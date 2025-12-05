@@ -5,25 +5,24 @@ date: "2025-12-05"
 ---
 
 ```{r setup, include=FALSE}
-knitr::opts_chunk$set(echo = TRUE)
-```
+# Configuración global del chunk:
+# message=FALSE y warning=FALSE son importantes para que el informe no se llene de mensajes
+knitr::opts_chunk$set(echo = TRUE, message=FALSE, warning=FALSE)
 
-## R Markdown
+# CARGA DE LIBRERÍAS
+# Esto es un buen lugar para poner todas las llamadas a library()
+library(readxl) # para abrir archivos de Excel
+library(splitstackshape) 
+library(descr) 
+library(rstatix) 
+library(tibble) 
+library(dplyr) 
+library(tidyr) 
+library(ggplot2) 
+library(xtable) 
+library(likert) 
+library(ggpubr) 
+library(flextable) 
+library(nortest)
 
-This is an R Markdown document. Markdown is a simple formatting syntax for authoring HTML, PDF, and MS Word documents. For more details on using R Markdown see <http://rmarkdown.rstudio.com>.
-
-When you click the **Knit** button a document will be generated that includes both content as well as the output of any embedded R code chunks within the document. You can embed an R code chunk like this:
-
-```{r cars}
-summary(cars)
-```
-
-## Including Plots
-
-You can also embed plots, for example:
-
-```{r pressure, echo=FALSE}
-plot(pressure)
-```
-
-Note that the `echo = FALSE` parameter was added to the code chunk to prevent printing of the R code that generated the plot.
+datos <- read_excel('respuestasEncuesta.xlsx')
