@@ -11,7 +11,6 @@ output:
     toc_float:           # Tabla de contenidos flotante a la izquierda
       collapsed: false
       smooth_scroll: true
-    code_folding: hide   # Oculta el código por defecto, pero permite verlo con un botón
     number_sections: true
 ---
 
@@ -22,7 +21,6 @@ knitr::opts_chunk$set(echo = TRUE, message = FALSE, warning = FALSE, fig.align =
 
 # 1. Preparación del Entorno
 
-Para este análisis, utilizamos un conjunto de librerías enfocadas en la manipulación de datos (`tidyverse`), análisis estadístico (`rstatix`, `nortest`) y visualización avanzada (`ggplot2`, `flextable`).
 
 ```{r librerias}
 # Carga de librerías
