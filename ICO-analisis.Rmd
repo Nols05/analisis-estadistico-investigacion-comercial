@@ -35,6 +35,9 @@ pacman::p_load(
   nortest, DT, RColorBrewer
 )
 
+# Configuración de decimales sugerida por tu profesor
+options(digits = 3)
+
 # Configuración de tema gráfico global para ggplot
 theme_set(theme_minimal() + 
             theme(plot.title = element_text(face = "bold", hjust = 0.5),
@@ -51,14 +54,10 @@ En esta sección procesamos el archivo crudo `respuestasEncuesta.xlsx`, renombra
 
 ```{r carga_datos}
 # Carga de datos
-# Asegúrate de que el archivo esté en tu directorio de trabajo
-tryCatch({
-  datos <- read_excel('respuestasEncuesta.xlsx')
-}, error = function(e) {
-  stop("El archivo 'respuestasEncuesta.xlsx' no se encuentra. Verifica la ruta.")
-})
 
-# Renombrado de columnas (Diccionario de datos)
+datos <- read_excel('respuestasEncuesta.xlsx')
+
+
 # Renombrado de columnas (Diccionario de datos)
 # Se asignan nombres cortos para facilitar el análisis, documentando la pregunta original.
 
@@ -104,14 +103,19 @@ Definimos las variables como categóricas.
 
 ```{r transformacion}
 
-# --- NOMINALES ---
 
 datos$f_Motivo <- factor(datos$Motivo,
-  levels = c('Conveniencia (falta de tiempo, por trabajo, estudios, etc.)', 'Reuniones sociales (familia, amigos, compañeros de trabajo, etc.)', 'Placer o disfrute personal (por gusto, por probar cosas nuevas, por cambiar de ambiente)', 'Circunstancias extraordinarias (viajes, eventos...)', 'Nunca como fuera de casa'),
+  levels = c('Conveniencia (falta de tiempo, por trabajo, estudios, etc.)', 
+             'Reuniones sociales (familia, amigos, compañeros de trabajo, etc.)', 
+             'Placer o disfrute personal (por gusto, por probar cosas nuevas, por cambiar de ambiente)', 
+             'Circunstancias extraordinarias (viajes, eventos...)', 
+             'Nunca como fuera de casa'),
   labels = c('Conveniencia', 'Social', 'Placer', 'Extraordinario', 'Nunca'))
 
 datos$f_Lugar_Habitual <- factor(datos$Lugar_Habitual,
-  levels = c('En un bar o restaurante', 'En una oficina o centro educativo (cantina, comedor, aula...)', 'En la vía pública (parques, calle, transporte, etc.)'),
+  levels = c('En un bar o restaurante', 
+             'En una oficina o centro educativo (cantina, comedor, aula...)', 
+             'En la vía pública (parques, calle, transporte, etc.)'),
   labels = c('Restaurante/Bar', 'Oficina/Centro', 'Vía Pública'))
 
 datos$f_Formato_Preferido <- factor(datos$Formato_Preferido,
@@ -119,7 +123,9 @@ datos$f_Formato_Preferido <- factor(datos$Formato_Preferido,
   labels = c('Precio Fijo', 'Pago Peso'))
 
 datos$f_Preferencia_Dispensacion <- factor(datos$Preferencia_Dispensacion,
-  levels = c('Ingredientes expuestos tras una mampara de cristal, donde el cliente abre la protección y utiliza pinzas para servirse en su propio recipiente (similar a un autoservicio tipo buffet)', 'Ingredientes protegidos por una barrera de cristal fija, sin acceso directo. Se utilizan palas largas para dispensarlos desde un lateral, evitando cualquier contacto del cliente con el producto, aunque con algo menos de comodidad (similar al sistema de algunas panaderías)', 'Ingredientes servidos por personal de atención.'),
+  levels = c('Ingredientes expuestos tras una mampara de cristal, donde el cliente abre la protección y utiliza pinzas para servirse en su propio recipiente (similar a un autoservicio tipo buffet)', 
+             'Ingredientes protegidos por una barrera de cristal fija, sin acceso directo. Se utilizan palas largas para dispensarlos desde un lateral, evitando cualquier contacto del cliente con el producto, aunque con algo menos de comodidad (similar al sistema de algunas panaderías)', 
+             'Ingredientes servidos por personal de atención.'),
   labels = c('Autoservicio', 'Protección Fija', 'Personal'))
 
 datos$f_Genero <- factor(datos$Genero,
@@ -131,10 +137,7 @@ datos$f_Situacion_Laboral <- factor(datos$Situacion_Laboral,
   labels = c('Estudiante', 'Cuenta Ajena', 'Autónomo', 'Desempleado', 'Jubilado', 'NS/NC'))
 
 datos$f_Experiencia_Barra <- factor(datos$Experiencia_Barra_Ensaladas, levels = c('Sí', 'No'))
-
 datos$f_Intencion_Uso <- factor(datos$Intencion_Uso, levels = c('Sí', 'No'))
-
-# --- ORDINALES ---
 
 datos$f_Frecuencia <- factor(datos$Frecuencia,
   levels = c('Rara vez / Nunca', 'Ocasionalmente', '1 o 2 veces por semana', '3 o 4 veces por semana', '5 o más veces por semana'),
@@ -144,21 +147,23 @@ datos$f_Frecuencia_Comida_Preparada <- factor(datos$Frecuencia_Comida_Preparada,
   levels = c('Rara vez / Nunca', 'Ocasionalmente', '1 o 2 veces por semana', '3 o 4 veces por semana', '5 o más veces por semana'),
   labels = c('Nunca/Rara', 'Ocasional', '1-2/sem', '3-4/sem', '5+/sem'))
 
-datos$f_Importancia_Saludable <- factor(datos$Importancia_Saludable, levels = c('1', '2', '3', '4', '5'))
+# Escalas Likert (1-5)
+niveles_likert <- c(1:5)
+etiquetas_likert <- c('1', '2', '3', '4', '5')
 
-datos$f_Imp_Sostenibilidad <- factor(datos$Imp_Sostenibilidad, levels = c('1', '2', '3', '4', '5'))
-datos$f_Imp_Origen_Local <- factor(datos$Imp_Origen_Local, levels = c('1', '2', '3', '4', '5'))
-datos$f_Imp_Variedad <- factor(datos$Imp_Variedad, levels = c('1', '2', '3', '4', '5'))
-datos$f_Imp_Sabor <- factor(datos$Imp_Sabor, levels = c('1', '2', '3', '4', '5'))
-datos$f_Imp_Precio <- factor(datos$Imp_Precio, levels = c('1', '2', '3', '4', '5'))
-datos$f_Imp_Higiene <- factor(datos$Imp_Higiene, levels = c('1', '2', '3', '4', '5'))
-datos$f_Imp_Rapidez <- factor(datos$Imp_Rapidez, levels = c('1', '2', '3', '4', '5'))
+datos$f_Importancia_Saludable <- factor(datos$Importancia_Saludable, levels = niveles_likert, labels = etiquetas_likert)
+datos$f_Imp_Sostenibilidad    <- factor(datos$Imp_Sostenibilidad, levels = niveles_likert, labels = etiquetas_likert)
+datos$f_Imp_Origen_Local      <- factor(datos$Imp_Origen_Local, levels = niveles_likert, labels = etiquetas_likert)
+datos$f_Imp_Variedad          <- factor(datos$Imp_Variedad, levels = niveles_likert, labels = etiquetas_likert)
+datos$f_Imp_Sabor             <- factor(datos$Imp_Sabor, levels = niveles_likert, labels = etiquetas_likert)
+datos$f_Imp_Precio            <- factor(datos$Imp_Precio, levels = niveles_likert, labels = etiquetas_likert)
+datos$f_Imp_Higiene           <- factor(datos$Imp_Higiene, levels = niveles_likert, labels = etiquetas_likert)
+datos$f_Imp_Rapidez           <- factor(datos$Imp_Rapidez, levels = niveles_likert, labels = etiquetas_likert)
+datos$f_Aptitud_Social        <- factor(datos$Aptitud_Social, levels = niveles_likert, labels = etiquetas_likert)
 
 datos$f_Disposicion_Pago <- factor(datos$Disposicion_Pago,
   levels = c('Menos de 4€', 'Entre 4 y 5,49€', 'Entre 5,50 y 7€', 'Entre 7 y 9,50€', 'Más de 9,50€'),
   labels = c('<4€', '4-5.5€', '5.5-7€', '7-9.5€', '>9.5€'))
-
-datos$f_Aptitud_Social <- factor(datos$Aptitud_Social, levels = c('1', '2', '3', '4', '5'))
 
 datos$f_Edad <- factor(datos$Edad,
   levels = c('Menor de 18', '18-24', '25-44', '45-64', '65+'))
@@ -167,12 +172,71 @@ datos$f_Nivel_Educativo <- factor(datos$Nivel_Educativo,
   levels = c('ESO (antiguo BUP)', 'FP medio o Bachillerato (antiguo COU)', 'FP superior', 'Universitario/a'),
   labels = c('ESO', 'Bachiller/FPm', 'FPs', 'Univ'))
 
-# Multiopción
+# ----- PREGUNTAS CON MÁS DE UNA RESPUESTA ---
 
-datos$f_Tipo_Comida <- as.factor(datos$Tipo_Comida)
-datos$f_Supermercado_Habitual <- as.factor(datos$Supermercado_Habitual)
-datos$f_Situaciones_Uso <- as.factor(datos$Situaciones_Uso)
-datos$f_Preferencia_Base <- as.factor(datos$Preferencia_Base)
-datos$f_Preferencia_Proteina <- as.factor(datos$Preferencia_Proteina)
-datos$f_Preferencia_Complementos <- as.factor(datos$Preferencia_Complementos)
+# Lista de variables multirespuesta
+multi_res <- c("Tipo_Comida", "Supermercado_Habitual", "Situaciones_Uso", 
+                "Preferencia_Base", "Preferencia_Proteina", "Preferencia_Complementos")
+
+# Aplicamos cSplit_e a cada una (separa por ", " y rellena con 0)
+for (var in multi_res) {
+  datos <- cSplit_e(datos, var, sep = ', ', type = 'character', fill = 0)
+}
+
+
+# !!!!!!!!!!!!!!!!!!!!! Si alguno da error es porque nadie lo ha marcado en la encuesta y la columna no existe, sería comentar esa línea
+
+# --- P4: Tipo de Comida ---
+datos$f_Tipo_Comida_Rapida <- factor(datos$`Tipo_Comida_Comida rápida`, 
+                                     levels = c(0, 1), labels = c('No', 'Sí'))
+datos$f_Tipo_Comida_Restaurante <- factor(datos$`Tipo_Comida_Comida preparada en un bar o restaurante (Excluyendo comida rápida)`, 
+                                          levels = c(0, 1), labels = c('No', 'Sí'))
+datos$f_Tipo_Comida_Super <- factor(datos$`Tipo_Comida_Platos preparados de supermercado`, 
+                                    levels = c(0, 1), labels = c('No', 'Sí'))
+datos$f_Tipo_Comida_Propia <- factor(datos$`Tipo_Comida_De elaboración propia`, 
+                                     levels = c(0, 1), labels = c('No', 'Sí'))
+
+# --- P6: Supermercados (Principales) ---
+
+datos$f_Super_Mercadona <- factor(datos$Supermercado_Habitual_Mercadona, levels = c(0, 1), labels = c('No', 'Sí'))
+datos$f_Super_Consum    <- factor(datos$Supermercado_Habitual_Consum, levels = c(0, 1), labels = c('No', 'Sí'))
+datos$f_Super_Carrefour <- factor(datos$Supermercado_Habitual_Carrefour, levels = c(0, 1), labels = c('No', 'Sí'))
+datos$f_Super_Lidl      <- factor(datos$Supermercado_Habitual_Lidl, levels = c(0, 1), labels = c('No', 'Sí'))
+datos$f_Super_Aldi      <- factor(datos$Supermercado_Habitual_Aldi, levels = c(0, 1), labels = c('No', 'Sí'))
+
+# --- P10: Situaciones de Uso ---
+datos$f_Uso_Momento <- factor(datos$`Situaciones_Uso_Para comer en el momento`, 
+                              levels = c(0, 1), labels = c('No', 'Sí'))
+datos$f_Uso_Llevar  <- factor(datos$`Situaciones_Uso_Para llevar al trabajo/universidad`, 
+                              levels = c(0, 1), labels = c('No', 'Sí'))
+datos$f_Uso_Cena    <- factor(datos$`Situaciones_Uso_Como cena ligera`, 
+                              levels = c(0, 1), labels = c('No', 'Sí'))
+datos$f_Uso_Complem <- factor(datos$`Situaciones_Uso_Como complemento de otra comida`, 
+                              levels = c(0, 1), labels = c('No', 'Sí'))
+
+# --- P13: Preferencia Base ---
+datos$f_Base_Lechuga <- factor(datos$`Preferencia_Base_Lechuga iceberg o romana`, 
+                               levels = c(0, 1), labels = c('No', 'Sí'))
+# Cuidado con esta línea, el nombre es muy largo y tiene símbolos:
+datos$f_Base_Verde   <- factor(datos$`Preferencia_Base_Mezcla verde: rúcula/canónigos/espinacas...`, 
+                               levels = c(0, 1), labels = c('No', 'Sí'))
+datos$f_Base_Pasta   <- factor(datos$Preferencia_Base_Pasta, 
+                               levels = c(0, 1), labels = c('No', 'Sí'))
+datos$f_Base_Quinoa  <- factor(datos$Preferencia_Base_Quinoa, 
+                               levels = c(0, 1), labels = c('No', 'Sí'))
+datos$f_Base_Legum   <- factor(datos$Preferencia_Base_Legumbres, 
+                               levels = c(0, 1), labels = c('No', 'Sí'))
+
+# --- P14: Proteínas ---
+datos$f_Prot_Pollo   <- factor(datos$Preferencia_Proteina_Pollo, levels = c(0, 1), labels = c('No', 'Sí'))
+datos$f_Prot_Pescado <- factor(datos$Preferencia_Proteina_Pescado, levels = c(0, 1), labels = c('No', 'Sí'))
+datos$f_Prot_Huevo   <- factor(datos$Preferencia_Proteina_Huevo, levels = c(0, 1), labels = c('No', 'Sí'))
+datos$f_Prot_Queso   <- factor(datos$Preferencia_Proteina_Quesos, levels = c(0, 1), labels = c('No', 'Sí'))
+datos$f_Prot_Tofu    <- factor(datos$Preferencia_Proteina_Tofu, levels = c(0, 1), labels = c('No', 'Sí'))
+
+# Verificación final
+colnames(datos)
+
+# Verificación
+colnames(datos)
 ```
