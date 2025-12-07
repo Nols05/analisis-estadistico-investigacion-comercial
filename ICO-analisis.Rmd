@@ -1,28 +1,236 @@
 ---
-title: "Analisis Encuesta - Barra ensaladas"
-output: html_document
-date: "2025-12-05"
+title: "Análisis de Mercado: Barra de Ensaladas"
+subtitle: "Estudio sobre preferencias, hábitos de consumo y disposición de pago"
+author: "Departamento de Análisis de Datos"
+date: "`r Sys.Date()`"
+output: 
+  html_document:
+    theme: flatly        # Temas recomendados: flatly, cerulean, journal, cosmo
+    highlight: tango
+    toc: true            # Tabla de contenidos
+    toc_float:           # Tabla de contenidos flotante a la izquierda
+      collapsed: false
+      smooth_scroll: true
+    code_folding: hide   # Oculta el código por defecto, pero permite verlo con un botón
+    number_sections: true
 ---
 
 ```{r setup, include=FALSE}
-# Configuración global del chunk:
-# message=FALSE y warning=FALSE son importantes para que el informe no se llene de mensajes
-knitr::opts_chunk$set(echo = TRUE, message=FALSE, warning=FALSE)
+# Configuración global
+knitr::opts_chunk$set(echo = TRUE, message = FALSE, warning = FALSE, fig.align = "center", fig.width = 10)
+```
 
-# CARGA DE LIBRERÍAS
-# Esto es un buen lugar para poner todas las llamadas a library()
-library(readxl) # para abrir archivos de Excel
-library(splitstackshape) 
-library(descr) 
-library(rstatix) 
-library(tibble) 
-library(dplyr) 
-library(tidyr) 
-library(ggplot2) 
-library(xtable) 
-library(likert) 
-library(ggpubr) 
-library(flextable) 
-library(nortest)
+# 1. Preparación del Entorno
 
-datos <- read_excel('respuestasEncuesta.xlsx')
+Para este análisis, utilizamos un conjunto de librerías enfocadas en la manipulación de datos (`tidyverse`), análisis estadístico (`rstatix`, `nortest`) y visualización avanzada (`ggplot2`, `flextable`).
+
+```{r librerias}
+# Carga de librerías
+if (!require("pacman")) install.packages("pacman")
+
+pacman::p_load(
+  readxl, splitstackshape, descr, rstatix, 
+  tibble, dplyr, tidyr, ggplot2, 
+  xtable, likert, ggpubr, flextable, 
+  nortest, DT, RColorBrewer
+)
+
+# Configuración de tema gráfico global para ggplot
+theme_set(theme_minimal() + 
+            theme(plot.title = element_text(face = "bold", hjust = 0.5),
+                  legend.position = "bottom"))
+```
+
+---
+
+# 2. Ingesta y Limpieza de Datos {.tabset}
+
+En esta sección procesamos el archivo crudo `respuestasEncuesta.xlsx`, renombrando las columnas para facilitar su manipulación y convirtiendo las variables categóricas.
+
+## Carga y Renombrado
+
+```{r carga_datos}
+# Carga de datos
+# Asegúrate de que el archivo esté en tu directorio de trabajo
+tryCatch({
+  datos <- read_excel('respuestasEncuesta.xlsx')
+}, error = function(e) {
+  stop("El archivo 'respuestasEncuesta.xlsx' no se encuentra. Verifica la ruta.")
+})
+
+# Renombrado de columnas (Diccionario de datos)
+# Renombrado de columnas (Diccionario de datos)
+# Se asignan nombres cortos para facilitar el análisis, documentando la pregunta original.
+
+nuevos_nombres <- c(
+  'Marca.Temporal',              # Marca temporal
+  'Motivo',                      # ¿Cuál es el principal motivo por el que suele comer fuera de casa?
+  'Frecuencia',                  # ¿Con qué frecuencia suele comer fuera de casa?
+  'Lugar_Habitual',              # Cuando come fuera ¿dónde suele comer?
+  'Tipo_Comida',                 # Cuando come fuera, ¿qué tipo de comida suele elegir?
+  'Frecuencia_Comida_Preparada', # ¿Con qué frecuencia compra comida preparada en un supermercado?
+  'Supermercado_Habitual',       # ¿En qué supermercados suele comprar comida?
+  'Importancia_Saludable',       # ¿Qué importancia tiene para usted comer de forma saludable cuando está fuera de casa?
+  'Experiencia_Barra_Ensaladas', # ¿Ha probado alguna vez una barra de ensaladas?
+  'Mala_Experiencia_Descripcion',# ¿Puede describir alguna mala experiencia que haya tenido con comida preparada o autoservicio...?
+  'Situaciones_Uso',             # ¿En qué situaciones utilizaría la barra de ensaladas?
+  'Formato_Preferido',           # ¿Qué formato preferiría?
+  'Imp_Sostenibilidad',          # Valore importancia: [Sostenibilidad de los envases]
+  'Imp_Origen_Local',            # Valore importancia: [Origen local de los productos]
+  'Imp_Variedad',                # Valore importancia: [Variedad de ingredientes]
+  'Imp_Sabor',                   # Valore importancia: [Sabor]
+  'Imp_Precio',                  # Valore importancia: [Precio]
+  'Imp_Higiene',                 # Valore importancia: [Higiene]
+  'Imp_Rapidez',                 # Valore importancia: [Rapidez del servicio]
+  'Preferencia_Base',            # ¿Qué tipo de base prefiere para sus ensaladas? (Hasta 2 opciones)
+  'Preferencia_Proteina',        # De las siguientes proteínas ¿cuáles prefiere? (Hasta 2 opciones)
+  'Preferencia_Complementos',    # De los siguientes complementos ¿cuáles prefiere? (Hasta 2 opciones)
+  'Disposicion_Pago',            # ¿Cuánto está dispuesto/a a pagar por una ensalada completa de tamaño mediano (500g)?
+  'Aptitud_Social',              # ¿Qué tan apropiadas considera las ensaladas para comidas en contextos sociales?
+  'Preferencia_Dispensacion',    # ¿Qué formato de dispensación preferiría? (Comodidad, rapidez e higiene)
+  'Intencion_Uso',               # Si su supermercado habitual ofreciera nuestra barra de ensaladas, ¿la usaría?
+  'Edad',                        # ¿En qué rango de edades se encuentra?
+  'Genero',                      # ¿Con qué género se identifica?
+  'Nivel_Educativo',             # Indique su nivel educativo máximo alcanzado
+  'Situacion_Laboral'            # ¿En qué situación laboral se encuentra?
+)
+
+# Aplicar los nombres al dataframe
+colnames(datos) <- nuevos_nombres
+```
+
+## Transformación de Variables
+Definimos las variables como categóricas. 
+
+```{r transformacion}
+
+# --- NOMINALES ---
+
+datos$f_Motivo <- factor(datos$Motivo,
+  levels = c('Conveniencia (falta de tiempo, por trabajo, estudios, etc.)', 'Reuniones sociales (familia, amigos, compañeros de trabajo, etc.)', 'Placer o disfrute personal (por gusto, por probar cosas nuevas, por cambiar de ambiente)', 'Circunstancias extraordinarias (viajes, eventos...)', 'Nunca como fuera de casa'),
+  labels = c('Conveniencia', 'Social', 'Placer', 'Extraordinario', 'Nunca'))
+
+datos$f_Lugar_Habitual <- factor(datos$Lugar_Habitual,
+  levels = c('En un bar o restaurante', 'En una oficina o centro educativo (cantina, comedor, aula...)', 'En la vía pública (parques, calle, transporte, etc.)'),
+  labels = c('Restaurante/Bar', 'Oficina/Centro', 'Vía Pública'))
+
+datos$f_Formato_Preferido <- factor(datos$Formato_Preferido,
+  levels = c('Tamaños de recipiente fijos con un precio establecido por tamaño', 'Pago por peso'),
+  labels = c('Precio Fijo', 'Pago Peso'))
+
+datos$f_Preferencia_Dispensacion <- factor(datos$Preferencia_Dispensacion,
+  levels = c('Ingredientes expuestos tras una mampara de cristal, donde el cliente abre la protección y utiliza pinzas para servirse en su propio recipiente (similar a un autoservicio tipo buffet)', 'Ingredientes protegidos por una barrera de cristal fija, sin acceso directo. Se utilizan palas largas para dispensarlos desde un lateral, evitando cualquier contacto del cliente con el producto, aunque con algo menos de comodidad (similar al sistema de algunas panaderías)', 'Ingredientes servidos por personal de atención.'),
+  labels = c('Autoservicio', 'Protección Fija', 'Personal'))
+
+datos$f_Genero <- factor(datos$Genero,
+  levels = c('Mujer', 'Hombre', 'Prefiero no decirlo', 'Otro:'),
+  labels = c('Mujer', 'Hombre', 'NS/NC', 'Otro'))
+
+datos$f_Situacion_Laboral <- factor(datos$Situacion_Laboral,
+  levels = c('Estudiante', 'Trabajador/a por cuenta ajena', 'Autónomo/a', 'Desempleado/a', 'Jubilado/a', 'Prefiero no decirlo'),
+  labels = c('Estudiante', 'Cuenta Ajena', 'Autónomo', 'Desempleado', 'Jubilado', 'NS/NC'))
+
+datos$f_Experiencia_Barra <- factor(datos$Experiencia_Barra_Ensaladas, levels = c('Sí', 'No'))
+
+datos$f_Intencion_Uso <- factor(datos$Intencion_Uso, levels = c('Sí', 'No'))
+
+# --- ORDINALES ---
+
+datos$f_Frecuencia <- factor(datos$Frecuencia,
+  levels = c('Rara vez / Nunca', 'Ocasionalmente', '1 o 2 veces por semana', '3 o 4 veces por semana', '5 o más veces por semana'),
+  labels = c('Nunca/Rara', 'Ocasional', '1-2/sem', '3-4/sem', '5+/sem'))
+
+datos$f_Frecuencia_Comida_Preparada <- factor(datos$Frecuencia_Comida_Preparada,
+  levels = c('Rara vez / Nunca', 'Ocasionalmente', '1 o 2 veces por semana', '3 o 4 veces por semana', '5 o más veces por semana'),
+  labels = c('Nunca/Rara', 'Ocasional', '1-2/sem', '3-4/sem', '5+/sem'))
+
+datos$f_Importancia_Saludable <- factor(datos$Importancia_Saludable, levels = c('1', '2', '3', '4', '5'))
+
+datos$f_Imp_Sostenibilidad <- factor(datos$Imp_Sostenibilidad, levels = c('1', '2', '3', '4', '5'))
+datos$f_Imp_Origen_Local <- factor(datos$Imp_Origen_Local, levels = c('1', '2', '3', '4', '5'))
+datos$f_Imp_Variedad <- factor(datos$Imp_Variedad, levels = c('1', '2', '3', '4', '5'))
+datos$f_Imp_Sabor <- factor(datos$Imp_Sabor, levels = c('1', '2', '3', '4', '5'))
+datos$f_Imp_Precio <- factor(datos$Imp_Precio, levels = c('1', '2', '3', '4', '5'))
+datos$f_Imp_Higiene <- factor(datos$Imp_Higiene, levels = c('1', '2', '3', '4', '5'))
+datos$f_Imp_Rapidez <- factor(datos$Imp_Rapidez, levels = c('1', '2', '3', '4', '5'))
+
+datos$f_Disposicion_Pago <- factor(datos$Disposicion_Pago,
+  levels = c('Menos de 4€', 'Entre 4 y 5,49€', 'Entre 5,50 y 7€', 'Entre 7 y 9,50€', 'Más de 9,50€'),
+  labels = c('<4€', '4-5.5€', '5.5-7€', '7-9.5€', '>9.5€'))
+
+datos$f_Aptitud_Social <- factor(datos$Aptitud_Social, levels = c('1', '2', '3', '4', '5'))
+
+datos$f_Edad <- factor(datos$Edad,
+  levels = c('Menor de 18', '18-24', '25-44', '45-64', '65+'))
+
+datos$f_Nivel_Educativo <- factor(datos$Nivel_Educativo,
+  levels = c('ESO (antiguo BUP)', 'FP medio o Bachillerato (antiguo COU)', 'FP superior', 'Universitario/a'),
+  labels = c('ESO', 'Bachiller/FPm', 'FPs', 'Univ'))
+
+# Multiopción
+
+datos$f_Tipo_Comida <- as.factor(datos$Tipo_Comida)
+datos$f_Supermercado_Habitual <- as.factor(datos$Supermercado_Habitual)
+datos$f_Situaciones_Uso <- as.factor(datos$Situaciones_Uso)
+datos$f_Preferencia_Base <- as.factor(datos$Preferencia_Base)
+datos$f_Preferencia_Proteina <- as.factor(datos$Preferencia_Proteina)
+datos$f_Preferencia_Complementos <- as.factor(datos$Preferencia_Complementos)
+```
+
+## Vista Previa de Datos
+
+A continuación se muestra una vista interactiva de los primeros registros de la base de datos procesada.
+
+```{r vista_previa}
+# Usamos DT para una tabla interactiva y scrolleable
+DT::datatable(head(datos, 100), 
+              options = list(scrollX = TRUE, pageLength = 5),
+              caption = "Tabla 1: Vista preliminar de las respuestas")
+```
+
+---
+
+# 3. Análisis Exploratorio
+
+## Perfil Demográfico
+
+```{r demografia}
+# Ejemplo de gráfico rápido y estético
+p1 <- ggplot(datos, aes(x = Edad, fill = Genero)) +
+  geom_bar(position = "dodge", alpha = 0.8) +
+  labs(title = "Distribución de Encuestados por Edad y Género",
+       y = "Conteo", x = "Rango de Edad") +
+  scale_fill_brewer(palette = "Set2")
+
+p1
+```
+
+## Preferencias de Consumo
+
+> **Nota:** Aquí analizamos qué factores son determinantes para el cliente (Sabor, Precio, Higiene).
+
+```{r importancia_factores}
+# Selección de columnas de importancia para un resumen
+cols_importancia <- datos %>% 
+  select(starts_with("Imp_")) %>%
+  pivot_longer(cols = everything(), names_to = "Factor", values_to = "Valor")
+
+# (Aquí podrías agregar tu código de Likert o gráficos de barras)
+# Ejemplo visual placeholder:
+ggplot(cols_importancia, aes(x = reorder(Factor, Valor), y = Valor)) +
+  geom_boxplot(fill = "skyblue", outlier.color = "red") +
+  coord_flip() +
+  labs(title = "Importancia de Atributos en la Elección",
+       x = "", y = "Escala de Valoración")
+```
+
+---
+
+# 4. Conclusiones Preliminares
+
+* **Perfil del usuario:** [Texto autogenerado o escrito a mano sobre quién responde].
+* **Oportunidad de mercado:** Basado en la variable `Intencion_Uso`.
+
+---
+<br>
+<center><small>Informe generado con RMarkdown - `r Sys.Date()`</small></center>   
