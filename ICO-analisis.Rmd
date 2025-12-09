@@ -23,7 +23,7 @@ knitr::opts_chunk$set(echo = TRUE, message = FALSE, warning = FALSE, fig.align =
 
 
 ```{r librerias}
-# Carga de librerías
+# Carga de librerías y configuraciones
 if (!require("pacman")) install.packages("pacman")
 
 pacman::p_load(
@@ -33,10 +33,8 @@ pacman::p_load(
   nortest, DT, RColorBrewer
 )
 
-# Configuración de decimales sugerida por tu profesor
 options(digits = 3)
 
-# Configuración de tema gráfico global para ggplot
 theme_set(theme_minimal() + 
             theme(plot.title = element_text(face = "bold", hjust = 0.5),
                   legend.position = "bottom"))
@@ -51,48 +49,43 @@ En esta sección procesamos el archivo crudo `respuestasEncuesta.xlsx`, renombra
 ## Carga y Renombrado
 
 ```{r carga_datos}
-# Carga de datos
+# Carga de datos y renombramiento de columnas
 
 datos <- read_excel('respuestasEncuesta.xlsx')
-
-
-# Renombrado de columnas (Diccionario de datos)
-# Se asignan nombres cortos para facilitar el análisis, documentando la pregunta original.
 
 nuevos_nombres <- c(
   'Marca.Temporal',              # Marca temporal
   'Motivo',                      # ¿Cuál es el principal motivo por el que suele comer fuera de casa?
   'Frecuencia',                  # ¿Con qué frecuencia suele comer fuera de casa?
-  'Lugar_Habitual',              # Cuando come fuera ¿dónde suele comer?
-  'Tipo_Comida',                 # Cuando come fuera, ¿qué tipo de comida suele elegir?
-  'Frecuencia_Comida_Preparada', # ¿Con qué frecuencia compra comida preparada en un supermercado?
-  'Supermercado_Habitual',       # ¿En qué supermercados suele comprar comida?
-  'Importancia_Saludable',       # ¿Qué importancia tiene para usted comer de forma saludable cuando está fuera de casa?
-  'Experiencia_Barra_Ensaladas', # ¿Ha probado alguna vez una barra de ensaladas?
-  'Mala_Experiencia_Descripcion',# ¿Puede describir alguna mala experiencia que haya tenido con comida preparada o autoservicio...?
-  'Situaciones_Uso',             # ¿En qué situaciones utilizaría la barra de ensaladas?
-  'Formato_Preferido',           # ¿Qué formato preferiría?
-  'Imp_Sostenibilidad',          # Valore importancia: [Sostenibilidad de los envases]
-  'Imp_Origen_Local',            # Valore importancia: [Origen local de los productos]
-  'Imp_Variedad',                # Valore importancia: [Variedad de ingredientes]
-  'Imp_Sabor',                   # Valore importancia: [Sabor]
-  'Imp_Precio',                  # Valore importancia: [Precio]
-  'Imp_Higiene',                 # Valore importancia: [Higiene]
-  'Imp_Rapidez',                 # Valore importancia: [Rapidez del servicio]
-  'Preferencia_Base',            # ¿Qué tipo de base prefiere para sus ensaladas? (Hasta 2 opciones)
-  'Preferencia_Proteina',        # De las siguientes proteínas ¿cuáles prefiere? (Hasta 2 opciones)
-  'Preferencia_Complementos',    # De los siguientes complementos ¿cuáles prefiere? (Hasta 2 opciones)
-  'Disposicion_Pago',            # ¿Cuánto está dispuesto/a a pagar por una ensalada completa de tamaño mediano (500g)?
-  'Aptitud_Social',              # ¿Qué tan apropiadas considera las ensaladas para comidas en contextos sociales?
-  'Preferencia_Dispensacion',    # ¿Qué formato de dispensación preferiría? (Comodidad, rapidez e higiene)
-  'Intencion_Uso',               # Si su supermercado habitual ofreciera nuestra barra de ensaladas, ¿la usaría?
+  'Lugar.Habitual',              # Cuando come fuera ¿dónde suele comer?
+  'Tipo.Comida',                 # Cuando come fuera, ¿qué tipo de comida suele elegir?
+  'Frecuencia.Comida.Preparada', # ¿Con qué frecuencia compra comida preparada en un supermercado?
+  'Supermercado.Habitual',       # ¿En qué supermercados suele comprar comida?
+  'Importancia.Saludable',       # ¿Qué importancia tiene para usted comer de forma saludable cuando está fuera de casa?
+  'Experiencia.Barra.Ensaladas', # ¿Ha probado alguna vez una barra de ensaladas?
+  'Mala.Experiencia.Descripcion',# ¿Puede describir alguna mala experiencia que haya tenido con comida preparada o autoservicio...?
+  'Situaciones.Uso',             # ¿En qué situaciones utilizaría la barra de ensaladas?
+  'Formato.Preferido',           # ¿Qué formato preferiría?
+  'Imp.Sostenibilidad',          # Valore importancia: [Sostenibilidad de los envases]
+  'Imp.Origen.Local',            # Valore importancia: [Origen local de los productos]
+  'Imp.Variedad',                # Valore importancia: [Variedad de ingredientes]
+  'Imp.Sabor',                   # Valore importancia: [Sabor]
+  'Imp.Precio',                  # Valore importancia: [Precio]
+  'Imp.Higiene',                 # Valore importancia: [Higiene]
+  'Imp.Rapidez',                 # Valore importancia: [Rapidez del servicio]
+  'Preferencia.Base',            # ¿Qué tipo de base prefiere para sus ensaladas? (Hasta 2 opciones)
+  'Preferencia.Proteina',        # De las siguientes proteínas ¿cuáles prefiere? (Hasta 2 opciones)
+  'Preferencia.Complementos',    # De los siguientes complementos ¿cuáles prefiere? (Hasta 2 opciones)
+  'Disposicion.Pago',            # ¿Cuánto está dispuesto/a a pagar por una ensalada completa de tamaño mediano (500g)?
+  'Aptitud.Social',              # ¿Qué tan apropiadas considera las ensaladas para comidas en contextos sociales?
+  'Preferencia.Dispensacion',    # ¿Qué formato de dispensación preferiría? (Comodidad, rapidez e higiene)
+  'Intencion.Uso',               # Si su supermercado habitual ofreciera nuestra barra de ensaladas, ¿la usaría?
   'Edad',                        # ¿En qué rango de edades se encuentra?
   'Genero',                      # ¿Con qué género se identifica?
-  'Nivel_Educativo',             # Indique su nivel educativo máximo alcanzado
-  'Situacion_Laboral'            # ¿En qué situación laboral se encuentra?
+  'Nivel.Educativo',             # Indique su nivel educativo máximo alcanzado
+  'Situacion.Laboral'            # ¿En qué situación laboral se encuentra?
 )
 
-# Aplicar los nombres al dataframe
 colnames(datos) <- nuevos_nombres
 ```
 
@@ -110,17 +103,17 @@ datos$f_Motivo <- factor(datos$Motivo,
              'Nunca como fuera de casa'),
   labels = c('Conveniencia', 'Social', 'Placer', 'Extraordinario', 'Nunca'))
 
-datos$f_Lugar_Habitual <- factor(datos$Lugar_Habitual,
+datos$f_Lugar.Habitual <- factor(datos$Lugar.Habitual,
   levels = c('En un bar o restaurante', 
              'En una oficina o centro educativo (cantina, comedor, aula...)', 
              'En la vía pública (parques, calle, transporte, etc.)'),
   labels = c('Restaurante/Bar', 'Oficina/Centro', 'Vía Pública'))
 
-datos$f_Formato_Preferido <- factor(datos$Formato_Preferido,
+datos$f_Formato.Preferido <- factor(datos$Formato.Preferido,
   levels = c('Tamaños de recipiente fijos con un precio establecido por tamaño', 'Pago por peso'),
   labels = c('Precio Fijo', 'Pago Peso'))
 
-datos$f_Preferencia_Dispensacion <- factor(datos$Preferencia_Dispensacion,
+datos$f_Preferencia.Dispensacion <- factor(datos$Preferencia.Dispensacion,
   levels = c('Ingredientes expuestos tras una mampara de cristal, donde el cliente abre la protección y utiliza pinzas para servirse en su propio recipiente (similar a un autoservicio tipo buffet)', 
              'Ingredientes protegidos por una barrera de cristal fija, sin acceso directo. Se utilizan palas largas para dispensarlos desde un lateral, evitando cualquier contacto del cliente con el producto, aunque con algo menos de comodidad (similar al sistema de algunas panaderías)', 
              'Ingredientes servidos por personal de atención.'),
@@ -130,18 +123,18 @@ datos$f_Genero <- factor(datos$Genero,
   levels = c('Mujer', 'Hombre', 'Prefiero no decirlo', 'Otro:'),
   labels = c('Mujer', 'Hombre', 'NS/NC', 'Otro'))
 
-datos$f_Situacion_Laboral <- factor(datos$Situacion_Laboral,
+datos$f_Situacion.Laboral <- factor(datos$Situacion.Laboral,
   levels = c('Estudiante', 'Trabajador/a por cuenta ajena', 'Autónomo/a', 'Desempleado/a', 'Jubilado/a', 'Prefiero no decirlo'),
   labels = c('Estudiante', 'Cuenta Ajena', 'Autónomo', 'Desempleado', 'Jubilado', 'NS/NC'))
 
-datos$f_Experiencia_Barra <- factor(datos$Experiencia_Barra_Ensaladas, levels = c('Sí', 'No'))
-datos$f_Intencion_Uso <- factor(datos$Intencion_Uso, levels = c('Sí', 'No'))
+datos$f_Experiencia.Barra <- factor(datos$Experiencia.Barra.Ensaladas, levels = c('Sí', 'No'))
+datos$f_Intencion.Uso <- factor(datos$Intencion.Uso, levels = c('Sí', 'No'))
 
 datos$f_Frecuencia <- factor(datos$Frecuencia,
   levels = c('Rara vez / Nunca', 'Ocasionalmente', '1 o 2 veces por semana', '3 o 4 veces por semana', '5 o más veces por semana'),
   labels = c('Nunca/Rara', 'Ocasional', '1-2/sem', '3-4/sem', '5+/sem'))
 
-datos$f_Frecuencia_Comida_Preparada <- factor(datos$Frecuencia_Comida_Preparada,
+datos$f_Frecuencia.Comida.Preparada <- factor(datos$Frecuencia.Comida.Preparada,
   levels = c('Rara vez / Nunca', 'Ocasionalmente', '1 o 2 veces por semana', '3 o 4 veces por semana', '5 o más veces por semana'),
   labels = c('Nunca/Rara', 'Ocasional', '1-2/sem', '3-4/sem', '5+/sem'))
 
@@ -149,32 +142,32 @@ datos$f_Frecuencia_Comida_Preparada <- factor(datos$Frecuencia_Comida_Preparada,
 niveles_likert <- c(1:5)
 etiquetas_likert <- c('1', '2', '3', '4', '5')
 
-datos$f_Importancia_Saludable <- factor(datos$Importancia_Saludable, levels = niveles_likert, labels = etiquetas_likert)
-datos$f_Imp_Sostenibilidad    <- factor(datos$Imp_Sostenibilidad, levels = niveles_likert, labels = etiquetas_likert)
-datos$f_Imp_Origen_Local      <- factor(datos$Imp_Origen_Local, levels = niveles_likert, labels = etiquetas_likert)
-datos$f_Imp_Variedad          <- factor(datos$Imp_Variedad, levels = niveles_likert, labels = etiquetas_likert)
-datos$f_Imp_Sabor             <- factor(datos$Imp_Sabor, levels = niveles_likert, labels = etiquetas_likert)
-datos$f_Imp_Precio            <- factor(datos$Imp_Precio, levels = niveles_likert, labels = etiquetas_likert)
-datos$f_Imp_Higiene           <- factor(datos$Imp_Higiene, levels = niveles_likert, labels = etiquetas_likert)
-datos$f_Imp_Rapidez           <- factor(datos$Imp_Rapidez, levels = niveles_likert, labels = etiquetas_likert)
-datos$f_Aptitud_Social        <- factor(datos$Aptitud_Social, levels = niveles_likert, labels = etiquetas_likert)
+datos$f_Importancia.Saludable <- factor(datos$Importancia.Saludable, levels = niveles_likert, labels = etiquetas_likert)
+datos$f_Imp.Sostenibilidad    <- factor(datos$Imp.Sostenibilidad, levels = niveles_likert, labels = etiquetas_likert)
+datos$f_Imp.Origen.Local      <- factor(datos$Imp.Origen.Local, levels = niveles_likert, labels = etiquetas_likert)
+datos$f_Imp.Variedad          <- factor(datos$Imp.Variedad, levels = niveles_likert, labels = etiquetas_likert)
+datos$f_Imp.Sabor             <- factor(datos$Imp.Sabor, levels = niveles_likert, labels = etiquetas_likert)
+datos$f_Imp.Precio            <- factor(datos$Imp.Precio, levels = niveles_likert, labels = etiquetas_likert)
+datos$f_Imp.Higiene           <- factor(datos$Imp.Higiene, levels = niveles_likert, labels = etiquetas_likert)
+datos$f_Imp.Rapidez           <- factor(datos$Imp.Rapidez, levels = niveles_likert, labels = etiquetas_likert)
+datos$f_Aptitud.Social        <- factor(datos$Aptitud.Social, levels = niveles_likert, labels = etiquetas_likert)
 
-datos$f_Disposicion_Pago <- factor(datos$Disposicion_Pago,
+datos$f_Disposicion.Pago <- factor(datos$Disposicion.Pago,
   levels = c('Menos de 4€', 'Entre 4 y 5,49€', 'Entre 5,50 y 7€', 'Entre 7 y 9,50€', 'Más de 9,50€'),
   labels = c('<4€', '4-5.5€', '5.5-7€', '7-9.5€', '>9.5€'))
 
 datos$f_Edad <- factor(datos$Edad,
   levels = c('Menor de 18', '18-24', '25-44', '45-64', '65+'))
 
-datos$f_Nivel_Educativo <- factor(datos$Nivel_Educativo,
+datos$f_Nivel.Educativo <- factor(datos$Nivel.Educativo,
   levels = c('ESO (antiguo BUP)', 'FP medio o Bachillerato (antiguo COU)', 'FP superior', 'Universitario/a'),
   labels = c('ESO', 'Bachiller/FPm', 'FPs', 'Univ'))
 
 # ----- PREGUNTAS CON MÁS DE UNA RESPUESTA ---
 
 # Lista de variables multirespuesta
-multi_res <- c("Tipo_Comida", "Supermercado_Habitual", "Situaciones_Uso", 
-                "Preferencia_Base", "Preferencia_Proteina", "Preferencia_Complementos")
+multi_res <- c("Tipo.Comida", "Supermercado.Habitual", "Situaciones.Uso", 
+                "Preferencia.Base", "Preferencia.Proteina", "Preferencia.Complementos")
 
 # Aplicamos cSplit_e a cada una (separa por ", " y rellena con 0)
 for (var in multi_res) {
@@ -185,52 +178,52 @@ for (var in multi_res) {
 # !!!!!!!!!!!!!!!!!!!!! Si alguno da error es porque nadie lo ha marcado en la encuesta y la columna no existe, sería comentar esa línea
 
 # --- P4: Tipo de Comida ---
-datos$f_Tipo_Comida_Rapida <- factor(datos$`Tipo_Comida_Comida rápida`, 
+datos$f_Tipo.Comida.Rapida <- factor(datos$`Tipo.Comida_Comida rápida`, 
                                      levels = c(0, 1), labels = c('No', 'Sí'))
-datos$f_Tipo_Comida_Restaurante <- factor(datos$`Tipo_Comida_Comida preparada en un bar o restaurante (Excluyendo comida rápida)`, 
+datos$f_Tipo.Comida.Restaurante <- factor(datos$`Tipo.Comida_Comida preparada en un bar o restaurante (Excluyendo comida rápida)`, 
                                           levels = c(0, 1), labels = c('No', 'Sí'))
-datos$f_Tipo_Comida_Super <- factor(datos$`Tipo_Comida_Platos preparados de supermercado`, 
+datos$f_Tipo.Comida.Super <- factor(datos$`Tipo.Comida_Platos preparados de supermercado`, 
                                     levels = c(0, 1), labels = c('No', 'Sí'))
-datos$f_Tipo_Comida_Propia <- factor(datos$`Tipo_Comida_De elaboración propia`, 
+datos$f_Tipo.Comida.Propia <- factor(datos$`Tipo.Comida_De elaboración propia`, 
                                      levels = c(0, 1), labels = c('No', 'Sí'))
 
 # --- P6: Supermercados (Principales) ---
 
-datos$f_Super_Mercadona <- factor(datos$Supermercado_Habitual_Mercadona, levels = c(0, 1), labels = c('No', 'Sí'))
-datos$f_Super_Consum    <- factor(datos$Supermercado_Habitual_Consum, levels = c(0, 1), labels = c('No', 'Sí'))
-datos$f_Super_Carrefour <- factor(datos$Supermercado_Habitual_Carrefour, levels = c(0, 1), labels = c('No', 'Sí'))
-datos$f_Super_Lidl      <- factor(datos$Supermercado_Habitual_Lidl, levels = c(0, 1), labels = c('No', 'Sí'))
-datos$f_Super_Aldi      <- factor(datos$Supermercado_Habitual_Aldi, levels = c(0, 1), labels = c('No', 'Sí'))
+datos$f_Super.Mercadona <- factor(datos$Supermercado.Habitual_Mercadona, levels = c(0, 1), labels = c('No', 'Sí'))
+datos$f_Super.Consum    <- factor(datos$Supermercado.Habitual_Consum, levels = c(0, 1), labels = c('No', 'Sí'))
+datos$f_Super.Carrefour <- factor(datos$Supermercado.Habitual_Carrefour, levels = c(0, 1), labels = c('No', 'Sí'))
+datos$f_Super.Lidl      <- factor(datos$Supermercado.Habitual_Lidl, levels = c(0, 1), labels = c('No', 'Sí'))
+datos$f_Super.Aldi      <- factor(datos$Supermercado.Habitual_Aldi, levels = c(0, 1), labels = c('No', 'Sí'))
 
 # --- P10: Situaciones de Uso ---
-datos$f_Uso_Momento <- factor(datos$`Situaciones_Uso_Para comer en el momento`, 
+datos$f_Uso.Momento <- factor(datos$`Situaciones.Uso_Para comer en el momento`, 
                               levels = c(0, 1), labels = c('No', 'Sí'))
-datos$f_Uso_Llevar  <- factor(datos$`Situaciones_Uso_Para llevar al trabajo/universidad`, 
+datos$f_Uso.Llevar  <- factor(datos$`Situaciones.Uso_Para llevar al trabajo/universidad`, 
                               levels = c(0, 1), labels = c('No', 'Sí'))
-datos$f_Uso_Cena    <- factor(datos$`Situaciones_Uso_Como cena ligera`, 
+datos$f_Uso.Cena    <- factor(datos$`Situaciones.Uso_Como cena ligera`, 
                               levels = c(0, 1), labels = c('No', 'Sí'))
-datos$f_Uso_Complem <- factor(datos$`Situaciones_Uso_Como complemento de otra comida`, 
+datos$f_Uso.Complem <- factor(datos$`Situaciones.Uso_Como complemento de otra comida`, 
                               levels = c(0, 1), labels = c('No', 'Sí'))
 
 # --- P13: Preferencia Base ---
-datos$f_Base_Lechuga <- factor(datos$`Preferencia_Base_Lechuga iceberg o romana`, 
+datos$f_Base.Lechuga <- factor(datos$`Preferencia.Base_Lechuga iceberg o romana`, 
                                levels = c(0, 1), labels = c('No', 'Sí'))
 # Cuidado con esta línea, el nombre es muy largo y tiene símbolos:
-datos$f_Base_Verde   <- factor(datos$`Preferencia_Base_Mezcla verde: rúcula/canónigos/espinacas...`, 
+datos$f_Base.Verde   <- factor(datos$`Preferencia.Base_Mezcla verde: rúcula/canónigos/espinacas...`, 
                                levels = c(0, 1), labels = c('No', 'Sí'))
-datos$f_Base_Pasta   <- factor(datos$Preferencia_Base_Pasta, 
+datos$f_Base.Pasta   <- factor(datos$Preferencia.Base_Pasta, 
                                levels = c(0, 1), labels = c('No', 'Sí'))
-datos$f_Base_Quinoa  <- factor(datos$Preferencia_Base_Quinoa, 
+datos$f_Base.Quinoa  <- factor(datos$Preferencia.Base_Quinoa, 
                                levels = c(0, 1), labels = c('No', 'Sí'))
-datos$f_Base_Legum   <- factor(datos$Preferencia_Base_Legumbres, 
+datos$f_Base.Legum   <- factor(datos$Preferencia.Base_Legumbres, 
                                levels = c(0, 1), labels = c('No', 'Sí'))
 
 # --- P14: Proteínas ---
-datos$f_Prot_Pollo   <- factor(datos$Preferencia_Proteina_Pollo, levels = c(0, 1), labels = c('No', 'Sí'))
-datos$f_Prot_Pescado <- factor(datos$Preferencia_Proteina_Pescado, levels = c(0, 1), labels = c('No', 'Sí'))
-datos$f_Prot_Huevo   <- factor(datos$Preferencia_Proteina_Huevo, levels = c(0, 1), labels = c('No', 'Sí'))
-datos$f_Prot_Queso   <- factor(datos$Preferencia_Proteina_Quesos, levels = c(0, 1), labels = c('No', 'Sí'))
-datos$f_Prot_Tofu    <- factor(datos$Preferencia_Proteina_Tofu, levels = c(0, 1), labels = c('No', 'Sí'))
+datos$f_Prot.Pollo   <- factor(datos$Preferencia.Proteina_Pollo, levels = c(0, 1), labels = c('No', 'Sí'))
+datos$f_Prot.Pescado <- factor(datos$Preferencia.Proteina_Pescado, levels = c(0, 1), labels = c('No', 'Sí'))
+datos$f_Prot.Huevo   <- factor(datos$Preferencia.Proteina_Huevo, levels = c(0, 1), labels = c('No', 'Sí'))
+datos$f_Prot.Queso   <- factor(datos$Preferencia.Proteina_Quesos, levels = c(0, 1), labels = c('No', 'Sí'))
+datos$f_Prot.Tofu    <- factor(datos$Preferencia.Proteina_Tofu, levels = c(0, 1), labels = c('No', 'Sí'))
 
 # Verificación final
 colnames(datos)
@@ -238,3 +231,18 @@ colnames(datos)
 # Verificación
 colnames(datos)
 ```
+## Control de consistencia
+Hemos introducido un control de consistencia en la pregunta sobre el supermercado en el que el encuestado compra comida habitualmente. Dos de las posibles respuestas son Fnac y Lefties, que no son supermercados. Por tanto, tendremos que descartar aquellos cuestionarios que tengan marcada alguna de estas respuestas, ya que es muy probable que hayan sido respondidos al azar o de forma poca seria.
+
+```{r control consistencia}
+
+n.filas.bruto <- dim(datos)[1]
+
+datos <- subset(datos, !(f_Super.Fnac))
+datos <- subset(datos, !(f_Super.Lefties))
+
+n.filas <- dim(datos)[1]
+
+``` 
+
+En el trabajo de campo recogimos inicialmente `r n.filas.bruto` cuestionarios. Tras realizar el control de consistencia, nuestra muestra efectiva es de `r n.filas` cuestionarios válidos.
