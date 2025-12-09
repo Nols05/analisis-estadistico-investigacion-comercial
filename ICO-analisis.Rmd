@@ -266,7 +266,7 @@ n.filas <- dim(datos)[1]
 
 En el trabajo de campo recogimos inicialmente `r n.filas.bruto` cuestionarios. Tras realizar el control de consistencia, nuestra muestra efectiva es de `r n.filas` cuestionarios válidos.
 
-# Estadísticos descriptivos
+# Estadísticos descriptivos (Análisis Univariante)
 Vamos a distinguir tres tipos de variables: categóricas, numéricas y cualitativas. Cada una tiene un tratamiento descriptivo diferente.
 
 ## Variables catégoricas
@@ -343,7 +343,7 @@ flextable::set_caption(caption = "Tabla 1. Distribución de frecuencias para Mot
   flextable::theme_booktabs() %>% # Aplicar un tema con líneas horizontales
   
   # Formato de alineación y cabecera
-  flextable::align(j = 1, align = "left", part = "body") %>%     # Columna 1 (Motivo) a la izquierda
+  flextable::align(j = 1, align = "left", part = "body") %>%
   flextable::align(j = 2:3, align = "center", part = "all") %>% # Columnas 2 y 3 (Datos) CENTRADAS
   flextable::align(align = "center", part = "header") %>%        # Encabezados CENTRADOS
   
@@ -427,7 +427,7 @@ flextable::set_caption(caption = "Tabla 2. Distribución de frecuencias para Lug
   flextable::theme_booktabs() %>% # Aplicar un tema con líneas horizontales
   
   # Formato de alineación y cabecera
-  flextable::align(j = 1, align = "left", part = "body") %>%     # Columna 1 (Motivo) a la izquierda
+  flextable::align(j = 1, align = "left", part = "body") %>%
   flextable::align(j = 2:3, align = "center", part = "all") %>% # Columnas 2 y 3 (Datos) CENTRADAS
   flextable::align(align = "center", part = "header") %>%        # Encabezados CENTRADOS
   
@@ -441,37 +441,89 @@ flextable::set_caption(caption = "Tabla 2. Distribución de frecuencias para Lug
 ft
 ```
 
-#### `f_Tipo.Comida.Rapida`
-Las categorías de `f_Tipo.Comida.Rapida` son si los encuestados comen fuera de casa, si eligen comida rápida o no. Se trata de una variable cuyas categorías no guardan una relación de orden entre sí. Por ese motivo no se definieron los `levels` al factorizarla.
+#### `f_Tipo.Comida`
+Las categorías de `f_Tipo.Comida` hacen referencia al tipo de comida que los encuestados suelen comer cuando comen fuera de casa. Es importante destacar que esta variable proviene de una pregunta con respuesta multiple por lo que la suma de los porcentajes superará el 100%.
 
-```{r P2_Tipo_Comida_Rapida, fig.height=5}
-# 1. PREPARACIÓN DE DATOS
-# Contamos la frecuencia (n) y calculamos el porcentaje
-df_rapida <- datos %>%
-  dplyr::count(f_Tipo.Comida.Rapida, name = "Frecuencia") %>%
+```{r P4-barras, fig.height=5}
+# Definir las variables a analizar del grupo "Tipo de Comida"
+multi_vars <- c("f_Tipo.Comida.Rapida", "f_Tipo.Comida.Restaurante", "f_Tipo.Comida.Super", 
+                "f_Tipo.Comida.Propia")
+
+# Calcular Frecuencia (n) y Porcentaje (%) de 'Sí'
+df_multi_res <- datos %>%
+  # Seleccionar solo las variables del grupo P4
+  dplyr::select(all_of(multi_vars)) %>%
+  # Sumar el número de 'Sí' para cada columna
+  dplyr::summarise(across(everything(), ~sum(. == 'Sí'))) %>%
+  # Transformar de formato ancho a largo (una fila por opción)
+  tidyr::pivot_longer(everything(), 
+                      names_to = "Tipo_de_Comida", 
+                      values_to = "Frecuencia") %>%
+  # Calcular el porcentaje y limpiar el texto de las etiquetas
   dplyr::mutate(
-    Porcentaje = Frecuencia / sum(Frecuencia) * 100
-  )
+    Porcentaje = (Frecuencia / n.filas) * 100,
+    # Usamos fixed = TRUE para tratar el patrón como texto literal.
+    Tipo_de_Comida = gsub("f_Tipo.Comida.", "", Tipo_de_Comida, fixed = TRUE),
+    # Capitalizar la primera letra para mejor presentación
+    Tipo_de_Comida = tools::toTitleCase(Tipo_de_Comida) 
+  ) %>%
+  # Excluir la opción que nadie marcó (si existiera)
+  dplyr::filter(Frecuencia > 0)
 
-# 2. GENERACIÓN DEL GRÁFICO DE BARRAS (ggplot2)
-ggplot(df_rapida, aes(x = f_Tipo.Comida.Rapida, y = Frecuencia, fill = f_Tipo.Comida.Rapida)) +
-  # Barras
-  geom_bar(stat = "identity") +
+
+# Generación del Gráfico de Barras (horizontal)
+ggplot(df_multi_res, aes(x = Porcentaje, y = reorder(Tipo_de_Comida, Porcentaje))) +
+  # Barras horizontales
+  geom_bar(stat = "identity", fill = "#3182bd") +
   # Etiquetas de Porcentaje sobre las barras
   geom_text(aes(label = paste0(round(Porcentaje, 1), "%")), 
-            vjust = -0.5, # Ajuste vertical para que quede sobre la barra
-            size = 5) + 
+            hjust = -0.1,  # Ajuste horizontal para que quede a la derecha de la barra
+            size = 4) + 
   
-  # Se añade una expansión del 10% en el límite superior del eje Y
-  scale_y_continuous(expand = expansion(mult = c(0, 0.1))) + 
+  # Corrección del eje X para dejar espacio al texto y evitar cortes
+  scale_x_continuous(expand = expansion(mult = c(0, 0.2))) + 
   
-  # 4. Títulos y Etiquetas
+  # Títulos y Etiquetas
   labs(
-    title = "Figura 3. Consumo de Comida Rápida",
-    x = "Consume Comida Rápida",
-    y = "Frecuencia (n)",
-    fill = "Consume" # Título de la leyenda
-  ) +
-  # 5. Personalización de color
-  scale_fill_brewer(palette = "Set1")
+    title = "Figura 3. Tipos de Comida Consumida Habitualmente",
+    x = "Porcentaje de Encuestados",
+    y = NULL # No necesitamos título en el eje Y
+  )
 ```
+Se observa una clara dominancia del consumo de comida de restaurante (con un 77,1%), seguido de comida de elaboración propia (con un 31,4%). Estos resultados sugieren que los consumidores están acostumbrados a un formato de comida que prioriza una comida preparada y de calidad.
+
+```{r P4-tabla, fig.height=5}
+# Generación de la tabla (flextable)
+ft_multi <- flextable::flextable(df_multi_res) %>%
+  
+  # Añadir Título
+  flextable::set_caption(caption = "Tabla 3. Distribución de respuestas para Tipo de Comida (Respuestas Múltiples)") %>%
+  
+  # Renombrar cabeceras
+  flextable::set_header_labels(
+    Opcion = "Tipo de Comida",
+    Frecuencia = "Frecuencia (n)",
+    Porcentaje = "Porcentaje (%)"
+  ) %>%
+  
+  # Formato de datos
+  # Aplicamos formato de doble, asumiendo que el porcentaje es numérico (sin el % aún)
+  flextable::colformat_double(j = 3, digits = 1, suffix = "%") %>% 
+  
+  # Aplicar tema y limpiar bordes (se elimina la redundancia)
+  flextable::border_remove() %>% 
+  flextable::theme_booktabs() %>% 
+  
+  # Alineación y Cabecera
+  flextable::align(j = 2:3, align = "center", part = "body") %>%
+  flextable::align(j = 1, align = "left", part = "body") %>%
+  flextable::align(align = "center", part = "header") %>%
+  flextable::bold(part = "header") %>%
+  
+  # Ajustar automáticamente
+  flextable::autofit()
+
+# Mostrar la tabla
+ft_multi
+```
+
