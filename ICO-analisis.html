@@ -9,9 +9,9 @@
 <meta http-equiv="X-UA-Compatible" content="IE=EDGE" />
 
 
-<meta name="author" content="Departamento de Análisis de Datos" />
+<meta name="author" content="Noel Lirón Martínez, Raquel Mus Maquieira, Carles Sahuquillo Soriano" />
 
-<meta name="date" content="2025-12-07" />
+<meta name="date" content="2025-12-09" />
 
 <title>Análisis de Mercado: Barra de Ensaladas</title>
 
@@ -1576,10 +1576,10 @@ font-size: 0.95em;
 
 <h1 class="title toc-ignore">Análisis de Mercado: Barra de
 Ensaladas</h1>
-<h3 class="subtitle">Estudio sobre preferencias, hábitos de consumo y
-disposición de pago</h3>
-<h4 class="author">Departamento de Análisis de Datos</h4>
-<h4 class="date">2025-12-07</h4>
+<h3 class="subtitle">Asignatura: Investigación Comercial</h3>
+<h4 class="author">Noel Lirón Martínez, Raquel Mus Maquieira, Carles
+Sahuquillo Soriano</h4>
+<h4 class="date">2025-12-09</h4>
 
 </div>
 
@@ -1587,7 +1587,7 @@ disposición de pago</h3>
 <div id="preparación-del-entorno" class="section level1" number="1">
 <h1><span class="header-section-number">1</span> 1. Preparación del
 Entorno</h1>
-<div class="sourceCode" id="cb1"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" tabindex="-1"></a><span class="co"># Carga de librerías</span></span>
+<div class="sourceCode" id="cb1"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" tabindex="-1"></a><span class="co"># Carga de librerías y configuraciones</span></span>
 <span id="cb1-2"><a href="#cb1-2" tabindex="-1"></a><span class="cf">if</span> (<span class="sc">!</span><span class="fu">require</span>(<span class="st">&quot;pacman&quot;</span>)) <span class="fu">install.packages</span>(<span class="st">&quot;pacman&quot;</span>)</span>
 <span id="cb1-3"><a href="#cb1-3" tabindex="-1"></a></span>
 <span id="cb1-4"><a href="#cb1-4" tabindex="-1"></a>pacman<span class="sc">::</span><span class="fu">p_load</span>(</span>
@@ -1597,13 +1597,11 @@ Entorno</h1>
 <span id="cb1-8"><a href="#cb1-8" tabindex="-1"></a>  nortest, DT, RColorBrewer</span>
 <span id="cb1-9"><a href="#cb1-9" tabindex="-1"></a>)</span>
 <span id="cb1-10"><a href="#cb1-10" tabindex="-1"></a></span>
-<span id="cb1-11"><a href="#cb1-11" tabindex="-1"></a><span class="co"># Configuración de decimales sugerida por tu profesor</span></span>
-<span id="cb1-12"><a href="#cb1-12" tabindex="-1"></a><span class="fu">options</span>(<span class="at">digits =</span> <span class="dv">3</span>)</span>
-<span id="cb1-13"><a href="#cb1-13" tabindex="-1"></a></span>
-<span id="cb1-14"><a href="#cb1-14" tabindex="-1"></a><span class="co"># Configuración de tema gráfico global para ggplot</span></span>
-<span id="cb1-15"><a href="#cb1-15" tabindex="-1"></a><span class="fu">theme_set</span>(<span class="fu">theme_minimal</span>() <span class="sc">+</span> </span>
-<span id="cb1-16"><a href="#cb1-16" tabindex="-1"></a>            <span class="fu">theme</span>(<span class="at">plot.title =</span> <span class="fu">element_text</span>(<span class="at">face =</span> <span class="st">&quot;bold&quot;</span>, <span class="at">hjust =</span> <span class="fl">0.5</span>),</span>
-<span id="cb1-17"><a href="#cb1-17" tabindex="-1"></a>                  <span class="at">legend.position =</span> <span class="st">&quot;bottom&quot;</span>))</span></code></pre></div>
+<span id="cb1-11"><a href="#cb1-11" tabindex="-1"></a><span class="fu">options</span>(<span class="at">digits =</span> <span class="dv">3</span>)</span>
+<span id="cb1-12"><a href="#cb1-12" tabindex="-1"></a></span>
+<span id="cb1-13"><a href="#cb1-13" tabindex="-1"></a><span class="fu">theme_set</span>(<span class="fu">theme_minimal</span>() <span class="sc">+</span> </span>
+<span id="cb1-14"><a href="#cb1-14" tabindex="-1"></a>            <span class="fu">theme</span>(<span class="at">plot.title =</span> <span class="fu">element_text</span>(<span class="at">face =</span> <span class="st">&quot;bold&quot;</span>, <span class="at">hjust =</span> <span class="fl">0.5</span>),</span>
+<span id="cb1-15"><a href="#cb1-15" tabindex="-1"></a>                  <span class="at">legend.position =</span> <span class="st">&quot;bottom&quot;</span>))</span></code></pre></div>
 <hr />
 </div>
 <div id="ingesta-y-limpieza-de-datos" class="section level1 tabset" number="2">
@@ -1615,49 +1613,44 @@ facilitar su manipulación y convirtiendo las variables categóricas.</p>
 <div id="carga-y-renombrado" class="section level2" number="2.1">
 <h2><span class="header-section-number">2.1</span> Carga y
 Renombrado</h2>
-<div class="sourceCode" id="cb2"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" tabindex="-1"></a><span class="co"># Carga de datos</span></span>
+<div class="sourceCode" id="cb2"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" tabindex="-1"></a><span class="co"># Carga de datos y renombramiento de columnas</span></span>
 <span id="cb2-2"><a href="#cb2-2" tabindex="-1"></a></span>
 <span id="cb2-3"><a href="#cb2-3" tabindex="-1"></a>datos <span class="ot">&lt;-</span> <span class="fu">read_excel</span>(<span class="st">&#39;respuestasEncuesta.xlsx&#39;</span>)</span>
 <span id="cb2-4"><a href="#cb2-4" tabindex="-1"></a></span>
-<span id="cb2-5"><a href="#cb2-5" tabindex="-1"></a></span>
-<span id="cb2-6"><a href="#cb2-6" tabindex="-1"></a><span class="co"># Renombrado de columnas (Diccionario de datos)</span></span>
-<span id="cb2-7"><a href="#cb2-7" tabindex="-1"></a><span class="co"># Se asignan nombres cortos para facilitar el análisis, documentando la pregunta original.</span></span>
-<span id="cb2-8"><a href="#cb2-8" tabindex="-1"></a></span>
-<span id="cb2-9"><a href="#cb2-9" tabindex="-1"></a>nuevos_nombres <span class="ot">&lt;-</span> <span class="fu">c</span>(</span>
-<span id="cb2-10"><a href="#cb2-10" tabindex="-1"></a>  <span class="st">&#39;Marca.Temporal&#39;</span>,              <span class="co"># Marca temporal</span></span>
-<span id="cb2-11"><a href="#cb2-11" tabindex="-1"></a>  <span class="st">&#39;Motivo&#39;</span>,                      <span class="co"># ¿Cuál es el principal motivo por el que suele comer fuera de casa?</span></span>
-<span id="cb2-12"><a href="#cb2-12" tabindex="-1"></a>  <span class="st">&#39;Frecuencia&#39;</span>,                  <span class="co"># ¿Con qué frecuencia suele comer fuera de casa?</span></span>
-<span id="cb2-13"><a href="#cb2-13" tabindex="-1"></a>  <span class="st">&#39;Lugar_Habitual&#39;</span>,              <span class="co"># Cuando come fuera ¿dónde suele comer?</span></span>
-<span id="cb2-14"><a href="#cb2-14" tabindex="-1"></a>  <span class="st">&#39;Tipo_Comida&#39;</span>,                 <span class="co"># Cuando come fuera, ¿qué tipo de comida suele elegir?</span></span>
-<span id="cb2-15"><a href="#cb2-15" tabindex="-1"></a>  <span class="st">&#39;Frecuencia_Comida_Preparada&#39;</span>, <span class="co"># ¿Con qué frecuencia compra comida preparada en un supermercado?</span></span>
-<span id="cb2-16"><a href="#cb2-16" tabindex="-1"></a>  <span class="st">&#39;Supermercado_Habitual&#39;</span>,       <span class="co"># ¿En qué supermercados suele comprar comida?</span></span>
-<span id="cb2-17"><a href="#cb2-17" tabindex="-1"></a>  <span class="st">&#39;Importancia_Saludable&#39;</span>,       <span class="co"># ¿Qué importancia tiene para usted comer de forma saludable cuando está fuera de casa?</span></span>
-<span id="cb2-18"><a href="#cb2-18" tabindex="-1"></a>  <span class="st">&#39;Experiencia_Barra_Ensaladas&#39;</span>, <span class="co"># ¿Ha probado alguna vez una barra de ensaladas?</span></span>
-<span id="cb2-19"><a href="#cb2-19" tabindex="-1"></a>  <span class="st">&#39;Mala_Experiencia_Descripcion&#39;</span>,<span class="co"># ¿Puede describir alguna mala experiencia que haya tenido con comida preparada o autoservicio...?</span></span>
-<span id="cb2-20"><a href="#cb2-20" tabindex="-1"></a>  <span class="st">&#39;Situaciones_Uso&#39;</span>,             <span class="co"># ¿En qué situaciones utilizaría la barra de ensaladas?</span></span>
-<span id="cb2-21"><a href="#cb2-21" tabindex="-1"></a>  <span class="st">&#39;Formato_Preferido&#39;</span>,           <span class="co"># ¿Qué formato preferiría?</span></span>
-<span id="cb2-22"><a href="#cb2-22" tabindex="-1"></a>  <span class="st">&#39;Imp_Sostenibilidad&#39;</span>,          <span class="co"># Valore importancia: [Sostenibilidad de los envases]</span></span>
-<span id="cb2-23"><a href="#cb2-23" tabindex="-1"></a>  <span class="st">&#39;Imp_Origen_Local&#39;</span>,            <span class="co"># Valore importancia: [Origen local de los productos]</span></span>
-<span id="cb2-24"><a href="#cb2-24" tabindex="-1"></a>  <span class="st">&#39;Imp_Variedad&#39;</span>,                <span class="co"># Valore importancia: [Variedad de ingredientes]</span></span>
-<span id="cb2-25"><a href="#cb2-25" tabindex="-1"></a>  <span class="st">&#39;Imp_Sabor&#39;</span>,                   <span class="co"># Valore importancia: [Sabor]</span></span>
-<span id="cb2-26"><a href="#cb2-26" tabindex="-1"></a>  <span class="st">&#39;Imp_Precio&#39;</span>,                  <span class="co"># Valore importancia: [Precio]</span></span>
-<span id="cb2-27"><a href="#cb2-27" tabindex="-1"></a>  <span class="st">&#39;Imp_Higiene&#39;</span>,                 <span class="co"># Valore importancia: [Higiene]</span></span>
-<span id="cb2-28"><a href="#cb2-28" tabindex="-1"></a>  <span class="st">&#39;Imp_Rapidez&#39;</span>,                 <span class="co"># Valore importancia: [Rapidez del servicio]</span></span>
-<span id="cb2-29"><a href="#cb2-29" tabindex="-1"></a>  <span class="st">&#39;Preferencia_Base&#39;</span>,            <span class="co"># ¿Qué tipo de base prefiere para sus ensaladas? (Hasta 2 opciones)</span></span>
-<span id="cb2-30"><a href="#cb2-30" tabindex="-1"></a>  <span class="st">&#39;Preferencia_Proteina&#39;</span>,        <span class="co"># De las siguientes proteínas ¿cuáles prefiere? (Hasta 2 opciones)</span></span>
-<span id="cb2-31"><a href="#cb2-31" tabindex="-1"></a>  <span class="st">&#39;Preferencia_Complementos&#39;</span>,    <span class="co"># De los siguientes complementos ¿cuáles prefiere? (Hasta 2 opciones)</span></span>
-<span id="cb2-32"><a href="#cb2-32" tabindex="-1"></a>  <span class="st">&#39;Disposicion_Pago&#39;</span>,            <span class="co"># ¿Cuánto está dispuesto/a a pagar por una ensalada completa de tamaño mediano (500g)?</span></span>
-<span id="cb2-33"><a href="#cb2-33" tabindex="-1"></a>  <span class="st">&#39;Aptitud_Social&#39;</span>,              <span class="co"># ¿Qué tan apropiadas considera las ensaladas para comidas en contextos sociales?</span></span>
-<span id="cb2-34"><a href="#cb2-34" tabindex="-1"></a>  <span class="st">&#39;Preferencia_Dispensacion&#39;</span>,    <span class="co"># ¿Qué formato de dispensación preferiría? (Comodidad, rapidez e higiene)</span></span>
-<span id="cb2-35"><a href="#cb2-35" tabindex="-1"></a>  <span class="st">&#39;Intencion_Uso&#39;</span>,               <span class="co"># Si su supermercado habitual ofreciera nuestra barra de ensaladas, ¿la usaría?</span></span>
-<span id="cb2-36"><a href="#cb2-36" tabindex="-1"></a>  <span class="st">&#39;Edad&#39;</span>,                        <span class="co"># ¿En qué rango de edades se encuentra?</span></span>
-<span id="cb2-37"><a href="#cb2-37" tabindex="-1"></a>  <span class="st">&#39;Genero&#39;</span>,                      <span class="co"># ¿Con qué género se identifica?</span></span>
-<span id="cb2-38"><a href="#cb2-38" tabindex="-1"></a>  <span class="st">&#39;Nivel_Educativo&#39;</span>,             <span class="co"># Indique su nivel educativo máximo alcanzado</span></span>
-<span id="cb2-39"><a href="#cb2-39" tabindex="-1"></a>  <span class="st">&#39;Situacion_Laboral&#39;</span>            <span class="co"># ¿En qué situación laboral se encuentra?</span></span>
-<span id="cb2-40"><a href="#cb2-40" tabindex="-1"></a>)</span>
-<span id="cb2-41"><a href="#cb2-41" tabindex="-1"></a></span>
-<span id="cb2-42"><a href="#cb2-42" tabindex="-1"></a><span class="co"># Aplicar los nombres al dataframe</span></span>
-<span id="cb2-43"><a href="#cb2-43" tabindex="-1"></a><span class="fu">colnames</span>(datos) <span class="ot">&lt;-</span> nuevos_nombres</span></code></pre></div>
+<span id="cb2-5"><a href="#cb2-5" tabindex="-1"></a>nuevos_nombres <span class="ot">&lt;-</span> <span class="fu">c</span>(</span>
+<span id="cb2-6"><a href="#cb2-6" tabindex="-1"></a>  <span class="st">&#39;Marca.Temporal&#39;</span>,              <span class="co"># Marca temporal</span></span>
+<span id="cb2-7"><a href="#cb2-7" tabindex="-1"></a>  <span class="st">&#39;Motivo&#39;</span>,                      <span class="co"># ¿Cuál es el principal motivo por el que suele comer fuera de casa?</span></span>
+<span id="cb2-8"><a href="#cb2-8" tabindex="-1"></a>  <span class="st">&#39;Frecuencia&#39;</span>,                  <span class="co"># ¿Con qué frecuencia suele comer fuera de casa?</span></span>
+<span id="cb2-9"><a href="#cb2-9" tabindex="-1"></a>  <span class="st">&#39;Lugar.Habitual&#39;</span>,              <span class="co"># Cuando come fuera ¿dónde suele comer?</span></span>
+<span id="cb2-10"><a href="#cb2-10" tabindex="-1"></a>  <span class="st">&#39;Tipo.Comida&#39;</span>,                 <span class="co"># Cuando come fuera, ¿qué tipo de comida suele elegir?</span></span>
+<span id="cb2-11"><a href="#cb2-11" tabindex="-1"></a>  <span class="st">&#39;Frecuencia.Comida.Preparada&#39;</span>, <span class="co"># ¿Con qué frecuencia compra comida preparada en un supermercado?</span></span>
+<span id="cb2-12"><a href="#cb2-12" tabindex="-1"></a>  <span class="st">&#39;Supermercado.Habitual&#39;</span>,       <span class="co"># ¿En qué supermercados suele comprar comida?</span></span>
+<span id="cb2-13"><a href="#cb2-13" tabindex="-1"></a>  <span class="st">&#39;Importancia.Saludable&#39;</span>,       <span class="co"># ¿Qué importancia tiene para usted comer de forma saludable cuando está fuera de casa?</span></span>
+<span id="cb2-14"><a href="#cb2-14" tabindex="-1"></a>  <span class="st">&#39;Experiencia.Barra.Ensaladas&#39;</span>, <span class="co"># ¿Ha probado alguna vez una barra de ensaladas?</span></span>
+<span id="cb2-15"><a href="#cb2-15" tabindex="-1"></a>  <span class="st">&#39;Mala.Experiencia.Descripcion&#39;</span>,<span class="co"># ¿Puede describir alguna mala experiencia que haya tenido con comida preparada o autoservicio...?</span></span>
+<span id="cb2-16"><a href="#cb2-16" tabindex="-1"></a>  <span class="st">&#39;Situaciones.Uso&#39;</span>,             <span class="co"># ¿En qué situaciones utilizaría la barra de ensaladas?</span></span>
+<span id="cb2-17"><a href="#cb2-17" tabindex="-1"></a>  <span class="st">&#39;Formato.Preferido&#39;</span>,           <span class="co"># ¿Qué formato preferiría?</span></span>
+<span id="cb2-18"><a href="#cb2-18" tabindex="-1"></a>  <span class="st">&#39;Imp.Sostenibilidad&#39;</span>,          <span class="co"># Valore importancia: [Sostenibilidad de los envases]</span></span>
+<span id="cb2-19"><a href="#cb2-19" tabindex="-1"></a>  <span class="st">&#39;Imp.Origen.Local&#39;</span>,            <span class="co"># Valore importancia: [Origen local de los productos]</span></span>
+<span id="cb2-20"><a href="#cb2-20" tabindex="-1"></a>  <span class="st">&#39;Imp.Variedad&#39;</span>,                <span class="co"># Valore importancia: [Variedad de ingredientes]</span></span>
+<span id="cb2-21"><a href="#cb2-21" tabindex="-1"></a>  <span class="st">&#39;Imp.Sabor&#39;</span>,                   <span class="co"># Valore importancia: [Sabor]</span></span>
+<span id="cb2-22"><a href="#cb2-22" tabindex="-1"></a>  <span class="st">&#39;Imp.Precio&#39;</span>,                  <span class="co"># Valore importancia: [Precio]</span></span>
+<span id="cb2-23"><a href="#cb2-23" tabindex="-1"></a>  <span class="st">&#39;Imp.Higiene&#39;</span>,                 <span class="co"># Valore importancia: [Higiene]</span></span>
+<span id="cb2-24"><a href="#cb2-24" tabindex="-1"></a>  <span class="st">&#39;Imp.Rapidez&#39;</span>,                 <span class="co"># Valore importancia: [Rapidez del servicio]</span></span>
+<span id="cb2-25"><a href="#cb2-25" tabindex="-1"></a>  <span class="st">&#39;Preferencia.Base&#39;</span>,            <span class="co"># ¿Qué tipo de base prefiere para sus ensaladas? (Hasta 2 opciones)</span></span>
+<span id="cb2-26"><a href="#cb2-26" tabindex="-1"></a>  <span class="st">&#39;Preferencia.Proteina&#39;</span>,        <span class="co"># De las siguientes proteínas ¿cuáles prefiere? (Hasta 2 opciones)</span></span>
+<span id="cb2-27"><a href="#cb2-27" tabindex="-1"></a>  <span class="st">&#39;Preferencia.Complementos&#39;</span>,    <span class="co"># De los siguientes complementos ¿cuáles prefiere? (Hasta 2 opciones)</span></span>
+<span id="cb2-28"><a href="#cb2-28" tabindex="-1"></a>  <span class="st">&#39;Disposicion.Pago&#39;</span>,            <span class="co"># ¿Cuánto está dispuesto/a a pagar por una ensalada completa de tamaño mediano (500g)?</span></span>
+<span id="cb2-29"><a href="#cb2-29" tabindex="-1"></a>  <span class="st">&#39;Aptitud.Social&#39;</span>,              <span class="co"># ¿Qué tan apropiadas considera las ensaladas para comidas en contextos sociales?</span></span>
+<span id="cb2-30"><a href="#cb2-30" tabindex="-1"></a>  <span class="st">&#39;Preferencia.Dispensacion&#39;</span>,    <span class="co"># ¿Qué formato de dispensación preferiría? (Comodidad, rapidez e higiene)</span></span>
+<span id="cb2-31"><a href="#cb2-31" tabindex="-1"></a>  <span class="st">&#39;Intencion.Uso&#39;</span>,               <span class="co"># Si su supermercado habitual ofreciera nuestra barra de ensaladas, ¿la usaría?</span></span>
+<span id="cb2-32"><a href="#cb2-32" tabindex="-1"></a>  <span class="st">&#39;Edad&#39;</span>,                        <span class="co"># ¿En qué rango de edades se encuentra?</span></span>
+<span id="cb2-33"><a href="#cb2-33" tabindex="-1"></a>  <span class="st">&#39;Genero&#39;</span>,                      <span class="co"># ¿Con qué género se identifica?</span></span>
+<span id="cb2-34"><a href="#cb2-34" tabindex="-1"></a>  <span class="st">&#39;Nivel.Educativo&#39;</span>,             <span class="co"># Indique su nivel educativo máximo alcanzado</span></span>
+<span id="cb2-35"><a href="#cb2-35" tabindex="-1"></a>  <span class="st">&#39;Situacion.Laboral&#39;</span>            <span class="co"># ¿En qué situación laboral se encuentra?</span></span>
+<span id="cb2-36"><a href="#cb2-36" tabindex="-1"></a>)</span>
+<span id="cb2-37"><a href="#cb2-37" tabindex="-1"></a></span>
+<span id="cb2-38"><a href="#cb2-38" tabindex="-1"></a><span class="fu">colnames</span>(datos) <span class="ot">&lt;-</span> nuevos_nombres</span></code></pre></div>
 </div>
 <div id="transformación-de-variables" class="section level2" number="2.2">
 <h2><span class="header-section-number">2.2</span> Transformación de
@@ -1671,17 +1664,17 @@ Variables</h2>
 <span id="cb3-6"><a href="#cb3-6" tabindex="-1"></a>             <span class="st">&#39;Nunca como fuera de casa&#39;</span>),</span>
 <span id="cb3-7"><a href="#cb3-7" tabindex="-1"></a>  <span class="at">labels =</span> <span class="fu">c</span>(<span class="st">&#39;Conveniencia&#39;</span>, <span class="st">&#39;Social&#39;</span>, <span class="st">&#39;Placer&#39;</span>, <span class="st">&#39;Extraordinario&#39;</span>, <span class="st">&#39;Nunca&#39;</span>))</span>
 <span id="cb3-8"><a href="#cb3-8" tabindex="-1"></a></span>
-<span id="cb3-9"><a href="#cb3-9" tabindex="-1"></a>datos<span class="sc">$</span>f_Lugar_Habitual <span class="ot">&lt;-</span> <span class="fu">factor</span>(datos<span class="sc">$</span>Lugar_Habitual,</span>
+<span id="cb3-9"><a href="#cb3-9" tabindex="-1"></a>datos<span class="sc">$</span>f_Lugar.Habitual <span class="ot">&lt;-</span> <span class="fu">factor</span>(datos<span class="sc">$</span>Lugar.Habitual,</span>
 <span id="cb3-10"><a href="#cb3-10" tabindex="-1"></a>  <span class="at">levels =</span> <span class="fu">c</span>(<span class="st">&#39;En un bar o restaurante&#39;</span>, </span>
 <span id="cb3-11"><a href="#cb3-11" tabindex="-1"></a>             <span class="st">&#39;En una oficina o centro educativo (cantina, comedor, aula...)&#39;</span>, </span>
 <span id="cb3-12"><a href="#cb3-12" tabindex="-1"></a>             <span class="st">&#39;En la vía pública (parques, calle, transporte, etc.)&#39;</span>),</span>
 <span id="cb3-13"><a href="#cb3-13" tabindex="-1"></a>  <span class="at">labels =</span> <span class="fu">c</span>(<span class="st">&#39;Restaurante/Bar&#39;</span>, <span class="st">&#39;Oficina/Centro&#39;</span>, <span class="st">&#39;Vía Pública&#39;</span>))</span>
 <span id="cb3-14"><a href="#cb3-14" tabindex="-1"></a></span>
-<span id="cb3-15"><a href="#cb3-15" tabindex="-1"></a>datos<span class="sc">$</span>f_Formato_Preferido <span class="ot">&lt;-</span> <span class="fu">factor</span>(datos<span class="sc">$</span>Formato_Preferido,</span>
+<span id="cb3-15"><a href="#cb3-15" tabindex="-1"></a>datos<span class="sc">$</span>f_Formato.Preferido <span class="ot">&lt;-</span> <span class="fu">factor</span>(datos<span class="sc">$</span>Formato.Preferido,</span>
 <span id="cb3-16"><a href="#cb3-16" tabindex="-1"></a>  <span class="at">levels =</span> <span class="fu">c</span>(<span class="st">&#39;Tamaños de recipiente fijos con un precio establecido por tamaño&#39;</span>, <span class="st">&#39;Pago por peso&#39;</span>),</span>
 <span id="cb3-17"><a href="#cb3-17" tabindex="-1"></a>  <span class="at">labels =</span> <span class="fu">c</span>(<span class="st">&#39;Precio Fijo&#39;</span>, <span class="st">&#39;Pago Peso&#39;</span>))</span>
 <span id="cb3-18"><a href="#cb3-18" tabindex="-1"></a></span>
-<span id="cb3-19"><a href="#cb3-19" tabindex="-1"></a>datos<span class="sc">$</span>f_Preferencia_Dispensacion <span class="ot">&lt;-</span> <span class="fu">factor</span>(datos<span class="sc">$</span>Preferencia_Dispensacion,</span>
+<span id="cb3-19"><a href="#cb3-19" tabindex="-1"></a>datos<span class="sc">$</span>f_Preferencia.Dispensacion <span class="ot">&lt;-</span> <span class="fu">factor</span>(datos<span class="sc">$</span>Preferencia.Dispensacion,</span>
 <span id="cb3-20"><a href="#cb3-20" tabindex="-1"></a>  <span class="at">levels =</span> <span class="fu">c</span>(<span class="st">&#39;Ingredientes expuestos tras una mampara de cristal, donde el cliente abre la protección y utiliza pinzas para servirse en su propio recipiente (similar a un autoservicio tipo buffet)&#39;</span>, </span>
 <span id="cb3-21"><a href="#cb3-21" tabindex="-1"></a>             <span class="st">&#39;Ingredientes protegidos por una barrera de cristal fija, sin acceso directo. Se utilizan palas largas para dispensarlos desde un lateral, evitando cualquier contacto del cliente con el producto, aunque con algo menos de comodidad (similar al sistema de algunas panaderías)&#39;</span>, </span>
 <span id="cb3-22"><a href="#cb3-22" tabindex="-1"></a>             <span class="st">&#39;Ingredientes servidos por personal de atención.&#39;</span>),</span>
@@ -1691,18 +1684,18 @@ Variables</h2>
 <span id="cb3-26"><a href="#cb3-26" tabindex="-1"></a>  <span class="at">levels =</span> <span class="fu">c</span>(<span class="st">&#39;Mujer&#39;</span>, <span class="st">&#39;Hombre&#39;</span>, <span class="st">&#39;Prefiero no decirlo&#39;</span>, <span class="st">&#39;Otro:&#39;</span>),</span>
 <span id="cb3-27"><a href="#cb3-27" tabindex="-1"></a>  <span class="at">labels =</span> <span class="fu">c</span>(<span class="st">&#39;Mujer&#39;</span>, <span class="st">&#39;Hombre&#39;</span>, <span class="st">&#39;NS/NC&#39;</span>, <span class="st">&#39;Otro&#39;</span>))</span>
 <span id="cb3-28"><a href="#cb3-28" tabindex="-1"></a></span>
-<span id="cb3-29"><a href="#cb3-29" tabindex="-1"></a>datos<span class="sc">$</span>f_Situacion_Laboral <span class="ot">&lt;-</span> <span class="fu">factor</span>(datos<span class="sc">$</span>Situacion_Laboral,</span>
+<span id="cb3-29"><a href="#cb3-29" tabindex="-1"></a>datos<span class="sc">$</span>f_Situacion.Laboral <span class="ot">&lt;-</span> <span class="fu">factor</span>(datos<span class="sc">$</span>Situacion.Laboral,</span>
 <span id="cb3-30"><a href="#cb3-30" tabindex="-1"></a>  <span class="at">levels =</span> <span class="fu">c</span>(<span class="st">&#39;Estudiante&#39;</span>, <span class="st">&#39;Trabajador/a por cuenta ajena&#39;</span>, <span class="st">&#39;Autónomo/a&#39;</span>, <span class="st">&#39;Desempleado/a&#39;</span>, <span class="st">&#39;Jubilado/a&#39;</span>, <span class="st">&#39;Prefiero no decirlo&#39;</span>),</span>
 <span id="cb3-31"><a href="#cb3-31" tabindex="-1"></a>  <span class="at">labels =</span> <span class="fu">c</span>(<span class="st">&#39;Estudiante&#39;</span>, <span class="st">&#39;Cuenta Ajena&#39;</span>, <span class="st">&#39;Autónomo&#39;</span>, <span class="st">&#39;Desempleado&#39;</span>, <span class="st">&#39;Jubilado&#39;</span>, <span class="st">&#39;NS/NC&#39;</span>))</span>
 <span id="cb3-32"><a href="#cb3-32" tabindex="-1"></a></span>
-<span id="cb3-33"><a href="#cb3-33" tabindex="-1"></a>datos<span class="sc">$</span>f_Experiencia_Barra <span class="ot">&lt;-</span> <span class="fu">factor</span>(datos<span class="sc">$</span>Experiencia_Barra_Ensaladas, <span class="at">levels =</span> <span class="fu">c</span>(<span class="st">&#39;Sí&#39;</span>, <span class="st">&#39;No&#39;</span>))</span>
-<span id="cb3-34"><a href="#cb3-34" tabindex="-1"></a>datos<span class="sc">$</span>f_Intencion_Uso <span class="ot">&lt;-</span> <span class="fu">factor</span>(datos<span class="sc">$</span>Intencion_Uso, <span class="at">levels =</span> <span class="fu">c</span>(<span class="st">&#39;Sí&#39;</span>, <span class="st">&#39;No&#39;</span>))</span>
+<span id="cb3-33"><a href="#cb3-33" tabindex="-1"></a>datos<span class="sc">$</span>f_Experiencia.Barra <span class="ot">&lt;-</span> <span class="fu">factor</span>(datos<span class="sc">$</span>Experiencia.Barra.Ensaladas, <span class="at">levels =</span> <span class="fu">c</span>(<span class="st">&#39;Sí&#39;</span>, <span class="st">&#39;No&#39;</span>))</span>
+<span id="cb3-34"><a href="#cb3-34" tabindex="-1"></a>datos<span class="sc">$</span>f_Intencion.Uso <span class="ot">&lt;-</span> <span class="fu">factor</span>(datos<span class="sc">$</span>Intencion.Uso, <span class="at">levels =</span> <span class="fu">c</span>(<span class="st">&#39;Sí&#39;</span>, <span class="st">&#39;No&#39;</span>))</span>
 <span id="cb3-35"><a href="#cb3-35" tabindex="-1"></a></span>
 <span id="cb3-36"><a href="#cb3-36" tabindex="-1"></a>datos<span class="sc">$</span>f_Frecuencia <span class="ot">&lt;-</span> <span class="fu">factor</span>(datos<span class="sc">$</span>Frecuencia,</span>
 <span id="cb3-37"><a href="#cb3-37" tabindex="-1"></a>  <span class="at">levels =</span> <span class="fu">c</span>(<span class="st">&#39;Rara vez / Nunca&#39;</span>, <span class="st">&#39;Ocasionalmente&#39;</span>, <span class="st">&#39;1 o 2 veces por semana&#39;</span>, <span class="st">&#39;3 o 4 veces por semana&#39;</span>, <span class="st">&#39;5 o más veces por semana&#39;</span>),</span>
 <span id="cb3-38"><a href="#cb3-38" tabindex="-1"></a>  <span class="at">labels =</span> <span class="fu">c</span>(<span class="st">&#39;Nunca/Rara&#39;</span>, <span class="st">&#39;Ocasional&#39;</span>, <span class="st">&#39;1-2/sem&#39;</span>, <span class="st">&#39;3-4/sem&#39;</span>, <span class="st">&#39;5+/sem&#39;</span>))</span>
 <span id="cb3-39"><a href="#cb3-39" tabindex="-1"></a></span>
-<span id="cb3-40"><a href="#cb3-40" tabindex="-1"></a>datos<span class="sc">$</span>f_Frecuencia_Comida_Preparada <span class="ot">&lt;-</span> <span class="fu">factor</span>(datos<span class="sc">$</span>Frecuencia_Comida_Preparada,</span>
+<span id="cb3-40"><a href="#cb3-40" tabindex="-1"></a>datos<span class="sc">$</span>f_Frecuencia.Comida.Preparada <span class="ot">&lt;-</span> <span class="fu">factor</span>(datos<span class="sc">$</span>Frecuencia.Comida.Preparada,</span>
 <span id="cb3-41"><a href="#cb3-41" tabindex="-1"></a>  <span class="at">levels =</span> <span class="fu">c</span>(<span class="st">&#39;Rara vez / Nunca&#39;</span>, <span class="st">&#39;Ocasionalmente&#39;</span>, <span class="st">&#39;1 o 2 veces por semana&#39;</span>, <span class="st">&#39;3 o 4 veces por semana&#39;</span>, <span class="st">&#39;5 o más veces por semana&#39;</span>),</span>
 <span id="cb3-42"><a href="#cb3-42" tabindex="-1"></a>  <span class="at">labels =</span> <span class="fu">c</span>(<span class="st">&#39;Nunca/Rara&#39;</span>, <span class="st">&#39;Ocasional&#39;</span>, <span class="st">&#39;1-2/sem&#39;</span>, <span class="st">&#39;3-4/sem&#39;</span>, <span class="st">&#39;5+/sem&#39;</span>))</span>
 <span id="cb3-43"><a href="#cb3-43" tabindex="-1"></a></span>
@@ -1710,32 +1703,32 @@ Variables</h2>
 <span id="cb3-45"><a href="#cb3-45" tabindex="-1"></a>niveles_likert <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="dv">1</span><span class="sc">:</span><span class="dv">5</span>)</span>
 <span id="cb3-46"><a href="#cb3-46" tabindex="-1"></a>etiquetas_likert <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="st">&#39;1&#39;</span>, <span class="st">&#39;2&#39;</span>, <span class="st">&#39;3&#39;</span>, <span class="st">&#39;4&#39;</span>, <span class="st">&#39;5&#39;</span>)</span>
 <span id="cb3-47"><a href="#cb3-47" tabindex="-1"></a></span>
-<span id="cb3-48"><a href="#cb3-48" tabindex="-1"></a>datos<span class="sc">$</span>f_Importancia_Saludable <span class="ot">&lt;-</span> <span class="fu">factor</span>(datos<span class="sc">$</span>Importancia_Saludable, <span class="at">levels =</span> niveles_likert, <span class="at">labels =</span> etiquetas_likert)</span>
-<span id="cb3-49"><a href="#cb3-49" tabindex="-1"></a>datos<span class="sc">$</span>f_Imp_Sostenibilidad    <span class="ot">&lt;-</span> <span class="fu">factor</span>(datos<span class="sc">$</span>Imp_Sostenibilidad, <span class="at">levels =</span> niveles_likert, <span class="at">labels =</span> etiquetas_likert)</span>
-<span id="cb3-50"><a href="#cb3-50" tabindex="-1"></a>datos<span class="sc">$</span>f_Imp_Origen_Local      <span class="ot">&lt;-</span> <span class="fu">factor</span>(datos<span class="sc">$</span>Imp_Origen_Local, <span class="at">levels =</span> niveles_likert, <span class="at">labels =</span> etiquetas_likert)</span>
-<span id="cb3-51"><a href="#cb3-51" tabindex="-1"></a>datos<span class="sc">$</span>f_Imp_Variedad          <span class="ot">&lt;-</span> <span class="fu">factor</span>(datos<span class="sc">$</span>Imp_Variedad, <span class="at">levels =</span> niveles_likert, <span class="at">labels =</span> etiquetas_likert)</span>
-<span id="cb3-52"><a href="#cb3-52" tabindex="-1"></a>datos<span class="sc">$</span>f_Imp_Sabor             <span class="ot">&lt;-</span> <span class="fu">factor</span>(datos<span class="sc">$</span>Imp_Sabor, <span class="at">levels =</span> niveles_likert, <span class="at">labels =</span> etiquetas_likert)</span>
-<span id="cb3-53"><a href="#cb3-53" tabindex="-1"></a>datos<span class="sc">$</span>f_Imp_Precio            <span class="ot">&lt;-</span> <span class="fu">factor</span>(datos<span class="sc">$</span>Imp_Precio, <span class="at">levels =</span> niveles_likert, <span class="at">labels =</span> etiquetas_likert)</span>
-<span id="cb3-54"><a href="#cb3-54" tabindex="-1"></a>datos<span class="sc">$</span>f_Imp_Higiene           <span class="ot">&lt;-</span> <span class="fu">factor</span>(datos<span class="sc">$</span>Imp_Higiene, <span class="at">levels =</span> niveles_likert, <span class="at">labels =</span> etiquetas_likert)</span>
-<span id="cb3-55"><a href="#cb3-55" tabindex="-1"></a>datos<span class="sc">$</span>f_Imp_Rapidez           <span class="ot">&lt;-</span> <span class="fu">factor</span>(datos<span class="sc">$</span>Imp_Rapidez, <span class="at">levels =</span> niveles_likert, <span class="at">labels =</span> etiquetas_likert)</span>
-<span id="cb3-56"><a href="#cb3-56" tabindex="-1"></a>datos<span class="sc">$</span>f_Aptitud_Social        <span class="ot">&lt;-</span> <span class="fu">factor</span>(datos<span class="sc">$</span>Aptitud_Social, <span class="at">levels =</span> niveles_likert, <span class="at">labels =</span> etiquetas_likert)</span>
+<span id="cb3-48"><a href="#cb3-48" tabindex="-1"></a>datos<span class="sc">$</span>f_Importancia.Saludable <span class="ot">&lt;-</span> <span class="fu">factor</span>(datos<span class="sc">$</span>Importancia.Saludable, <span class="at">levels =</span> niveles_likert, <span class="at">labels =</span> etiquetas_likert)</span>
+<span id="cb3-49"><a href="#cb3-49" tabindex="-1"></a>datos<span class="sc">$</span>f_Imp.Sostenibilidad    <span class="ot">&lt;-</span> <span class="fu">factor</span>(datos<span class="sc">$</span>Imp.Sostenibilidad, <span class="at">levels =</span> niveles_likert, <span class="at">labels =</span> etiquetas_likert)</span>
+<span id="cb3-50"><a href="#cb3-50" tabindex="-1"></a>datos<span class="sc">$</span>f_Imp.Origen.Local      <span class="ot">&lt;-</span> <span class="fu">factor</span>(datos<span class="sc">$</span>Imp.Origen.Local, <span class="at">levels =</span> niveles_likert, <span class="at">labels =</span> etiquetas_likert)</span>
+<span id="cb3-51"><a href="#cb3-51" tabindex="-1"></a>datos<span class="sc">$</span>f_Imp.Variedad          <span class="ot">&lt;-</span> <span class="fu">factor</span>(datos<span class="sc">$</span>Imp.Variedad, <span class="at">levels =</span> niveles_likert, <span class="at">labels =</span> etiquetas_likert)</span>
+<span id="cb3-52"><a href="#cb3-52" tabindex="-1"></a>datos<span class="sc">$</span>f_Imp.Sabor             <span class="ot">&lt;-</span> <span class="fu">factor</span>(datos<span class="sc">$</span>Imp.Sabor, <span class="at">levels =</span> niveles_likert, <span class="at">labels =</span> etiquetas_likert)</span>
+<span id="cb3-53"><a href="#cb3-53" tabindex="-1"></a>datos<span class="sc">$</span>f_Imp.Precio            <span class="ot">&lt;-</span> <span class="fu">factor</span>(datos<span class="sc">$</span>Imp.Precio, <span class="at">levels =</span> niveles_likert, <span class="at">labels =</span> etiquetas_likert)</span>
+<span id="cb3-54"><a href="#cb3-54" tabindex="-1"></a>datos<span class="sc">$</span>f_Imp.Higiene           <span class="ot">&lt;-</span> <span class="fu">factor</span>(datos<span class="sc">$</span>Imp.Higiene, <span class="at">levels =</span> niveles_likert, <span class="at">labels =</span> etiquetas_likert)</span>
+<span id="cb3-55"><a href="#cb3-55" tabindex="-1"></a>datos<span class="sc">$</span>f_Imp.Rapidez           <span class="ot">&lt;-</span> <span class="fu">factor</span>(datos<span class="sc">$</span>Imp.Rapidez, <span class="at">levels =</span> niveles_likert, <span class="at">labels =</span> etiquetas_likert)</span>
+<span id="cb3-56"><a href="#cb3-56" tabindex="-1"></a>datos<span class="sc">$</span>f_Aptitud.Social        <span class="ot">&lt;-</span> <span class="fu">factor</span>(datos<span class="sc">$</span>Aptitud.Social, <span class="at">levels =</span> niveles_likert, <span class="at">labels =</span> etiquetas_likert)</span>
 <span id="cb3-57"><a href="#cb3-57" tabindex="-1"></a></span>
-<span id="cb3-58"><a href="#cb3-58" tabindex="-1"></a>datos<span class="sc">$</span>f_Disposicion_Pago <span class="ot">&lt;-</span> <span class="fu">factor</span>(datos<span class="sc">$</span>Disposicion_Pago,</span>
+<span id="cb3-58"><a href="#cb3-58" tabindex="-1"></a>datos<span class="sc">$</span>f_Disposicion.Pago <span class="ot">&lt;-</span> <span class="fu">factor</span>(datos<span class="sc">$</span>Disposicion.Pago,</span>
 <span id="cb3-59"><a href="#cb3-59" tabindex="-1"></a>  <span class="at">levels =</span> <span class="fu">c</span>(<span class="st">&#39;Menos de 4€&#39;</span>, <span class="st">&#39;Entre 4 y 5,49€&#39;</span>, <span class="st">&#39;Entre 5,50 y 7€&#39;</span>, <span class="st">&#39;Entre 7 y 9,50€&#39;</span>, <span class="st">&#39;Más de 9,50€&#39;</span>),</span>
 <span id="cb3-60"><a href="#cb3-60" tabindex="-1"></a>  <span class="at">labels =</span> <span class="fu">c</span>(<span class="st">&#39;&lt;4€&#39;</span>, <span class="st">&#39;4-5.5€&#39;</span>, <span class="st">&#39;5.5-7€&#39;</span>, <span class="st">&#39;7-9.5€&#39;</span>, <span class="st">&#39;&gt;9.5€&#39;</span>))</span>
 <span id="cb3-61"><a href="#cb3-61" tabindex="-1"></a></span>
 <span id="cb3-62"><a href="#cb3-62" tabindex="-1"></a>datos<span class="sc">$</span>f_Edad <span class="ot">&lt;-</span> <span class="fu">factor</span>(datos<span class="sc">$</span>Edad,</span>
 <span id="cb3-63"><a href="#cb3-63" tabindex="-1"></a>  <span class="at">levels =</span> <span class="fu">c</span>(<span class="st">&#39;Menor de 18&#39;</span>, <span class="st">&#39;18-24&#39;</span>, <span class="st">&#39;25-44&#39;</span>, <span class="st">&#39;45-64&#39;</span>, <span class="st">&#39;65+&#39;</span>))</span>
 <span id="cb3-64"><a href="#cb3-64" tabindex="-1"></a></span>
-<span id="cb3-65"><a href="#cb3-65" tabindex="-1"></a>datos<span class="sc">$</span>f_Nivel_Educativo <span class="ot">&lt;-</span> <span class="fu">factor</span>(datos<span class="sc">$</span>Nivel_Educativo,</span>
+<span id="cb3-65"><a href="#cb3-65" tabindex="-1"></a>datos<span class="sc">$</span>f_Nivel.Educativo <span class="ot">&lt;-</span> <span class="fu">factor</span>(datos<span class="sc">$</span>Nivel.Educativo,</span>
 <span id="cb3-66"><a href="#cb3-66" tabindex="-1"></a>  <span class="at">levels =</span> <span class="fu">c</span>(<span class="st">&#39;ESO (antiguo BUP)&#39;</span>, <span class="st">&#39;FP medio o Bachillerato (antiguo COU)&#39;</span>, <span class="st">&#39;FP superior&#39;</span>, <span class="st">&#39;Universitario/a&#39;</span>),</span>
 <span id="cb3-67"><a href="#cb3-67" tabindex="-1"></a>  <span class="at">labels =</span> <span class="fu">c</span>(<span class="st">&#39;ESO&#39;</span>, <span class="st">&#39;Bachiller/FPm&#39;</span>, <span class="st">&#39;FPs&#39;</span>, <span class="st">&#39;Univ&#39;</span>))</span>
 <span id="cb3-68"><a href="#cb3-68" tabindex="-1"></a></span>
 <span id="cb3-69"><a href="#cb3-69" tabindex="-1"></a><span class="co"># ----- PREGUNTAS CON MÁS DE UNA RESPUESTA ---</span></span>
 <span id="cb3-70"><a href="#cb3-70" tabindex="-1"></a></span>
 <span id="cb3-71"><a href="#cb3-71" tabindex="-1"></a><span class="co"># Lista de variables multirespuesta</span></span>
-<span id="cb3-72"><a href="#cb3-72" tabindex="-1"></a>multi_res <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="st">&quot;Tipo_Comida&quot;</span>, <span class="st">&quot;Supermercado_Habitual&quot;</span>, <span class="st">&quot;Situaciones_Uso&quot;</span>, </span>
-<span id="cb3-73"><a href="#cb3-73" tabindex="-1"></a>                <span class="st">&quot;Preferencia_Base&quot;</span>, <span class="st">&quot;Preferencia_Proteina&quot;</span>, <span class="st">&quot;Preferencia_Complementos&quot;</span>)</span>
+<span id="cb3-72"><a href="#cb3-72" tabindex="-1"></a>multi_res <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="st">&quot;Tipo.Comida&quot;</span>, <span class="st">&quot;Supermercado.Habitual&quot;</span>, <span class="st">&quot;Situaciones.Uso&quot;</span>, </span>
+<span id="cb3-73"><a href="#cb3-73" tabindex="-1"></a>                <span class="st">&quot;Preferencia.Base&quot;</span>, <span class="st">&quot;Preferencia.Proteina&quot;</span>, <span class="st">&quot;Preferencia.Complementos&quot;</span>)</span>
 <span id="cb3-74"><a href="#cb3-74" tabindex="-1"></a></span>
 <span id="cb3-75"><a href="#cb3-75" tabindex="-1"></a><span class="co"># Aplicamos cSplit_e a cada una (separa por &quot;, &quot; y rellena con 0)</span></span>
 <span id="cb3-76"><a href="#cb3-76" tabindex="-1"></a><span class="cf">for</span> (var <span class="cf">in</span> multi_res) {</span>
@@ -1746,283 +1739,352 @@ Variables</h2>
 <span id="cb3-81"><a href="#cb3-81" tabindex="-1"></a><span class="co"># !!!!!!!!!!!!!!!!!!!!! Si alguno da error es porque nadie lo ha marcado en la encuesta y la columna no existe, sería comentar esa línea</span></span>
 <span id="cb3-82"><a href="#cb3-82" tabindex="-1"></a></span>
 <span id="cb3-83"><a href="#cb3-83" tabindex="-1"></a><span class="co"># --- P4: Tipo de Comida ---</span></span>
-<span id="cb3-84"><a href="#cb3-84" tabindex="-1"></a>datos<span class="sc">$</span>f_Tipo_Comida_Rapida <span class="ot">&lt;-</span> <span class="fu">factor</span>(datos<span class="sc">$</span><span class="st">`</span><span class="at">Tipo_Comida_Comida rápida</span><span class="st">`</span>, </span>
+<span id="cb3-84"><a href="#cb3-84" tabindex="-1"></a>datos<span class="sc">$</span>f_Tipo.Comida.Rapida <span class="ot">&lt;-</span> <span class="fu">factor</span>(datos<span class="sc">$</span><span class="st">`</span><span class="at">Tipo.Comida_Comida rápida</span><span class="st">`</span>, </span>
 <span id="cb3-85"><a href="#cb3-85" tabindex="-1"></a>                                     <span class="at">levels =</span> <span class="fu">c</span>(<span class="dv">0</span>, <span class="dv">1</span>), <span class="at">labels =</span> <span class="fu">c</span>(<span class="st">&#39;No&#39;</span>, <span class="st">&#39;Sí&#39;</span>))</span>
-<span id="cb3-86"><a href="#cb3-86" tabindex="-1"></a>datos<span class="sc">$</span>f_Tipo_Comida_Restaurante <span class="ot">&lt;-</span> <span class="fu">factor</span>(datos<span class="sc">$</span><span class="st">`</span><span class="at">Tipo_Comida_Comida preparada en un bar o restaurante (Excluyendo comida rápida)</span><span class="st">`</span>, </span>
+<span id="cb3-86"><a href="#cb3-86" tabindex="-1"></a>datos<span class="sc">$</span>f_Tipo.Comida.Restaurante <span class="ot">&lt;-</span> <span class="fu">factor</span>(datos<span class="sc">$</span><span class="st">`</span><span class="at">Tipo.Comida_Comida preparada en un bar o restaurante (Excluyendo comida rápida)</span><span class="st">`</span>, </span>
 <span id="cb3-87"><a href="#cb3-87" tabindex="-1"></a>                                          <span class="at">levels =</span> <span class="fu">c</span>(<span class="dv">0</span>, <span class="dv">1</span>), <span class="at">labels =</span> <span class="fu">c</span>(<span class="st">&#39;No&#39;</span>, <span class="st">&#39;Sí&#39;</span>))</span>
-<span id="cb3-88"><a href="#cb3-88" tabindex="-1"></a>datos<span class="sc">$</span>f_Tipo_Comida_Super <span class="ot">&lt;-</span> <span class="fu">factor</span>(datos<span class="sc">$</span><span class="st">`</span><span class="at">Tipo_Comida_Platos preparados de supermercado</span><span class="st">`</span>, </span>
+<span id="cb3-88"><a href="#cb3-88" tabindex="-1"></a>datos<span class="sc">$</span>f_Tipo.Comida.Super <span class="ot">&lt;-</span> <span class="fu">factor</span>(datos<span class="sc">$</span><span class="st">`</span><span class="at">Tipo.Comida_Platos preparados de supermercado</span><span class="st">`</span>, </span>
 <span id="cb3-89"><a href="#cb3-89" tabindex="-1"></a>                                    <span class="at">levels =</span> <span class="fu">c</span>(<span class="dv">0</span>, <span class="dv">1</span>), <span class="at">labels =</span> <span class="fu">c</span>(<span class="st">&#39;No&#39;</span>, <span class="st">&#39;Sí&#39;</span>))</span>
-<span id="cb3-90"><a href="#cb3-90" tabindex="-1"></a>datos<span class="sc">$</span>f_Tipo_Comida_Propia <span class="ot">&lt;-</span> <span class="fu">factor</span>(datos<span class="sc">$</span><span class="st">`</span><span class="at">Tipo_Comida_De elaboración propia</span><span class="st">`</span>, </span>
+<span id="cb3-90"><a href="#cb3-90" tabindex="-1"></a>datos<span class="sc">$</span>f_Tipo.Comida.Propia <span class="ot">&lt;-</span> <span class="fu">factor</span>(datos<span class="sc">$</span><span class="st">`</span><span class="at">Tipo.Comida_De elaboración propia</span><span class="st">`</span>, </span>
 <span id="cb3-91"><a href="#cb3-91" tabindex="-1"></a>                                     <span class="at">levels =</span> <span class="fu">c</span>(<span class="dv">0</span>, <span class="dv">1</span>), <span class="at">labels =</span> <span class="fu">c</span>(<span class="st">&#39;No&#39;</span>, <span class="st">&#39;Sí&#39;</span>))</span>
 <span id="cb3-92"><a href="#cb3-92" tabindex="-1"></a></span>
 <span id="cb3-93"><a href="#cb3-93" tabindex="-1"></a><span class="co"># --- P6: Supermercados (Principales) ---</span></span>
 <span id="cb3-94"><a href="#cb3-94" tabindex="-1"></a></span>
-<span id="cb3-95"><a href="#cb3-95" tabindex="-1"></a>datos<span class="sc">$</span>f_Super_Mercadona <span class="ot">&lt;-</span> <span class="fu">factor</span>(datos<span class="sc">$</span>Supermercado_Habitual_Mercadona, <span class="at">levels =</span> <span class="fu">c</span>(<span class="dv">0</span>, <span class="dv">1</span>), <span class="at">labels =</span> <span class="fu">c</span>(<span class="st">&#39;No&#39;</span>, <span class="st">&#39;Sí&#39;</span>))</span>
-<span id="cb3-96"><a href="#cb3-96" tabindex="-1"></a>datos<span class="sc">$</span>f_Super_Consum    <span class="ot">&lt;-</span> <span class="fu">factor</span>(datos<span class="sc">$</span>Supermercado_Habitual_Consum, <span class="at">levels =</span> <span class="fu">c</span>(<span class="dv">0</span>, <span class="dv">1</span>), <span class="at">labels =</span> <span class="fu">c</span>(<span class="st">&#39;No&#39;</span>, <span class="st">&#39;Sí&#39;</span>))</span>
-<span id="cb3-97"><a href="#cb3-97" tabindex="-1"></a>datos<span class="sc">$</span>f_Super_Carrefour <span class="ot">&lt;-</span> <span class="fu">factor</span>(datos<span class="sc">$</span>Supermercado_Habitual_Carrefour, <span class="at">levels =</span> <span class="fu">c</span>(<span class="dv">0</span>, <span class="dv">1</span>), <span class="at">labels =</span> <span class="fu">c</span>(<span class="st">&#39;No&#39;</span>, <span class="st">&#39;Sí&#39;</span>))</span>
-<span id="cb3-98"><a href="#cb3-98" tabindex="-1"></a>datos<span class="sc">$</span>f_Super_Lidl      <span class="ot">&lt;-</span> <span class="fu">factor</span>(datos<span class="sc">$</span>Supermercado_Habitual_Lidl, <span class="at">levels =</span> <span class="fu">c</span>(<span class="dv">0</span>, <span class="dv">1</span>), <span class="at">labels =</span> <span class="fu">c</span>(<span class="st">&#39;No&#39;</span>, <span class="st">&#39;Sí&#39;</span>))</span>
-<span id="cb3-99"><a href="#cb3-99" tabindex="-1"></a>datos<span class="sc">$</span>f_Super_Aldi      <span class="ot">&lt;-</span> <span class="fu">factor</span>(datos<span class="sc">$</span>Supermercado_Habitual_Aldi, <span class="at">levels =</span> <span class="fu">c</span>(<span class="dv">0</span>, <span class="dv">1</span>), <span class="at">labels =</span> <span class="fu">c</span>(<span class="st">&#39;No&#39;</span>, <span class="st">&#39;Sí&#39;</span>))</span>
-<span id="cb3-100"><a href="#cb3-100" tabindex="-1"></a></span>
-<span id="cb3-101"><a href="#cb3-101" tabindex="-1"></a><span class="co"># --- P10: Situaciones de Uso ---</span></span>
-<span id="cb3-102"><a href="#cb3-102" tabindex="-1"></a>datos<span class="sc">$</span>f_Uso_Momento <span class="ot">&lt;-</span> <span class="fu">factor</span>(datos<span class="sc">$</span><span class="st">`</span><span class="at">Situaciones_Uso_Para comer en el momento</span><span class="st">`</span>, </span>
-<span id="cb3-103"><a href="#cb3-103" tabindex="-1"></a>                              <span class="at">levels =</span> <span class="fu">c</span>(<span class="dv">0</span>, <span class="dv">1</span>), <span class="at">labels =</span> <span class="fu">c</span>(<span class="st">&#39;No&#39;</span>, <span class="st">&#39;Sí&#39;</span>))</span>
-<span id="cb3-104"><a href="#cb3-104" tabindex="-1"></a>datos<span class="sc">$</span>f_Uso_Llevar  <span class="ot">&lt;-</span> <span class="fu">factor</span>(datos<span class="sc">$</span><span class="st">`</span><span class="at">Situaciones_Uso_Para llevar al trabajo/universidad</span><span class="st">`</span>, </span>
-<span id="cb3-105"><a href="#cb3-105" tabindex="-1"></a>                              <span class="at">levels =</span> <span class="fu">c</span>(<span class="dv">0</span>, <span class="dv">1</span>), <span class="at">labels =</span> <span class="fu">c</span>(<span class="st">&#39;No&#39;</span>, <span class="st">&#39;Sí&#39;</span>))</span>
-<span id="cb3-106"><a href="#cb3-106" tabindex="-1"></a>datos<span class="sc">$</span>f_Uso_Cena    <span class="ot">&lt;-</span> <span class="fu">factor</span>(datos<span class="sc">$</span><span class="st">`</span><span class="at">Situaciones_Uso_Como cena ligera</span><span class="st">`</span>, </span>
-<span id="cb3-107"><a href="#cb3-107" tabindex="-1"></a>                              <span class="at">levels =</span> <span class="fu">c</span>(<span class="dv">0</span>, <span class="dv">1</span>), <span class="at">labels =</span> <span class="fu">c</span>(<span class="st">&#39;No&#39;</span>, <span class="st">&#39;Sí&#39;</span>))</span>
-<span id="cb3-108"><a href="#cb3-108" tabindex="-1"></a>datos<span class="sc">$</span>f_Uso_Complem <span class="ot">&lt;-</span> <span class="fu">factor</span>(datos<span class="sc">$</span><span class="st">`</span><span class="at">Situaciones_Uso_Como complemento de otra comida</span><span class="st">`</span>, </span>
-<span id="cb3-109"><a href="#cb3-109" tabindex="-1"></a>                              <span class="at">levels =</span> <span class="fu">c</span>(<span class="dv">0</span>, <span class="dv">1</span>), <span class="at">labels =</span> <span class="fu">c</span>(<span class="st">&#39;No&#39;</span>, <span class="st">&#39;Sí&#39;</span>))</span>
-<span id="cb3-110"><a href="#cb3-110" tabindex="-1"></a></span>
-<span id="cb3-111"><a href="#cb3-111" tabindex="-1"></a><span class="co"># --- P13: Preferencia Base ---</span></span>
-<span id="cb3-112"><a href="#cb3-112" tabindex="-1"></a>datos<span class="sc">$</span>f_Base_Lechuga <span class="ot">&lt;-</span> <span class="fu">factor</span>(datos<span class="sc">$</span><span class="st">`</span><span class="at">Preferencia_Base_Lechuga iceberg o romana</span><span class="st">`</span>, </span>
-<span id="cb3-113"><a href="#cb3-113" tabindex="-1"></a>                               <span class="at">levels =</span> <span class="fu">c</span>(<span class="dv">0</span>, <span class="dv">1</span>), <span class="at">labels =</span> <span class="fu">c</span>(<span class="st">&#39;No&#39;</span>, <span class="st">&#39;Sí&#39;</span>))</span>
-<span id="cb3-114"><a href="#cb3-114" tabindex="-1"></a><span class="co"># Cuidado con esta línea, el nombre es muy largo y tiene símbolos:</span></span>
-<span id="cb3-115"><a href="#cb3-115" tabindex="-1"></a>datos<span class="sc">$</span>f_Base_Verde   <span class="ot">&lt;-</span> <span class="fu">factor</span>(datos<span class="sc">$</span><span class="st">`</span><span class="at">Preferencia_Base_Mezcla verde: rúcula/canónigos/espinacas...</span><span class="st">`</span>, </span>
-<span id="cb3-116"><a href="#cb3-116" tabindex="-1"></a>                               <span class="at">levels =</span> <span class="fu">c</span>(<span class="dv">0</span>, <span class="dv">1</span>), <span class="at">labels =</span> <span class="fu">c</span>(<span class="st">&#39;No&#39;</span>, <span class="st">&#39;Sí&#39;</span>))</span>
-<span id="cb3-117"><a href="#cb3-117" tabindex="-1"></a>datos<span class="sc">$</span>f_Base_Pasta   <span class="ot">&lt;-</span> <span class="fu">factor</span>(datos<span class="sc">$</span>Preferencia_Base_Pasta, </span>
-<span id="cb3-118"><a href="#cb3-118" tabindex="-1"></a>                               <span class="at">levels =</span> <span class="fu">c</span>(<span class="dv">0</span>, <span class="dv">1</span>), <span class="at">labels =</span> <span class="fu">c</span>(<span class="st">&#39;No&#39;</span>, <span class="st">&#39;Sí&#39;</span>))</span>
-<span id="cb3-119"><a href="#cb3-119" tabindex="-1"></a>datos<span class="sc">$</span>f_Base_Quinoa  <span class="ot">&lt;-</span> <span class="fu">factor</span>(datos<span class="sc">$</span>Preferencia_Base_Quinoa, </span>
-<span id="cb3-120"><a href="#cb3-120" tabindex="-1"></a>                               <span class="at">levels =</span> <span class="fu">c</span>(<span class="dv">0</span>, <span class="dv">1</span>), <span class="at">labels =</span> <span class="fu">c</span>(<span class="st">&#39;No&#39;</span>, <span class="st">&#39;Sí&#39;</span>))</span>
-<span id="cb3-121"><a href="#cb3-121" tabindex="-1"></a>datos<span class="sc">$</span>f_Base_Legum   <span class="ot">&lt;-</span> <span class="fu">factor</span>(datos<span class="sc">$</span>Preferencia_Base_Legumbres, </span>
+<span id="cb3-95"><a href="#cb3-95" tabindex="-1"></a>datos<span class="sc">$</span>f_Super.Mercadona <span class="ot">&lt;-</span> <span class="fu">factor</span>(datos<span class="sc">$</span>Supermercado.Habitual_Mercadona, <span class="at">levels =</span> <span class="fu">c</span>(<span class="dv">0</span>, <span class="dv">1</span>), <span class="at">labels =</span> <span class="fu">c</span>(<span class="st">&#39;No&#39;</span>, <span class="st">&#39;Sí&#39;</span>))</span>
+<span id="cb3-96"><a href="#cb3-96" tabindex="-1"></a>datos<span class="sc">$</span>f_Super.Consum    <span class="ot">&lt;-</span> <span class="fu">factor</span>(datos<span class="sc">$</span>Supermercado.Habitual_Consum, <span class="at">levels =</span> <span class="fu">c</span>(<span class="dv">0</span>, <span class="dv">1</span>), <span class="at">labels =</span> <span class="fu">c</span>(<span class="st">&#39;No&#39;</span>, <span class="st">&#39;Sí&#39;</span>))</span>
+<span id="cb3-97"><a href="#cb3-97" tabindex="-1"></a>datos<span class="sc">$</span>f_Super.Carrefour <span class="ot">&lt;-</span> <span class="fu">factor</span>(datos<span class="sc">$</span>Supermercado.Habitual_Carrefour, <span class="at">levels =</span> <span class="fu">c</span>(<span class="dv">0</span>, <span class="dv">1</span>), <span class="at">labels =</span> <span class="fu">c</span>(<span class="st">&#39;No&#39;</span>, <span class="st">&#39;Sí&#39;</span>))</span>
+<span id="cb3-98"><a href="#cb3-98" tabindex="-1"></a>datos<span class="sc">$</span>f_Super.Lidl      <span class="ot">&lt;-</span> <span class="fu">factor</span>(datos<span class="sc">$</span>Supermercado.Habitual_Lidl, <span class="at">levels =</span> <span class="fu">c</span>(<span class="dv">0</span>, <span class="dv">1</span>), <span class="at">labels =</span> <span class="fu">c</span>(<span class="st">&#39;No&#39;</span>, <span class="st">&#39;Sí&#39;</span>))</span>
+<span id="cb3-99"><a href="#cb3-99" tabindex="-1"></a>datos<span class="sc">$</span>f_Super.Aldi      <span class="ot">&lt;-</span> <span class="fu">factor</span>(datos<span class="sc">$</span>Supermercado.Habitual_Aldi, <span class="at">levels =</span> <span class="fu">c</span>(<span class="dv">0</span>, <span class="dv">1</span>), <span class="at">labels =</span> <span class="fu">c</span>(<span class="st">&#39;No&#39;</span>, <span class="st">&#39;Sí&#39;</span>))</span>
+<span id="cb3-100"><a href="#cb3-100" tabindex="-1"></a>datos<span class="sc">$</span>f_Super.Masymas   <span class="ot">&lt;-</span> <span class="fu">factor</span>(datos<span class="sc">$</span>Supermercado.Habitual_Masymas, <span class="at">levels =</span> <span class="fu">c</span>(<span class="dv">0</span>, <span class="dv">1</span>), <span class="at">labels =</span> <span class="fu">c</span>(<span class="st">&#39;No&#39;</span>, <span class="st">&#39;Sí&#39;</span>))</span>
+<span id="cb3-101"><a href="#cb3-101" tabindex="-1"></a>datos<span class="sc">$</span>f_Super.Alcampo   <span class="ot">&lt;-</span> <span class="fu">factor</span>(datos<span class="sc">$</span>Supermercado.Habitual_Alcampo, <span class="at">levels =</span> <span class="fu">c</span>(<span class="dv">0</span>, <span class="dv">1</span>), <span class="at">labels =</span> <span class="fu">c</span>(<span class="st">&#39;No&#39;</span>, <span class="st">&#39;Sí&#39;</span>))</span>
+<span id="cb3-102"><a href="#cb3-102" tabindex="-1"></a><span class="co">#datos$f_Super.Gadis     &lt;- factor(datos$Supermercado.Habitual_Gadis, levels = c(0, 1), labels = c(&#39;No&#39;, &#39;Sí&#39;))</span></span>
+<span id="cb3-103"><a href="#cb3-103" tabindex="-1"></a>datos<span class="sc">$</span>f_Super.Fnac      <span class="ot">&lt;-</span> <span class="fu">factor</span>(datos<span class="sc">$</span>Supermercado.Habitual_Fnac, <span class="at">levels =</span> <span class="fu">c</span>(<span class="dv">0</span>, <span class="dv">1</span>), <span class="at">labels =</span> <span class="fu">c</span>(<span class="st">&#39;No&#39;</span>, <span class="st">&#39;Sí&#39;</span>))</span>
+<span id="cb3-104"><a href="#cb3-104" tabindex="-1"></a>datos<span class="sc">$</span>f_Super.DIA       <span class="ot">&lt;-</span> <span class="fu">factor</span>(datos<span class="sc">$</span>Supermercado.Habitual_DIA, <span class="at">levels =</span> <span class="fu">c</span>(<span class="dv">0</span>, <span class="dv">1</span>), <span class="at">labels =</span> <span class="fu">c</span>(<span class="st">&#39;No&#39;</span>, <span class="st">&#39;Sí&#39;</span>))</span>
+<span id="cb3-105"><a href="#cb3-105" tabindex="-1"></a>datos<span class="sc">$</span>f_Super.Dialprix  <span class="ot">&lt;-</span> <span class="fu">factor</span>(datos<span class="sc">$</span>Supermercado.Habitual_Dialprix, <span class="at">levels =</span> <span class="fu">c</span>(<span class="dv">0</span>, <span class="dv">1</span>), <span class="at">labels =</span> <span class="fu">c</span>(<span class="st">&#39;No&#39;</span>, <span class="st">&#39;Sí&#39;</span>))</span>
+<span id="cb3-106"><a href="#cb3-106" tabindex="-1"></a>datos<span class="sc">$</span>f_Super.Lefties   <span class="ot">&lt;-</span> <span class="fu">factor</span>(datos<span class="sc">$</span>Supermercado.Habitual_Lefties, <span class="at">levels =</span> <span class="fu">c</span>(<span class="dv">0</span>, <span class="dv">1</span>), <span class="at">labels =</span> <span class="fu">c</span>(<span class="st">&#39;No&#39;</span>, <span class="st">&#39;Sí&#39;</span>))</span>
+<span id="cb3-107"><a href="#cb3-107" tabindex="-1"></a></span>
+<span id="cb3-108"><a href="#cb3-108" tabindex="-1"></a><span class="co"># --- P10: Situaciones de Uso ---</span></span>
+<span id="cb3-109"><a href="#cb3-109" tabindex="-1"></a>datos<span class="sc">$</span>f_Uso.Momento <span class="ot">&lt;-</span> <span class="fu">factor</span>(datos<span class="sc">$</span><span class="st">`</span><span class="at">Situaciones.Uso_Para comer en el momento</span><span class="st">`</span>, </span>
+<span id="cb3-110"><a href="#cb3-110" tabindex="-1"></a>                              <span class="at">levels =</span> <span class="fu">c</span>(<span class="dv">0</span>, <span class="dv">1</span>), <span class="at">labels =</span> <span class="fu">c</span>(<span class="st">&#39;No&#39;</span>, <span class="st">&#39;Sí&#39;</span>))</span>
+<span id="cb3-111"><a href="#cb3-111" tabindex="-1"></a>datos<span class="sc">$</span>f_Uso.Llevar  <span class="ot">&lt;-</span> <span class="fu">factor</span>(datos<span class="sc">$</span><span class="st">`</span><span class="at">Situaciones.Uso_Para llevar al trabajo/universidad</span><span class="st">`</span>, </span>
+<span id="cb3-112"><a href="#cb3-112" tabindex="-1"></a>                              <span class="at">levels =</span> <span class="fu">c</span>(<span class="dv">0</span>, <span class="dv">1</span>), <span class="at">labels =</span> <span class="fu">c</span>(<span class="st">&#39;No&#39;</span>, <span class="st">&#39;Sí&#39;</span>))</span>
+<span id="cb3-113"><a href="#cb3-113" tabindex="-1"></a>datos<span class="sc">$</span>f_Uso.Cena    <span class="ot">&lt;-</span> <span class="fu">factor</span>(datos<span class="sc">$</span><span class="st">`</span><span class="at">Situaciones.Uso_Como cena ligera</span><span class="st">`</span>, </span>
+<span id="cb3-114"><a href="#cb3-114" tabindex="-1"></a>                              <span class="at">levels =</span> <span class="fu">c</span>(<span class="dv">0</span>, <span class="dv">1</span>), <span class="at">labels =</span> <span class="fu">c</span>(<span class="st">&#39;No&#39;</span>, <span class="st">&#39;Sí&#39;</span>))</span>
+<span id="cb3-115"><a href="#cb3-115" tabindex="-1"></a>datos<span class="sc">$</span>f_Uso.Complem <span class="ot">&lt;-</span> <span class="fu">factor</span>(datos<span class="sc">$</span><span class="st">`</span><span class="at">Situaciones.Uso_Como complemento de otra comida</span><span class="st">`</span>, </span>
+<span id="cb3-116"><a href="#cb3-116" tabindex="-1"></a>                              <span class="at">levels =</span> <span class="fu">c</span>(<span class="dv">0</span>, <span class="dv">1</span>), <span class="at">labels =</span> <span class="fu">c</span>(<span class="st">&#39;No&#39;</span>, <span class="st">&#39;Sí&#39;</span>))</span>
+<span id="cb3-117"><a href="#cb3-117" tabindex="-1"></a>datos<span class="sc">$</span>f_Uso.Nunca   <span class="ot">&lt;-</span> <span class="fu">factor</span>(datos<span class="sc">$</span><span class="st">`</span><span class="at">Situaciones.Uso_Nunca</span><span class="st">`</span>, </span>
+<span id="cb3-118"><a href="#cb3-118" tabindex="-1"></a>                              <span class="at">levels =</span> <span class="fu">c</span>(<span class="dv">0</span>, <span class="dv">1</span>), <span class="at">labels =</span> <span class="fu">c</span>(<span class="st">&#39;No&#39;</span>, <span class="st">&#39;Sí&#39;</span>))</span>
+<span id="cb3-119"><a href="#cb3-119" tabindex="-1"></a></span>
+<span id="cb3-120"><a href="#cb3-120" tabindex="-1"></a><span class="co"># --- P13: Preferencia Base ---</span></span>
+<span id="cb3-121"><a href="#cb3-121" tabindex="-1"></a>datos<span class="sc">$</span>f_Base.Lechuga <span class="ot">&lt;-</span> <span class="fu">factor</span>(datos<span class="sc">$</span><span class="st">`</span><span class="at">Preferencia.Base_Lechuga iceberg o romana</span><span class="st">`</span>, </span>
 <span id="cb3-122"><a href="#cb3-122" tabindex="-1"></a>                               <span class="at">levels =</span> <span class="fu">c</span>(<span class="dv">0</span>, <span class="dv">1</span>), <span class="at">labels =</span> <span class="fu">c</span>(<span class="st">&#39;No&#39;</span>, <span class="st">&#39;Sí&#39;</span>))</span>
-<span id="cb3-123"><a href="#cb3-123" tabindex="-1"></a></span>
-<span id="cb3-124"><a href="#cb3-124" tabindex="-1"></a><span class="co"># --- P14: Proteínas ---</span></span>
-<span id="cb3-125"><a href="#cb3-125" tabindex="-1"></a>datos<span class="sc">$</span>f_Prot_Pollo   <span class="ot">&lt;-</span> <span class="fu">factor</span>(datos<span class="sc">$</span>Preferencia_Proteina_Pollo, <span class="at">levels =</span> <span class="fu">c</span>(<span class="dv">0</span>, <span class="dv">1</span>), <span class="at">labels =</span> <span class="fu">c</span>(<span class="st">&#39;No&#39;</span>, <span class="st">&#39;Sí&#39;</span>))</span>
-<span id="cb3-126"><a href="#cb3-126" tabindex="-1"></a>datos<span class="sc">$</span>f_Prot_Pescado <span class="ot">&lt;-</span> <span class="fu">factor</span>(datos<span class="sc">$</span>Preferencia_Proteina_Pescado, <span class="at">levels =</span> <span class="fu">c</span>(<span class="dv">0</span>, <span class="dv">1</span>), <span class="at">labels =</span> <span class="fu">c</span>(<span class="st">&#39;No&#39;</span>, <span class="st">&#39;Sí&#39;</span>))</span>
-<span id="cb3-127"><a href="#cb3-127" tabindex="-1"></a>datos<span class="sc">$</span>f_Prot_Huevo   <span class="ot">&lt;-</span> <span class="fu">factor</span>(datos<span class="sc">$</span>Preferencia_Proteina_Huevo, <span class="at">levels =</span> <span class="fu">c</span>(<span class="dv">0</span>, <span class="dv">1</span>), <span class="at">labels =</span> <span class="fu">c</span>(<span class="st">&#39;No&#39;</span>, <span class="st">&#39;Sí&#39;</span>))</span>
-<span id="cb3-128"><a href="#cb3-128" tabindex="-1"></a>datos<span class="sc">$</span>f_Prot_Queso   <span class="ot">&lt;-</span> <span class="fu">factor</span>(datos<span class="sc">$</span>Preferencia_Proteina_Quesos, <span class="at">levels =</span> <span class="fu">c</span>(<span class="dv">0</span>, <span class="dv">1</span>), <span class="at">labels =</span> <span class="fu">c</span>(<span class="st">&#39;No&#39;</span>, <span class="st">&#39;Sí&#39;</span>))</span>
-<span id="cb3-129"><a href="#cb3-129" tabindex="-1"></a>datos<span class="sc">$</span>f_Prot_Tofu    <span class="ot">&lt;-</span> <span class="fu">factor</span>(datos<span class="sc">$</span>Preferencia_Proteina_Tofu, <span class="at">levels =</span> <span class="fu">c</span>(<span class="dv">0</span>, <span class="dv">1</span>), <span class="at">labels =</span> <span class="fu">c</span>(<span class="st">&#39;No&#39;</span>, <span class="st">&#39;Sí&#39;</span>))</span>
-<span id="cb3-130"><a href="#cb3-130" tabindex="-1"></a></span>
-<span id="cb3-131"><a href="#cb3-131" tabindex="-1"></a><span class="co"># Verificación final</span></span>
-<span id="cb3-132"><a href="#cb3-132" tabindex="-1"></a><span class="fu">colnames</span>(datos)</span></code></pre></div>
+<span id="cb3-123"><a href="#cb3-123" tabindex="-1"></a><span class="co"># Cuidado con esta línea, el nombre es muy largo y tiene símbolos:</span></span>
+<span id="cb3-124"><a href="#cb3-124" tabindex="-1"></a>datos<span class="sc">$</span>f_Base.Verde   <span class="ot">&lt;-</span> <span class="fu">factor</span>(datos<span class="sc">$</span><span class="st">`</span><span class="at">Preferencia.Base_Mezcla verde: rúcula/canónigos/espinacas...</span><span class="st">`</span>,</span>
+<span id="cb3-125"><a href="#cb3-125" tabindex="-1"></a>                               <span class="at">levels =</span> <span class="fu">c</span>(<span class="dv">0</span>, <span class="dv">1</span>), <span class="at">labels =</span> <span class="fu">c</span>(<span class="st">&#39;No&#39;</span>, <span class="st">&#39;Sí&#39;</span>))</span>
+<span id="cb3-126"><a href="#cb3-126" tabindex="-1"></a>datos<span class="sc">$</span>f_Base.Pasta   <span class="ot">&lt;-</span> <span class="fu">factor</span>(datos<span class="sc">$</span>Preferencia.Base_Pasta, </span>
+<span id="cb3-127"><a href="#cb3-127" tabindex="-1"></a>                               <span class="at">levels =</span> <span class="fu">c</span>(<span class="dv">0</span>, <span class="dv">1</span>), <span class="at">labels =</span> <span class="fu">c</span>(<span class="st">&#39;No&#39;</span>, <span class="st">&#39;Sí&#39;</span>))</span>
+<span id="cb3-128"><a href="#cb3-128" tabindex="-1"></a>datos<span class="sc">$</span>f_Base.Quinoa  <span class="ot">&lt;-</span> <span class="fu">factor</span>(datos<span class="sc">$</span>Preferencia.Base_Quinoa, </span>
+<span id="cb3-129"><a href="#cb3-129" tabindex="-1"></a>                               <span class="at">levels =</span> <span class="fu">c</span>(<span class="dv">0</span>, <span class="dv">1</span>), <span class="at">labels =</span> <span class="fu">c</span>(<span class="st">&#39;No&#39;</span>, <span class="st">&#39;Sí&#39;</span>))</span>
+<span id="cb3-130"><a href="#cb3-130" tabindex="-1"></a>datos<span class="sc">$</span>f_Base.Cuscus  <span class="ot">&lt;-</span> <span class="fu">factor</span>(datos<span class="sc">$</span><span class="st">`</span><span class="at">Preferencia.Base_Cuscús</span><span class="st">`</span>, </span>
+<span id="cb3-131"><a href="#cb3-131" tabindex="-1"></a>                               <span class="at">levels =</span> <span class="fu">c</span>(<span class="dv">0</span>, <span class="dv">1</span>), <span class="at">labels =</span> <span class="fu">c</span>(<span class="st">&#39;No&#39;</span>, <span class="st">&#39;Sí&#39;</span>))</span>
+<span id="cb3-132"><a href="#cb3-132" tabindex="-1"></a>datos<span class="sc">$</span>f_Base.Legum   <span class="ot">&lt;-</span> <span class="fu">factor</span>(datos<span class="sc">$</span>Preferencia.Base_Legumbres, </span>
+<span id="cb3-133"><a href="#cb3-133" tabindex="-1"></a>                               <span class="at">levels =</span> <span class="fu">c</span>(<span class="dv">0</span>, <span class="dv">1</span>), <span class="at">labels =</span> <span class="fu">c</span>(<span class="st">&#39;No&#39;</span>, <span class="st">&#39;Sí&#39;</span>))</span>
+<span id="cb3-134"><a href="#cb3-134" tabindex="-1"></a></span>
+<span id="cb3-135"><a href="#cb3-135" tabindex="-1"></a><span class="co"># --- P14: Proteínas ---</span></span>
+<span id="cb3-136"><a href="#cb3-136" tabindex="-1"></a>datos<span class="sc">$</span>f_Prot.Pollo   <span class="ot">&lt;-</span> <span class="fu">factor</span>(datos<span class="sc">$</span>Preferencia.Proteina_Pollo, <span class="at">levels =</span> <span class="fu">c</span>(<span class="dv">0</span>, <span class="dv">1</span>), <span class="at">labels =</span> <span class="fu">c</span>(<span class="st">&#39;No&#39;</span>, <span class="st">&#39;Sí&#39;</span>))</span>
+<span id="cb3-137"><a href="#cb3-137" tabindex="-1"></a>datos<span class="sc">$</span>f_Prot.Pescado <span class="ot">&lt;-</span> <span class="fu">factor</span>(datos<span class="sc">$</span>Preferencia.Proteina_Pescado, <span class="at">levels =</span> <span class="fu">c</span>(<span class="dv">0</span>, <span class="dv">1</span>), <span class="at">labels =</span> <span class="fu">c</span>(<span class="st">&#39;No&#39;</span>, <span class="st">&#39;Sí&#39;</span>))</span>
+<span id="cb3-138"><a href="#cb3-138" tabindex="-1"></a>datos<span class="sc">$</span>f_Prot.Huevo   <span class="ot">&lt;-</span> <span class="fu">factor</span>(datos<span class="sc">$</span>Preferencia.Proteina_Huevo, <span class="at">levels =</span> <span class="fu">c</span>(<span class="dv">0</span>, <span class="dv">1</span>), <span class="at">labels =</span> <span class="fu">c</span>(<span class="st">&#39;No&#39;</span>, <span class="st">&#39;Sí&#39;</span>))</span>
+<span id="cb3-139"><a href="#cb3-139" tabindex="-1"></a>datos<span class="sc">$</span>f_Prot.Queso   <span class="ot">&lt;-</span> <span class="fu">factor</span>(datos<span class="sc">$</span>Preferencia.Proteina_Quesos, <span class="at">levels =</span> <span class="fu">c</span>(<span class="dv">0</span>, <span class="dv">1</span>), <span class="at">labels =</span> <span class="fu">c</span>(<span class="st">&#39;No&#39;</span>, <span class="st">&#39;Sí&#39;</span>))</span>
+<span id="cb3-140"><a href="#cb3-140" tabindex="-1"></a>datos<span class="sc">$</span>f_Prot.Tofu    <span class="ot">&lt;-</span> <span class="fu">factor</span>(datos<span class="sc">$</span>Preferencia.Proteina_Tofu, <span class="at">levels =</span> <span class="fu">c</span>(<span class="dv">0</span>, <span class="dv">1</span>), <span class="at">labels =</span> <span class="fu">c</span>(<span class="st">&#39;No&#39;</span>, <span class="st">&#39;Sí&#39;</span>))</span>
+<span id="cb3-141"><a href="#cb3-141" tabindex="-1"></a>datos<span class="sc">$</span>f_Prot.Marisco <span class="ot">&lt;-</span> <span class="fu">factor</span>(datos<span class="sc">$</span>Preferencia.Proteina_Marisco, <span class="at">levels =</span> <span class="fu">c</span>(<span class="dv">0</span>, <span class="dv">1</span>), <span class="at">labels =</span> <span class="fu">c</span>(<span class="st">&#39;No&#39;</span>, <span class="st">&#39;Sí&#39;</span>))</span>
+<span id="cb3-142"><a href="#cb3-142" tabindex="-1"></a>datos<span class="sc">$</span>f_Prot.Carne   <span class="ot">&lt;-</span> <span class="fu">factor</span>(datos<span class="sc">$</span>Preferencia.Proteina_Carne, <span class="at">levels =</span> <span class="fu">c</span>(<span class="dv">0</span>, <span class="dv">1</span>), <span class="at">labels =</span> <span class="fu">c</span>(<span class="st">&#39;No&#39;</span>, <span class="st">&#39;Sí&#39;</span>))</span>
+<span id="cb3-143"><a href="#cb3-143" tabindex="-1"></a></span>
+<span id="cb3-144"><a href="#cb3-144" tabindex="-1"></a><span class="co"># --- P15: Complementos ---</span></span>
+<span id="cb3-145"><a href="#cb3-145" tabindex="-1"></a>datos<span class="sc">$</span>f_Complem.Frutas   <span class="ot">&lt;-</span> <span class="fu">factor</span>(datos<span class="sc">$</span><span class="st">`</span><span class="at">Preferencia.Complementos_Frutas varias</span><span class="st">`</span>, <span class="at">levels =</span> <span class="fu">c</span>(<span class="dv">0</span>, <span class="dv">1</span>), <span class="at">labels =</span> <span class="fu">c</span>(<span class="st">&#39;No&#39;</span>, <span class="st">&#39;Sí&#39;</span>))</span>
+<span id="cb3-146"><a href="#cb3-146" tabindex="-1"></a>datos<span class="sc">$</span>f_Complem.Secos    <span class="ot">&lt;-</span> <span class="fu">factor</span>(datos<span class="sc">$</span><span class="st">`</span><span class="at">Preferencia.Complementos_Frutos secos/semillas</span><span class="st">`</span>, <span class="at">levels =</span> <span class="fu">c</span>(<span class="dv">0</span>, <span class="dv">1</span>), <span class="at">labels =</span> <span class="fu">c</span>(<span class="st">&#39;No&#39;</span>, <span class="st">&#39;Sí&#39;</span>))</span>
+<span id="cb3-147"><a href="#cb3-147" tabindex="-1"></a>datos<span class="sc">$</span>f_Complem.Verduras <span class="ot">&lt;-</span> <span class="fu">factor</span>(datos<span class="sc">$</span><span class="st">`</span><span class="at">Preferencia.Complementos_Verduras cocinadas</span><span class="st">`</span>, <span class="at">levels =</span> <span class="fu">c</span>(<span class="dv">0</span>, <span class="dv">1</span>), <span class="at">labels =</span> <span class="fu">c</span>(<span class="st">&#39;No&#39;</span>, <span class="st">&#39;Sí&#39;</span>))</span>
+<span id="cb3-148"><a href="#cb3-148" tabindex="-1"></a>datos<span class="sc">$</span>f_Complem.Salsas   <span class="ot">&lt;-</span> <span class="fu">factor</span>(datos<span class="sc">$</span><span class="st">`</span><span class="at">Preferencia.Complementos_Salsas varias</span><span class="st">`</span>, <span class="at">levels =</span> <span class="fu">c</span>(<span class="dv">0</span>, <span class="dv">1</span>), <span class="at">labels =</span> <span class="fu">c</span>(<span class="st">&#39;No&#39;</span>, <span class="st">&#39;Sí&#39;</span>))</span>
+<span id="cb3-149"><a href="#cb3-149" tabindex="-1"></a>datos<span class="sc">$</span>f_Complem.Especias    <span class="ot">&lt;-</span> <span class="fu">factor</span>(datos<span class="sc">$</span>Preferencia.Complementos_Especias, <span class="at">levels =</span> <span class="fu">c</span>(<span class="dv">0</span>, <span class="dv">1</span>), <span class="at">labels =</span> <span class="fu">c</span>(<span class="st">&#39;No&#39;</span>, <span class="st">&#39;Sí&#39;</span>))</span>
+<span id="cb3-150"><a href="#cb3-150" tabindex="-1"></a></span>
+<span id="cb3-151"><a href="#cb3-151" tabindex="-1"></a><span class="co"># Verificación final</span></span>
+<span id="cb3-152"><a href="#cb3-152" tabindex="-1"></a><span class="fu">colnames</span>(datos)</span></code></pre></div>
 <pre><code>##   [1] &quot;Marca.Temporal&quot;                                                                 
 ##   [2] &quot;Motivo&quot;                                                                         
 ##   [3] &quot;Frecuencia&quot;                                                                     
-##   [4] &quot;Lugar_Habitual&quot;                                                                 
-##   [5] &quot;Tipo_Comida&quot;                                                                    
-##   [6] &quot;Frecuencia_Comida_Preparada&quot;                                                    
-##   [7] &quot;Supermercado_Habitual&quot;                                                          
-##   [8] &quot;Importancia_Saludable&quot;                                                          
-##   [9] &quot;Experiencia_Barra_Ensaladas&quot;                                                    
-##  [10] &quot;Mala_Experiencia_Descripcion&quot;                                                   
-##  [11] &quot;Situaciones_Uso&quot;                                                                
-##  [12] &quot;Formato_Preferido&quot;                                                              
-##  [13] &quot;Imp_Sostenibilidad&quot;                                                             
-##  [14] &quot;Imp_Origen_Local&quot;                                                               
-##  [15] &quot;Imp_Variedad&quot;                                                                   
-##  [16] &quot;Imp_Sabor&quot;                                                                      
-##  [17] &quot;Imp_Precio&quot;                                                                     
-##  [18] &quot;Imp_Higiene&quot;                                                                    
-##  [19] &quot;Imp_Rapidez&quot;                                                                    
-##  [20] &quot;Preferencia_Base&quot;                                                               
-##  [21] &quot;Preferencia_Proteina&quot;                                                           
-##  [22] &quot;Preferencia_Complementos&quot;                                                       
-##  [23] &quot;Disposicion_Pago&quot;                                                               
-##  [24] &quot;Aptitud_Social&quot;                                                                 
-##  [25] &quot;Preferencia_Dispensacion&quot;                                                       
-##  [26] &quot;Intencion_Uso&quot;                                                                  
+##   [4] &quot;Lugar.Habitual&quot;                                                                 
+##   [5] &quot;Tipo.Comida&quot;                                                                    
+##   [6] &quot;Frecuencia.Comida.Preparada&quot;                                                    
+##   [7] &quot;Supermercado.Habitual&quot;                                                          
+##   [8] &quot;Importancia.Saludable&quot;                                                          
+##   [9] &quot;Experiencia.Barra.Ensaladas&quot;                                                    
+##  [10] &quot;Mala.Experiencia.Descripcion&quot;                                                   
+##  [11] &quot;Situaciones.Uso&quot;                                                                
+##  [12] &quot;Formato.Preferido&quot;                                                              
+##  [13] &quot;Imp.Sostenibilidad&quot;                                                             
+##  [14] &quot;Imp.Origen.Local&quot;                                                               
+##  [15] &quot;Imp.Variedad&quot;                                                                   
+##  [16] &quot;Imp.Sabor&quot;                                                                      
+##  [17] &quot;Imp.Precio&quot;                                                                     
+##  [18] &quot;Imp.Higiene&quot;                                                                    
+##  [19] &quot;Imp.Rapidez&quot;                                                                    
+##  [20] &quot;Preferencia.Base&quot;                                                               
+##  [21] &quot;Preferencia.Proteina&quot;                                                           
+##  [22] &quot;Preferencia.Complementos&quot;                                                       
+##  [23] &quot;Disposicion.Pago&quot;                                                               
+##  [24] &quot;Aptitud.Social&quot;                                                                 
+##  [25] &quot;Preferencia.Dispensacion&quot;                                                       
+##  [26] &quot;Intencion.Uso&quot;                                                                  
 ##  [27] &quot;Edad&quot;                                                                           
 ##  [28] &quot;Genero&quot;                                                                         
-##  [29] &quot;Nivel_Educativo&quot;                                                                
-##  [30] &quot;Situacion_Laboral&quot;                                                              
+##  [29] &quot;Nivel.Educativo&quot;                                                                
+##  [30] &quot;Situacion.Laboral&quot;                                                              
 ##  [31] &quot;f_Motivo&quot;                                                                       
-##  [32] &quot;f_Lugar_Habitual&quot;                                                               
-##  [33] &quot;f_Formato_Preferido&quot;                                                            
-##  [34] &quot;f_Preferencia_Dispensacion&quot;                                                     
+##  [32] &quot;f_Lugar.Habitual&quot;                                                               
+##  [33] &quot;f_Formato.Preferido&quot;                                                            
+##  [34] &quot;f_Preferencia.Dispensacion&quot;                                                     
 ##  [35] &quot;f_Genero&quot;                                                                       
-##  [36] &quot;f_Situacion_Laboral&quot;                                                            
-##  [37] &quot;f_Experiencia_Barra&quot;                                                            
-##  [38] &quot;f_Intencion_Uso&quot;                                                                
+##  [36] &quot;f_Situacion.Laboral&quot;                                                            
+##  [37] &quot;f_Experiencia.Barra&quot;                                                            
+##  [38] &quot;f_Intencion.Uso&quot;                                                                
 ##  [39] &quot;f_Frecuencia&quot;                                                                   
-##  [40] &quot;f_Frecuencia_Comida_Preparada&quot;                                                  
-##  [41] &quot;f_Importancia_Saludable&quot;                                                        
-##  [42] &quot;f_Imp_Sostenibilidad&quot;                                                           
-##  [43] &quot;f_Imp_Origen_Local&quot;                                                             
-##  [44] &quot;f_Imp_Variedad&quot;                                                                 
-##  [45] &quot;f_Imp_Sabor&quot;                                                                    
-##  [46] &quot;f_Imp_Precio&quot;                                                                   
-##  [47] &quot;f_Imp_Higiene&quot;                                                                  
-##  [48] &quot;f_Imp_Rapidez&quot;                                                                  
-##  [49] &quot;f_Aptitud_Social&quot;                                                               
-##  [50] &quot;f_Disposicion_Pago&quot;                                                             
+##  [40] &quot;f_Frecuencia.Comida.Preparada&quot;                                                  
+##  [41] &quot;f_Importancia.Saludable&quot;                                                        
+##  [42] &quot;f_Imp.Sostenibilidad&quot;                                                           
+##  [43] &quot;f_Imp.Origen.Local&quot;                                                             
+##  [44] &quot;f_Imp.Variedad&quot;                                                                 
+##  [45] &quot;f_Imp.Sabor&quot;                                                                    
+##  [46] &quot;f_Imp.Precio&quot;                                                                   
+##  [47] &quot;f_Imp.Higiene&quot;                                                                  
+##  [48] &quot;f_Imp.Rapidez&quot;                                                                  
+##  [49] &quot;f_Aptitud.Social&quot;                                                               
+##  [50] &quot;f_Disposicion.Pago&quot;                                                             
 ##  [51] &quot;f_Edad&quot;                                                                         
-##  [52] &quot;f_Nivel_Educativo&quot;                                                              
-##  [53] &quot;Tipo_Comida_Comida preparada en un bar o restaurante (Excluyendo comida rápida)&quot;
-##  [54] &quot;Tipo_Comida_Comida rápida&quot;                                                      
-##  [55] &quot;Tipo_Comida_De elaboración propia&quot;                                              
-##  [56] &quot;Tipo_Comida_Platos preparados de supermercado&quot;                                  
-##  [57] &quot;Supermercado_Habitual_Alcampo&quot;                                                  
-##  [58] &quot;Supermercado_Habitual_Aldi&quot;                                                     
-##  [59] &quot;Supermercado_Habitual_Carrefour&quot;                                                
-##  [60] &quot;Supermercado_Habitual_Consum&quot;                                                   
-##  [61] &quot;Supermercado_Habitual_DIA&quot;                                                      
-##  [62] &quot;Supermercado_Habitual_Dialprix&quot;                                                 
-##  [63] &quot;Supermercado_Habitual_Fnac&quot;                                                     
-##  [64] &quot;Supermercado_Habitual_Lefties&quot;                                                  
-##  [65] &quot;Supermercado_Habitual_Lidl&quot;                                                     
-##  [66] &quot;Supermercado_Habitual_Masymas&quot;                                                  
-##  [67] &quot;Supermercado_Habitual_Mercadona&quot;                                                
-##  [68] &quot;Situaciones_Uso_Como cena ligera&quot;                                               
-##  [69] &quot;Situaciones_Uso_Como complemento de otra comida&quot;                                
-##  [70] &quot;Situaciones_Uso_Nunca&quot;                                                          
-##  [71] &quot;Situaciones_Uso_Para comer en el momento&quot;                                       
-##  [72] &quot;Situaciones_Uso_Para llevar al trabajo/universidad&quot;                             
-##  [73] &quot;Preferencia_Base_Cuscús&quot;                                                        
-##  [74] &quot;Preferencia_Base_Lechuga iceberg o romana&quot;                                      
-##  [75] &quot;Preferencia_Base_Legumbres&quot;                                                     
-##  [76] &quot;Preferencia_Base_Mezcla verde: rúcula/canónigos/espinacas...&quot;                   
-##  [77] &quot;Preferencia_Base_Pasta&quot;                                                         
-##  [78] &quot;Preferencia_Base_Quinoa&quot;                                                        
-##  [79] &quot;Preferencia_Proteina_Carne&quot;                                                     
-##  [80] &quot;Preferencia_Proteina_Huevo&quot;                                                     
-##  [81] &quot;Preferencia_Proteina_Marisco&quot;                                                   
-##  [82] &quot;Preferencia_Proteina_Pescado&quot;                                                   
-##  [83] &quot;Preferencia_Proteina_Pollo&quot;                                                     
-##  [84] &quot;Preferencia_Proteina_Quesos&quot;                                                    
-##  [85] &quot;Preferencia_Proteina_Tofu&quot;                                                      
-##  [86] &quot;Preferencia_Complementos_Especias&quot;                                              
-##  [87] &quot;Preferencia_Complementos_Frutas varias&quot;                                         
-##  [88] &quot;Preferencia_Complementos_Frutos secos/semillas&quot;                                 
-##  [89] &quot;Preferencia_Complementos_Salsas varias&quot;                                         
-##  [90] &quot;Preferencia_Complementos_Verduras cocinadas&quot;                                    
-##  [91] &quot;f_Tipo_Comida_Rapida&quot;                                                           
-##  [92] &quot;f_Tipo_Comida_Restaurante&quot;                                                      
-##  [93] &quot;f_Tipo_Comida_Super&quot;                                                            
-##  [94] &quot;f_Tipo_Comida_Propia&quot;                                                           
-##  [95] &quot;f_Super_Mercadona&quot;                                                              
-##  [96] &quot;f_Super_Consum&quot;                                                                 
-##  [97] &quot;f_Super_Carrefour&quot;                                                              
-##  [98] &quot;f_Super_Lidl&quot;                                                                   
-##  [99] &quot;f_Super_Aldi&quot;                                                                   
-## [100] &quot;f_Uso_Momento&quot;                                                                  
-## [101] &quot;f_Uso_Llevar&quot;                                                                   
-## [102] &quot;f_Uso_Cena&quot;                                                                     
-## [103] &quot;f_Uso_Complem&quot;                                                                  
-## [104] &quot;f_Base_Lechuga&quot;                                                                 
-## [105] &quot;f_Base_Verde&quot;                                                                   
-## [106] &quot;f_Base_Pasta&quot;                                                                   
-## [107] &quot;f_Base_Quinoa&quot;                                                                  
-## [108] &quot;f_Base_Legum&quot;                                                                   
-## [109] &quot;f_Prot_Pollo&quot;                                                                   
-## [110] &quot;f_Prot_Pescado&quot;                                                                 
-## [111] &quot;f_Prot_Huevo&quot;                                                                   
-## [112] &quot;f_Prot_Queso&quot;                                                                   
-## [113] &quot;f_Prot_Tofu&quot;</code></pre>
+##  [52] &quot;f_Nivel.Educativo&quot;                                                              
+##  [53] &quot;Tipo.Comida_Comida preparada en un bar o restaurante (Excluyendo comida rápida)&quot;
+##  [54] &quot;Tipo.Comida_Comida rápida&quot;                                                      
+##  [55] &quot;Tipo.Comida_De elaboración propia&quot;                                              
+##  [56] &quot;Tipo.Comida_Platos preparados de supermercado&quot;                                  
+##  [57] &quot;Supermercado.Habitual_Alcampo&quot;                                                  
+##  [58] &quot;Supermercado.Habitual_Aldi&quot;                                                     
+##  [59] &quot;Supermercado.Habitual_Carrefour&quot;                                                
+##  [60] &quot;Supermercado.Habitual_Consum&quot;                                                   
+##  [61] &quot;Supermercado.Habitual_DIA&quot;                                                      
+##  [62] &quot;Supermercado.Habitual_Dialprix&quot;                                                 
+##  [63] &quot;Supermercado.Habitual_Fnac&quot;                                                     
+##  [64] &quot;Supermercado.Habitual_Lefties&quot;                                                  
+##  [65] &quot;Supermercado.Habitual_Lidl&quot;                                                     
+##  [66] &quot;Supermercado.Habitual_Masymas&quot;                                                  
+##  [67] &quot;Supermercado.Habitual_Mercadona&quot;                                                
+##  [68] &quot;Situaciones.Uso_Como cena ligera&quot;                                               
+##  [69] &quot;Situaciones.Uso_Como complemento de otra comida&quot;                                
+##  [70] &quot;Situaciones.Uso_Nunca&quot;                                                          
+##  [71] &quot;Situaciones.Uso_Para comer en el momento&quot;                                       
+##  [72] &quot;Situaciones.Uso_Para llevar al trabajo/universidad&quot;                             
+##  [73] &quot;Preferencia.Base_Cuscús&quot;                                                        
+##  [74] &quot;Preferencia.Base_Lechuga iceberg o romana&quot;                                      
+##  [75] &quot;Preferencia.Base_Legumbres&quot;                                                     
+##  [76] &quot;Preferencia.Base_Mezcla verde: rúcula/canónigos/espinacas...&quot;                   
+##  [77] &quot;Preferencia.Base_Pasta&quot;                                                         
+##  [78] &quot;Preferencia.Base_Quinoa&quot;                                                        
+##  [79] &quot;Preferencia.Proteina_Carne&quot;                                                     
+##  [80] &quot;Preferencia.Proteina_Huevo&quot;                                                     
+##  [81] &quot;Preferencia.Proteina_Marisco&quot;                                                   
+##  [82] &quot;Preferencia.Proteina_Pescado&quot;                                                   
+##  [83] &quot;Preferencia.Proteina_Pollo&quot;                                                     
+##  [84] &quot;Preferencia.Proteina_Quesos&quot;                                                    
+##  [85] &quot;Preferencia.Proteina_Tofu&quot;                                                      
+##  [86] &quot;Preferencia.Complementos_Especias&quot;                                              
+##  [87] &quot;Preferencia.Complementos_Frutas varias&quot;                                         
+##  [88] &quot;Preferencia.Complementos_Frutos secos/semillas&quot;                                 
+##  [89] &quot;Preferencia.Complementos_Salsas varias&quot;                                         
+##  [90] &quot;Preferencia.Complementos_Verduras cocinadas&quot;                                    
+##  [91] &quot;f_Tipo.Comida.Rapida&quot;                                                           
+##  [92] &quot;f_Tipo.Comida.Restaurante&quot;                                                      
+##  [93] &quot;f_Tipo.Comida.Super&quot;                                                            
+##  [94] &quot;f_Tipo.Comida.Propia&quot;                                                           
+##  [95] &quot;f_Super.Mercadona&quot;                                                              
+##  [96] &quot;f_Super.Consum&quot;                                                                 
+##  [97] &quot;f_Super.Carrefour&quot;                                                              
+##  [98] &quot;f_Super.Lidl&quot;                                                                   
+##  [99] &quot;f_Super.Aldi&quot;                                                                   
+## [100] &quot;f_Super.Masymas&quot;                                                                
+## [101] &quot;f_Super.Alcampo&quot;                                                                
+## [102] &quot;f_Super.Fnac&quot;                                                                   
+## [103] &quot;f_Super.DIA&quot;                                                                    
+## [104] &quot;f_Super.Dialprix&quot;                                                               
+## [105] &quot;f_Super.Lefties&quot;                                                                
+## [106] &quot;f_Uso.Momento&quot;                                                                  
+## [107] &quot;f_Uso.Llevar&quot;                                                                   
+## [108] &quot;f_Uso.Cena&quot;                                                                     
+## [109] &quot;f_Uso.Complem&quot;                                                                  
+## [110] &quot;f_Uso.Nunca&quot;                                                                    
+## [111] &quot;f_Base.Lechuga&quot;                                                                 
+## [112] &quot;f_Base.Verde&quot;                                                                   
+## [113] &quot;f_Base.Pasta&quot;                                                                   
+## [114] &quot;f_Base.Quinoa&quot;                                                                  
+## [115] &quot;f_Base.Cuscus&quot;                                                                  
+## [116] &quot;f_Base.Legum&quot;                                                                   
+## [117] &quot;f_Prot.Pollo&quot;                                                                   
+## [118] &quot;f_Prot.Pescado&quot;                                                                 
+## [119] &quot;f_Prot.Huevo&quot;                                                                   
+## [120] &quot;f_Prot.Queso&quot;                                                                   
+## [121] &quot;f_Prot.Tofu&quot;                                                                    
+## [122] &quot;f_Prot.Marisco&quot;                                                                 
+## [123] &quot;f_Prot.Carne&quot;                                                                   
+## [124] &quot;f_Complem.Frutas&quot;                                                               
+## [125] &quot;f_Complem.Secos&quot;                                                                
+## [126] &quot;f_Complem.Verduras&quot;                                                             
+## [127] &quot;f_Complem.Salsas&quot;                                                               
+## [128] &quot;f_Complem.Especias&quot;</code></pre>
 <div class="sourceCode" id="cb5"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" tabindex="-1"></a><span class="co"># Verificación</span></span>
 <span id="cb5-2"><a href="#cb5-2" tabindex="-1"></a><span class="fu">colnames</span>(datos)</span></code></pre></div>
 <pre><code>##   [1] &quot;Marca.Temporal&quot;                                                                 
 ##   [2] &quot;Motivo&quot;                                                                         
 ##   [3] &quot;Frecuencia&quot;                                                                     
-##   [4] &quot;Lugar_Habitual&quot;                                                                 
-##   [5] &quot;Tipo_Comida&quot;                                                                    
-##   [6] &quot;Frecuencia_Comida_Preparada&quot;                                                    
-##   [7] &quot;Supermercado_Habitual&quot;                                                          
-##   [8] &quot;Importancia_Saludable&quot;                                                          
-##   [9] &quot;Experiencia_Barra_Ensaladas&quot;                                                    
-##  [10] &quot;Mala_Experiencia_Descripcion&quot;                                                   
-##  [11] &quot;Situaciones_Uso&quot;                                                                
-##  [12] &quot;Formato_Preferido&quot;                                                              
-##  [13] &quot;Imp_Sostenibilidad&quot;                                                             
-##  [14] &quot;Imp_Origen_Local&quot;                                                               
-##  [15] &quot;Imp_Variedad&quot;                                                                   
-##  [16] &quot;Imp_Sabor&quot;                                                                      
-##  [17] &quot;Imp_Precio&quot;                                                                     
-##  [18] &quot;Imp_Higiene&quot;                                                                    
-##  [19] &quot;Imp_Rapidez&quot;                                                                    
-##  [20] &quot;Preferencia_Base&quot;                                                               
-##  [21] &quot;Preferencia_Proteina&quot;                                                           
-##  [22] &quot;Preferencia_Complementos&quot;                                                       
-##  [23] &quot;Disposicion_Pago&quot;                                                               
-##  [24] &quot;Aptitud_Social&quot;                                                                 
-##  [25] &quot;Preferencia_Dispensacion&quot;                                                       
-##  [26] &quot;Intencion_Uso&quot;                                                                  
+##   [4] &quot;Lugar.Habitual&quot;                                                                 
+##   [5] &quot;Tipo.Comida&quot;                                                                    
+##   [6] &quot;Frecuencia.Comida.Preparada&quot;                                                    
+##   [7] &quot;Supermercado.Habitual&quot;                                                          
+##   [8] &quot;Importancia.Saludable&quot;                                                          
+##   [9] &quot;Experiencia.Barra.Ensaladas&quot;                                                    
+##  [10] &quot;Mala.Experiencia.Descripcion&quot;                                                   
+##  [11] &quot;Situaciones.Uso&quot;                                                                
+##  [12] &quot;Formato.Preferido&quot;                                                              
+##  [13] &quot;Imp.Sostenibilidad&quot;                                                             
+##  [14] &quot;Imp.Origen.Local&quot;                                                               
+##  [15] &quot;Imp.Variedad&quot;                                                                   
+##  [16] &quot;Imp.Sabor&quot;                                                                      
+##  [17] &quot;Imp.Precio&quot;                                                                     
+##  [18] &quot;Imp.Higiene&quot;                                                                    
+##  [19] &quot;Imp.Rapidez&quot;                                                                    
+##  [20] &quot;Preferencia.Base&quot;                                                               
+##  [21] &quot;Preferencia.Proteina&quot;                                                           
+##  [22] &quot;Preferencia.Complementos&quot;                                                       
+##  [23] &quot;Disposicion.Pago&quot;                                                               
+##  [24] &quot;Aptitud.Social&quot;                                                                 
+##  [25] &quot;Preferencia.Dispensacion&quot;                                                       
+##  [26] &quot;Intencion.Uso&quot;                                                                  
 ##  [27] &quot;Edad&quot;                                                                           
 ##  [28] &quot;Genero&quot;                                                                         
-##  [29] &quot;Nivel_Educativo&quot;                                                                
-##  [30] &quot;Situacion_Laboral&quot;                                                              
+##  [29] &quot;Nivel.Educativo&quot;                                                                
+##  [30] &quot;Situacion.Laboral&quot;                                                              
 ##  [31] &quot;f_Motivo&quot;                                                                       
-##  [32] &quot;f_Lugar_Habitual&quot;                                                               
-##  [33] &quot;f_Formato_Preferido&quot;                                                            
-##  [34] &quot;f_Preferencia_Dispensacion&quot;                                                     
+##  [32] &quot;f_Lugar.Habitual&quot;                                                               
+##  [33] &quot;f_Formato.Preferido&quot;                                                            
+##  [34] &quot;f_Preferencia.Dispensacion&quot;                                                     
 ##  [35] &quot;f_Genero&quot;                                                                       
-##  [36] &quot;f_Situacion_Laboral&quot;                                                            
-##  [37] &quot;f_Experiencia_Barra&quot;                                                            
-##  [38] &quot;f_Intencion_Uso&quot;                                                                
+##  [36] &quot;f_Situacion.Laboral&quot;                                                            
+##  [37] &quot;f_Experiencia.Barra&quot;                                                            
+##  [38] &quot;f_Intencion.Uso&quot;                                                                
 ##  [39] &quot;f_Frecuencia&quot;                                                                   
-##  [40] &quot;f_Frecuencia_Comida_Preparada&quot;                                                  
-##  [41] &quot;f_Importancia_Saludable&quot;                                                        
-##  [42] &quot;f_Imp_Sostenibilidad&quot;                                                           
-##  [43] &quot;f_Imp_Origen_Local&quot;                                                             
-##  [44] &quot;f_Imp_Variedad&quot;                                                                 
-##  [45] &quot;f_Imp_Sabor&quot;                                                                    
-##  [46] &quot;f_Imp_Precio&quot;                                                                   
-##  [47] &quot;f_Imp_Higiene&quot;                                                                  
-##  [48] &quot;f_Imp_Rapidez&quot;                                                                  
-##  [49] &quot;f_Aptitud_Social&quot;                                                               
-##  [50] &quot;f_Disposicion_Pago&quot;                                                             
+##  [40] &quot;f_Frecuencia.Comida.Preparada&quot;                                                  
+##  [41] &quot;f_Importancia.Saludable&quot;                                                        
+##  [42] &quot;f_Imp.Sostenibilidad&quot;                                                           
+##  [43] &quot;f_Imp.Origen.Local&quot;                                                             
+##  [44] &quot;f_Imp.Variedad&quot;                                                                 
+##  [45] &quot;f_Imp.Sabor&quot;                                                                    
+##  [46] &quot;f_Imp.Precio&quot;                                                                   
+##  [47] &quot;f_Imp.Higiene&quot;                                                                  
+##  [48] &quot;f_Imp.Rapidez&quot;                                                                  
+##  [49] &quot;f_Aptitud.Social&quot;                                                               
+##  [50] &quot;f_Disposicion.Pago&quot;                                                             
 ##  [51] &quot;f_Edad&quot;                                                                         
-##  [52] &quot;f_Nivel_Educativo&quot;                                                              
-##  [53] &quot;Tipo_Comida_Comida preparada en un bar o restaurante (Excluyendo comida rápida)&quot;
-##  [54] &quot;Tipo_Comida_Comida rápida&quot;                                                      
-##  [55] &quot;Tipo_Comida_De elaboración propia&quot;                                              
-##  [56] &quot;Tipo_Comida_Platos preparados de supermercado&quot;                                  
-##  [57] &quot;Supermercado_Habitual_Alcampo&quot;                                                  
-##  [58] &quot;Supermercado_Habitual_Aldi&quot;                                                     
-##  [59] &quot;Supermercado_Habitual_Carrefour&quot;                                                
-##  [60] &quot;Supermercado_Habitual_Consum&quot;                                                   
-##  [61] &quot;Supermercado_Habitual_DIA&quot;                                                      
-##  [62] &quot;Supermercado_Habitual_Dialprix&quot;                                                 
-##  [63] &quot;Supermercado_Habitual_Fnac&quot;                                                     
-##  [64] &quot;Supermercado_Habitual_Lefties&quot;                                                  
-##  [65] &quot;Supermercado_Habitual_Lidl&quot;                                                     
-##  [66] &quot;Supermercado_Habitual_Masymas&quot;                                                  
-##  [67] &quot;Supermercado_Habitual_Mercadona&quot;                                                
-##  [68] &quot;Situaciones_Uso_Como cena ligera&quot;                                               
-##  [69] &quot;Situaciones_Uso_Como complemento de otra comida&quot;                                
-##  [70] &quot;Situaciones_Uso_Nunca&quot;                                                          
-##  [71] &quot;Situaciones_Uso_Para comer en el momento&quot;                                       
-##  [72] &quot;Situaciones_Uso_Para llevar al trabajo/universidad&quot;                             
-##  [73] &quot;Preferencia_Base_Cuscús&quot;                                                        
-##  [74] &quot;Preferencia_Base_Lechuga iceberg o romana&quot;                                      
-##  [75] &quot;Preferencia_Base_Legumbres&quot;                                                     
-##  [76] &quot;Preferencia_Base_Mezcla verde: rúcula/canónigos/espinacas...&quot;                   
-##  [77] &quot;Preferencia_Base_Pasta&quot;                                                         
-##  [78] &quot;Preferencia_Base_Quinoa&quot;                                                        
-##  [79] &quot;Preferencia_Proteina_Carne&quot;                                                     
-##  [80] &quot;Preferencia_Proteina_Huevo&quot;                                                     
-##  [81] &quot;Preferencia_Proteina_Marisco&quot;                                                   
-##  [82] &quot;Preferencia_Proteina_Pescado&quot;                                                   
-##  [83] &quot;Preferencia_Proteina_Pollo&quot;                                                     
-##  [84] &quot;Preferencia_Proteina_Quesos&quot;                                                    
-##  [85] &quot;Preferencia_Proteina_Tofu&quot;                                                      
-##  [86] &quot;Preferencia_Complementos_Especias&quot;                                              
-##  [87] &quot;Preferencia_Complementos_Frutas varias&quot;                                         
-##  [88] &quot;Preferencia_Complementos_Frutos secos/semillas&quot;                                 
-##  [89] &quot;Preferencia_Complementos_Salsas varias&quot;                                         
-##  [90] &quot;Preferencia_Complementos_Verduras cocinadas&quot;                                    
-##  [91] &quot;f_Tipo_Comida_Rapida&quot;                                                           
-##  [92] &quot;f_Tipo_Comida_Restaurante&quot;                                                      
-##  [93] &quot;f_Tipo_Comida_Super&quot;                                                            
-##  [94] &quot;f_Tipo_Comida_Propia&quot;                                                           
-##  [95] &quot;f_Super_Mercadona&quot;                                                              
-##  [96] &quot;f_Super_Consum&quot;                                                                 
-##  [97] &quot;f_Super_Carrefour&quot;                                                              
-##  [98] &quot;f_Super_Lidl&quot;                                                                   
-##  [99] &quot;f_Super_Aldi&quot;                                                                   
-## [100] &quot;f_Uso_Momento&quot;                                                                  
-## [101] &quot;f_Uso_Llevar&quot;                                                                   
-## [102] &quot;f_Uso_Cena&quot;                                                                     
-## [103] &quot;f_Uso_Complem&quot;                                                                  
-## [104] &quot;f_Base_Lechuga&quot;                                                                 
-## [105] &quot;f_Base_Verde&quot;                                                                   
-## [106] &quot;f_Base_Pasta&quot;                                                                   
-## [107] &quot;f_Base_Quinoa&quot;                                                                  
-## [108] &quot;f_Base_Legum&quot;                                                                   
-## [109] &quot;f_Prot_Pollo&quot;                                                                   
-## [110] &quot;f_Prot_Pescado&quot;                                                                 
-## [111] &quot;f_Prot_Huevo&quot;                                                                   
-## [112] &quot;f_Prot_Queso&quot;                                                                   
-## [113] &quot;f_Prot_Tofu&quot;</code></pre>
+##  [52] &quot;f_Nivel.Educativo&quot;                                                              
+##  [53] &quot;Tipo.Comida_Comida preparada en un bar o restaurante (Excluyendo comida rápida)&quot;
+##  [54] &quot;Tipo.Comida_Comida rápida&quot;                                                      
+##  [55] &quot;Tipo.Comida_De elaboración propia&quot;                                              
+##  [56] &quot;Tipo.Comida_Platos preparados de supermercado&quot;                                  
+##  [57] &quot;Supermercado.Habitual_Alcampo&quot;                                                  
+##  [58] &quot;Supermercado.Habitual_Aldi&quot;                                                     
+##  [59] &quot;Supermercado.Habitual_Carrefour&quot;                                                
+##  [60] &quot;Supermercado.Habitual_Consum&quot;                                                   
+##  [61] &quot;Supermercado.Habitual_DIA&quot;                                                      
+##  [62] &quot;Supermercado.Habitual_Dialprix&quot;                                                 
+##  [63] &quot;Supermercado.Habitual_Fnac&quot;                                                     
+##  [64] &quot;Supermercado.Habitual_Lefties&quot;                                                  
+##  [65] &quot;Supermercado.Habitual_Lidl&quot;                                                     
+##  [66] &quot;Supermercado.Habitual_Masymas&quot;                                                  
+##  [67] &quot;Supermercado.Habitual_Mercadona&quot;                                                
+##  [68] &quot;Situaciones.Uso_Como cena ligera&quot;                                               
+##  [69] &quot;Situaciones.Uso_Como complemento de otra comida&quot;                                
+##  [70] &quot;Situaciones.Uso_Nunca&quot;                                                          
+##  [71] &quot;Situaciones.Uso_Para comer en el momento&quot;                                       
+##  [72] &quot;Situaciones.Uso_Para llevar al trabajo/universidad&quot;                             
+##  [73] &quot;Preferencia.Base_Cuscús&quot;                                                        
+##  [74] &quot;Preferencia.Base_Lechuga iceberg o romana&quot;                                      
+##  [75] &quot;Preferencia.Base_Legumbres&quot;                                                     
+##  [76] &quot;Preferencia.Base_Mezcla verde: rúcula/canónigos/espinacas...&quot;                   
+##  [77] &quot;Preferencia.Base_Pasta&quot;                                                         
+##  [78] &quot;Preferencia.Base_Quinoa&quot;                                                        
+##  [79] &quot;Preferencia.Proteina_Carne&quot;                                                     
+##  [80] &quot;Preferencia.Proteina_Huevo&quot;                                                     
+##  [81] &quot;Preferencia.Proteina_Marisco&quot;                                                   
+##  [82] &quot;Preferencia.Proteina_Pescado&quot;                                                   
+##  [83] &quot;Preferencia.Proteina_Pollo&quot;                                                     
+##  [84] &quot;Preferencia.Proteina_Quesos&quot;                                                    
+##  [85] &quot;Preferencia.Proteina_Tofu&quot;                                                      
+##  [86] &quot;Preferencia.Complementos_Especias&quot;                                              
+##  [87] &quot;Preferencia.Complementos_Frutas varias&quot;                                         
+##  [88] &quot;Preferencia.Complementos_Frutos secos/semillas&quot;                                 
+##  [89] &quot;Preferencia.Complementos_Salsas varias&quot;                                         
+##  [90] &quot;Preferencia.Complementos_Verduras cocinadas&quot;                                    
+##  [91] &quot;f_Tipo.Comida.Rapida&quot;                                                           
+##  [92] &quot;f_Tipo.Comida.Restaurante&quot;                                                      
+##  [93] &quot;f_Tipo.Comida.Super&quot;                                                            
+##  [94] &quot;f_Tipo.Comida.Propia&quot;                                                           
+##  [95] &quot;f_Super.Mercadona&quot;                                                              
+##  [96] &quot;f_Super.Consum&quot;                                                                 
+##  [97] &quot;f_Super.Carrefour&quot;                                                              
+##  [98] &quot;f_Super.Lidl&quot;                                                                   
+##  [99] &quot;f_Super.Aldi&quot;                                                                   
+## [100] &quot;f_Super.Masymas&quot;                                                                
+## [101] &quot;f_Super.Alcampo&quot;                                                                
+## [102] &quot;f_Super.Fnac&quot;                                                                   
+## [103] &quot;f_Super.DIA&quot;                                                                    
+## [104] &quot;f_Super.Dialprix&quot;                                                               
+## [105] &quot;f_Super.Lefties&quot;                                                                
+## [106] &quot;f_Uso.Momento&quot;                                                                  
+## [107] &quot;f_Uso.Llevar&quot;                                                                   
+## [108] &quot;f_Uso.Cena&quot;                                                                     
+## [109] &quot;f_Uso.Complem&quot;                                                                  
+## [110] &quot;f_Uso.Nunca&quot;                                                                    
+## [111] &quot;f_Base.Lechuga&quot;                                                                 
+## [112] &quot;f_Base.Verde&quot;                                                                   
+## [113] &quot;f_Base.Pasta&quot;                                                                   
+## [114] &quot;f_Base.Quinoa&quot;                                                                  
+## [115] &quot;f_Base.Cuscus&quot;                                                                  
+## [116] &quot;f_Base.Legum&quot;                                                                   
+## [117] &quot;f_Prot.Pollo&quot;                                                                   
+## [118] &quot;f_Prot.Pescado&quot;                                                                 
+## [119] &quot;f_Prot.Huevo&quot;                                                                   
+## [120] &quot;f_Prot.Queso&quot;                                                                   
+## [121] &quot;f_Prot.Tofu&quot;                                                                    
+## [122] &quot;f_Prot.Marisco&quot;                                                                 
+## [123] &quot;f_Prot.Carne&quot;                                                                   
+## [124] &quot;f_Complem.Frutas&quot;                                                               
+## [125] &quot;f_Complem.Secos&quot;                                                                
+## [126] &quot;f_Complem.Verduras&quot;                                                             
+## [127] &quot;f_Complem.Salsas&quot;                                                               
+## [128] &quot;f_Complem.Especias&quot;</code></pre>
+</div>
+<div id="control-de-consistencia" class="section level2" number="2.3">
+<h2><span class="header-section-number">2.3</span> Control de
+consistencia</h2>
+<p>Hemos introducido un control de consistencia en la pregunta sobre el
+supermercado en el que el encuestado compra comida habitualmente. Dos de
+las posibles respuestas son Fnac y Lefties, que no son supermercados.
+Por tanto, tendremos que descartar aquellos cuestionarios que tengan
+marcada alguna de estas respuestas, ya que es muy probable que hayan
+sido respondidos al azar o de forma poca seria.</p>
+<div class="sourceCode" id="cb7"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" tabindex="-1"></a>n.filas.bruto <span class="ot">&lt;-</span> <span class="fu">dim</span>(datos)[<span class="dv">1</span>]</span>
+<span id="cb7-2"><a href="#cb7-2" tabindex="-1"></a></span>
+<span id="cb7-3"><a href="#cb7-3" tabindex="-1"></a>datos <span class="ot">&lt;-</span> <span class="fu">subset</span>(datos, <span class="sc">!</span>(Supermercado.Habitual <span class="sc">%in%</span> <span class="st">&#39;Fnac&#39;</span>))</span>
+<span id="cb7-4"><a href="#cb7-4" tabindex="-1"></a>datos <span class="ot">&lt;-</span> <span class="fu">subset</span>(datos, <span class="sc">!</span>(Supermercado.Habitual <span class="sc">%in%</span> <span class="st">&#39;Lefties&#39;</span>))</span>
+<span id="cb7-5"><a href="#cb7-5" tabindex="-1"></a></span>
+<span id="cb7-6"><a href="#cb7-6" tabindex="-1"></a>n.filas <span class="ot">&lt;-</span> <span class="fu">dim</span>(datos)[<span class="dv">1</span>]</span></code></pre></div>
+<p>En el trabajo de campo recogimos inicialmente 36 cuestionarios. Tras
+realizar el control de consistencia, nuestra muestra efectiva es de 35
+cuestionarios válidos.</p>
 </div>
 </div>
 

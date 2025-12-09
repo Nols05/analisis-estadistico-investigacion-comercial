@@ -1,7 +1,7 @@
 ---
 title: "Análisis de Mercado: Barra de Ensaladas"
-subtitle: "Estudio sobre preferencias, hábitos de consumo y disposición de pago"
-author: "Departamento de Análisis de Datos"
+subtitle: "Asignatura: Investigación Comercial"
+author: "Noel Lirón Martínez, Raquel Mus Maquieira, Carles Sahuquillo Soriano"
 date: "`r Sys.Date()`"
 output: 
   html_document:
@@ -19,7 +19,7 @@ output:
 knitr::opts_chunk$set(echo = TRUE, message = FALSE, warning = FALSE, fig.align = "center", fig.width = 10)
 ```
 
-# 1. Preparación del Entorno
+# Preparación del Entorno
 
 
 ```{r librerias}
@@ -30,7 +30,7 @@ pacman::p_load(
   readxl, splitstackshape, descr, rstatix, 
   tibble, dplyr, tidyr, ggplot2, 
   xtable, likert, ggpubr, flextable, 
-  nortest, DT, RColorBrewer
+  nortest, DT, RColorBrewer, graphics
 )
 
 options(digits = 3)
@@ -42,7 +42,7 @@ theme_set(theme_minimal() +
 
 ---
 
-# 2. Ingesta y Limpieza de Datos {.tabset}
+# Ingesta y Limpieza de Datos {.tabset}
 
 En esta sección procesamos el archivo crudo `respuestasEncuesta.xlsx`, renombrando las columnas para facilitar su manipulación y convirtiendo las variables categóricas.
 
@@ -194,6 +194,13 @@ datos$f_Super.Consum    <- factor(datos$Supermercado.Habitual_Consum, levels = c
 datos$f_Super.Carrefour <- factor(datos$Supermercado.Habitual_Carrefour, levels = c(0, 1), labels = c('No', 'Sí'))
 datos$f_Super.Lidl      <- factor(datos$Supermercado.Habitual_Lidl, levels = c(0, 1), labels = c('No', 'Sí'))
 datos$f_Super.Aldi      <- factor(datos$Supermercado.Habitual_Aldi, levels = c(0, 1), labels = c('No', 'Sí'))
+datos$f_Super.Masymas   <- factor(datos$Supermercado.Habitual_Masymas, levels = c(0, 1), labels = c('No', 'Sí'))
+datos$f_Super.Alcampo   <- factor(datos$Supermercado.Habitual_Alcampo, levels = c(0, 1), labels = c('No', 'Sí'))
+#datos$f_Super.Gadis     <- factor(datos$Supermercado.Habitual_Gadis, levels = c(0, 1), labels = c('No', 'Sí'))
+datos$f_Super.Fnac      <- factor(datos$Supermercado.Habitual_Fnac, levels = c(0, 1), labels = c('No', 'Sí'))
+datos$f_Super.DIA       <- factor(datos$Supermercado.Habitual_DIA, levels = c(0, 1), labels = c('No', 'Sí'))
+datos$f_Super.Dialprix  <- factor(datos$Supermercado.Habitual_Dialprix, levels = c(0, 1), labels = c('No', 'Sí'))
+datos$f_Super.Lefties   <- factor(datos$Supermercado.Habitual_Lefties, levels = c(0, 1), labels = c('No', 'Sí'))
 
 # --- P10: Situaciones de Uso ---
 datos$f_Uso.Momento <- factor(datos$`Situaciones.Uso_Para comer en el momento`, 
@@ -204,16 +211,20 @@ datos$f_Uso.Cena    <- factor(datos$`Situaciones.Uso_Como cena ligera`,
                               levels = c(0, 1), labels = c('No', 'Sí'))
 datos$f_Uso.Complem <- factor(datos$`Situaciones.Uso_Como complemento de otra comida`, 
                               levels = c(0, 1), labels = c('No', 'Sí'))
+datos$f_Uso.Nunca   <- factor(datos$`Situaciones.Uso_Nunca`, 
+                              levels = c(0, 1), labels = c('No', 'Sí'))
 
 # --- P13: Preferencia Base ---
 datos$f_Base.Lechuga <- factor(datos$`Preferencia.Base_Lechuga iceberg o romana`, 
                                levels = c(0, 1), labels = c('No', 'Sí'))
 # Cuidado con esta línea, el nombre es muy largo y tiene símbolos:
-datos$f_Base.Verde   <- factor(datos$`Preferencia.Base_Mezcla verde: rúcula/canónigos/espinacas...`, 
+datos$f_Base.Verde   <- factor(datos$`Preferencia.Base_Mezcla verde: rúcula/canónigos/espinacas...`,
                                levels = c(0, 1), labels = c('No', 'Sí'))
 datos$f_Base.Pasta   <- factor(datos$Preferencia.Base_Pasta, 
                                levels = c(0, 1), labels = c('No', 'Sí'))
 datos$f_Base.Quinoa  <- factor(datos$Preferencia.Base_Quinoa, 
+                               levels = c(0, 1), labels = c('No', 'Sí'))
+datos$f_Base.Cuscus  <- factor(datos$`Preferencia.Base_Cuscús`, 
                                levels = c(0, 1), labels = c('No', 'Sí'))
 datos$f_Base.Legum   <- factor(datos$Preferencia.Base_Legumbres, 
                                levels = c(0, 1), labels = c('No', 'Sí'))
@@ -224,6 +235,15 @@ datos$f_Prot.Pescado <- factor(datos$Preferencia.Proteina_Pescado, levels = c(0,
 datos$f_Prot.Huevo   <- factor(datos$Preferencia.Proteina_Huevo, levels = c(0, 1), labels = c('No', 'Sí'))
 datos$f_Prot.Queso   <- factor(datos$Preferencia.Proteina_Quesos, levels = c(0, 1), labels = c('No', 'Sí'))
 datos$f_Prot.Tofu    <- factor(datos$Preferencia.Proteina_Tofu, levels = c(0, 1), labels = c('No', 'Sí'))
+datos$f_Prot.Marisco <- factor(datos$Preferencia.Proteina_Marisco, levels = c(0, 1), labels = c('No', 'Sí'))
+datos$f_Prot.Carne   <- factor(datos$Preferencia.Proteina_Carne, levels = c(0, 1), labels = c('No', 'Sí'))
+
+# --- P15: Complementos ---
+datos$f_Complem.Frutas   <- factor(datos$`Preferencia.Complementos_Frutas varias`, levels = c(0, 1), labels = c('No', 'Sí'))
+datos$f_Complem.Secos    <- factor(datos$`Preferencia.Complementos_Frutos secos/semillas`, levels = c(0, 1), labels = c('No', 'Sí'))
+datos$f_Complem.Verduras <- factor(datos$`Preferencia.Complementos_Verduras cocinadas`, levels = c(0, 1), labels = c('No', 'Sí'))
+datos$f_Complem.Salsas   <- factor(datos$`Preferencia.Complementos_Salsas varias`, levels = c(0, 1), labels = c('No', 'Sí'))
+datos$f_Complem.Especias    <- factor(datos$Preferencia.Complementos_Especias, levels = c(0, 1), labels = c('No', 'Sí'))
 
 # Verificación final
 colnames(datos)
@@ -238,11 +258,58 @@ Hemos introducido un control de consistencia en la pregunta sobre el supermercad
 
 n.filas.bruto <- dim(datos)[1]
 
-datos <- subset(datos, !(f_Super.Fnac))
-datos <- subset(datos, !(f_Super.Lefties))
+datos <- subset(datos, !(Supermercado.Habitual %in% 'Fnac'))
+datos <- subset(datos, !(Supermercado.Habitual %in% 'Lefties'))
 
 n.filas <- dim(datos)[1]
 
 ``` 
 
 En el trabajo de campo recogimos inicialmente `r n.filas.bruto` cuestionarios. Tras realizar el control de consistencia, nuestra muestra efectiva es de `r n.filas` cuestionarios válidos.
+
+# Estadísticos descriptivos
+Vamos a distinguir tres tipos de variables: categóricas, numéricas y cualitativas. Cada una tiene un tratamiento descriptivo diferente.
+
+## Variables catégoricas
+
+### Caso de variables catégoricas carentes de orden
+Las categorías de f_Motivo son los motivos por los que los encuestados comen fuera de casa. Se trata de una variable cuyas categorías no guardan una relación de orden entre sí. Por ese motivo no se definieron los levels al factorizarla.
+
+```{r P1}
+# Paso 1.1: Crear df_freq usando 'freq' y nombrarlo correctamente
+# Asumo que la función 'freq' proviene de la librería 'questionr' o similar.
+# El resultado de 'freq' debe ser transformado a data frame y luego manipulado.
+
+df_freq <- as.data.frame(freq(datos$f_Motivo, plot=FALSE)) 
+
+# Paso 1.2: Renombrar las columnas para que coincidan con tu código posterior
+
+# La función 'freq' (si es de 'questionr') típicamente produce columnas
+# con nombres como 'modalities' y 'percent'. Debes renombrarlas.
+colnames(df_freq) <- c("Motivo", "Frecuencia", "Porcentaje", "Porcentaje_Acumulado") 
+
+# Paso 1.3: Limpiar el data frame para quitar filas que no sirven
+# (Como los totales o filas con NA que freq añade a veces)
+
+df_freq <- na.omit(df_freq)
+df_freq <- df_freq[df_freq$Motivo != "Total", ] # Eliminar la fila 'Total' si existe
+
+# ¡Importante! Si la función 'freq' incluye una fila de Total, y esa fila
+# está nombrada como "Total" en la columna 'Motivo', ¡esta línea funcionará!
+
+# 1. Filtramos los datos para quitar el TOTAL y los que valen 0
+# Utilizamos el data frame correctamente nombrado: df_freq
+datos_grafico <- df_freq[df_freq$Motivo != "Total" & df_freq$Porcentaje > 0, ]
+
+# Tu código de filtrado (usando la variable ya corregida como df_freq):
+# datos_grafico <- df_freq[df_freq$Motivo != "Total" & df_freq$Porcentaje > 0, ]
+
+# 2. Hacemos el gráfico con los datos limpios y etiquetas claras
+pie(datos_grafico$Porcentaje,
+    # Creamos las etiquetas: Nombre del Motivo + Porcentaje redondeado + '%'
+    labels=paste(datos_grafico$Motivo, round(datos_grafico$Porcentaje, 1), "%"),
+    # Titulo
+    main = 'Figura 1. Motivos de compra.')
+
+```
+
