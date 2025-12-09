@@ -1,17 +1,19 @@
 ---
-title: "Análisis de Mercado: Barra de Ensaladas"
-subtitle: "Asignatura: Investigación Comercial"
+title: 'Análisis de Mercado: Barra de Ensaladas'
 author: "Noel Lirón Martínez, Raquel Mus Maquieira, Carles Sahuquillo Soriano"
 date: "`r Sys.Date()`"
-output: 
+output:
   html_document:
-    theme: flatly        # Temas recomendados: flatly, cerulean, journal, cosmo
+    theme: flatly
     highlight: tango
-    toc: true            # Tabla de contenidos
-    toc_float:           # Tabla de contenidos flotante a la izquierda
+    toc: true
+    toc_float:
       collapsed: false
       smooth_scroll: true
     number_sections: true
+  pdf_document:
+    toc: true
+subtitle: 'Asignatura: Investigación Comercial'
 ---
 
 ```{r setup, include=FALSE}
@@ -247,12 +249,9 @@ datos$f_Complem.Especias    <- factor(datos$Preferencia.Complementos_Especias, l
 
 # Verificación final
 colnames(datos)
-
-# Verificación
-colnames(datos)
 ```
 ## Control de consistencia
-Hemos introducido un control de consistencia en la pregunta sobre el supermercado en el que el encuestado compra comida habitualmente. Dos de las posibles respuestas son Fnac y Lefties, que no son supermercados. Por tanto, tendremos que descartar aquellos cuestionarios que tengan marcada alguna de estas respuestas, ya que es muy probable que hayan sido respondidos al azar o de forma poca seria.
+Hemos introducido un control de consistencia en la pregunta sobre el supermercado en el que el encuestado compra comida habitualmente. Dos de las posibles respuestas son `Fnac` y `Lefties`, que no son supermercados. Por tanto, tendremos que descartar aquellos cuestionarios que tengan marcada alguna de estas respuestas, ya que es muy probable que hayan sido respondidos al azar o de forma poca seria.
 
 ```{r control consistencia}
 
@@ -273,43 +272,206 @@ Vamos a distinguir tres tipos de variables: categóricas, numéricas y cualitati
 ## Variables catégoricas
 
 ### Caso de variables catégoricas carentes de orden
-Las categorías de f_Motivo son los motivos por los que los encuestados comen fuera de casa. Se trata de una variable cuyas categorías no guardan una relación de orden entre sí. Por ese motivo no se definieron los levels al factorizarla.
 
-```{r P1}
-# Paso 1.1: Crear df_freq usando 'freq' y nombrarlo correctamente
-# Asumo que la función 'freq' proviene de la librería 'questionr' o similar.
-# El resultado de 'freq' debe ser transformado a data frame y luego manipulado.
+#### `f_Motivo`
+Las categorías de `f_Motivo` son los motivos por los que los encuestados comen fuera de casa. Se trata de una variable cuyas categorías no guardan una relación de orden entre sí. Por ese motivo no se definieron los `levels` al factorizarla.
 
-df_freq <- as.data.frame(freq(datos$f_Motivo, plot=FALSE)) 
+```{r P1-tarta}
+# Crear el data frame de frecuencias y porcentajes usando dplyr
+datos_grafico <- datos %>%
+  # Contar la frecuencia de cada nivel de la variable f_Motivo
+  count(f_Motivo, name = "Frecuencia") %>%
+  # Calcular el porcentaje y el texto de la etiqueta
+  mutate(
+    Porcentaje = Frecuencia / sum(Frecuencia) * 100,
+    Etiquetas = paste0(f_Motivo, "\n(", round(Porcentaje, 1), "%)") # Etiqueta para el gráfico
+  ) %>%
+  # Eliminar filas con 0% si existen, y categorías no deseadas
+  filter(Porcentaje > 0 & f_Motivo != "Total") # Se filtra 'Total' aunque dplyr no lo añade
 
-# Paso 1.2: Renombrar las columnas para que coincidan con tu código posterior
-
-# La función 'freq' (si es de 'questionr') típicamente produce columnas
-# con nombres como 'modalities' y 'percent'. Debes renombrarlas.
-colnames(df_freq) <- c("Motivo", "Frecuencia", "Porcentaje", "Porcentaje_Acumulado") 
-
-# Paso 1.3: Limpiar el data frame para quitar filas que no sirven
-# (Como los totales o filas con NA que freq añade a veces)
-
-df_freq <- na.omit(df_freq)
-df_freq <- df_freq[df_freq$Motivo != "Total", ] # Eliminar la fila 'Total' si existe
-
-# ¡Importante! Si la función 'freq' incluye una fila de Total, y esa fila
-# está nombrada como "Total" en la columna 'Motivo', ¡esta línea funcionará!
-
-# 1. Filtramos los datos para quitar el TOTAL y los que valen 0
-# Utilizamos el data frame correctamente nombrado: df_freq
-datos_grafico <- df_freq[df_freq$Motivo != "Total" & df_freq$Porcentaje > 0, ]
-
-# Tu código de filtrado (usando la variable ya corregida como df_freq):
-# datos_grafico <- df_freq[df_freq$Motivo != "Total" & df_freq$Porcentaje > 0, ]
-
-# 2. Hacemos el gráfico con los datos limpios y etiquetas claras
+# Usamos el vector de Porcentaje para el tamaño de las porciones
 pie(datos_grafico$Porcentaje,
-    # Creamos las etiquetas: Nombre del Motivo + Porcentaje redondeado + '%'
-    labels=paste(datos_grafico$Motivo, round(datos_grafico$Porcentaje, 1), "%"),
-    # Titulo
-    main = 'Figura 1. Motivos de compra.')
+    # Usamos las Etiquetas que combinan nombre y porcentaje
+    labels = datos_grafico$Etiquetas,
+    # Título
+    main = 'Figura 1. Motivos de compra.',
+    # Asignar un color diferente a cada porción
+    col = RColorBrewer::brewer.pal(n = nrow(datos_grafico), name = "Set3"))
 
 ```
+Se observa que `Conveniencia` es el principal motivo por el que los encuestados comen fuera de casa, representando el 38.9% de la muestra. A continuación presentamos los resultados en formato de tabla:
 
+```{r P1-tabla}
+# Preparación de datos
+df_tabla_motivo <- datos %>%
+  # Contar la frecuencia de cada nivel
+  dplyr::count(f_Motivo, name = "Frecuencia") %>%
+  # Calcular porcentajes
+  dplyr::mutate(
+    Porcentaje = Frecuencia / sum(Frecuencia) * 100
+  ) %>%
+  # Redondear y formatear los porcentajes
+  dplyr::mutate(
+    Porcentaje = paste0(round(Porcentaje, 1), "%")
+  )
+
+# Calcular y añadir la fila total
+df_total <- data.frame(
+  f_Motivo = "Total",
+  Frecuencia = sum(df_tabla_motivo$Frecuencia),
+  Porcentaje = "100.0%"
+)
+
+# Unir el data frame de frecuencias con la fila total
+df_tabla_final <- bind_rows(df_tabla_motivo, df_total)
+
+# Generación de la tabla (flextable)
+ft <- flextable::flextable(df_tabla_final) %>%
+
+flextable::set_caption(caption = "Tabla 1. Distribución de frecuencias para Motivo de Comer Fuera.") %>%
+  
+  # Renombrar las cabeceras
+  flextable::set_header_labels(
+    f_Motivo = "Motivo de Comer Fuera",
+    Frecuencia = "Frecuencia (n)",
+    Porcentaje = "Porcentaje"
+  ) %>%
+  
+  # Aplicar negrita y bordes a la fila "Total"
+  flextable::bold(i = nrow(df_tabla_final), part = "body") %>% # Negrita a la última fila (Total)
+  flextable::border_remove() %>% # Quitar bordes predeterminados
+  flextable::theme_booktabs() %>% # Aplicar un tema con líneas horizontales
+  
+  # Formato de alineación y cabecera
+  flextable::align(j = 1, align = "left", part = "body") %>%     # Columna 1 (Motivo) a la izquierda
+  flextable::align(j = 2:3, align = "center", part = "all") %>% # Columnas 2 y 3 (Datos) CENTRADAS
+  flextable::align(align = "center", part = "header") %>%        # Encabezados CENTRADOS
+  
+  # Añadir una línea superior a la fila "Total" para separarla
+  flextable::hline(i = nrow(df_tabla_final) - 1, border = officer::fp_border(width = 1.5, color = "black")) %>%
+  
+  # Ajustar el ancho de las columnas
+  flextable::autofit()
+
+# Mostrar la tabla
+ft
+```
+
+#### `f_Lugar.Habitual`
+Las categorías de `f_Lugar.Habitual` son los lugares en los que los encuestados comen fuera de casa. Se trata de una variable cuyas categorías no guardan una relación de orden entre sí. Por ese motivo no se definieron los `levels` al factorizarla.
+
+```{r P3-tarta}
+# Crear el data frame de frecuencias y porcentajes usando dplyr
+datos_grafico <- datos %>%
+  # Contar la frecuencia de cada nivel de la variable f_Motivo
+  count(f_Lugar.Habitual, name = "Frecuencia") %>%
+  # Calcular el porcentaje y el texto de la etiqueta
+  mutate(
+    Porcentaje = Frecuencia / sum(Frecuencia) * 100,
+    Etiquetas = paste0(f_Lugar.Habitual, "\n(", round(Porcentaje, 1), "%)") # Etiqueta para el gráfico
+  ) %>%
+  # Eliminar filas con 0% si existen, y categorías no deseadas
+  filter(Porcentaje > 0 & f_Lugar.Habitual != "Total") # Se filtra 'Total' aunque dplyr no lo añade
+
+# Usamos el vector de Porcentaje para el tamaño de las porciones
+pie(datos_grafico$Porcentaje,
+    # Usamos las Etiquetas que combinan nombre y porcentaje
+    labels = datos_grafico$Etiquetas,
+    # Título
+    main = 'Figura 2. Lugar habitual.',
+    # Asignar un color diferente a cada porción
+    col = RColorBrewer::brewer.pal(n = nrow(datos_grafico), name = "Set3"))
+
+```
+Se observa que `Restaurante/Bar` es el principal lugar en el que los encuestados comen fuera de casa, representando el 71.4% de la muestra. A continuación presentamos los resultados en formato de tabla:
+
+```{r P3-tabla}
+# Preparación de datos
+df_tabla_lugar <- datos %>%
+  # Contar la frecuencia de cada nivel
+  dplyr::count(f_Lugar.Habitual, name = "Frecuencia") %>%
+  # Calcular porcentajes
+  dplyr::mutate(
+    Porcentaje = Frecuencia / sum(Frecuencia) * 100
+  ) %>%
+  # Redondear y formatear los porcentajes
+  dplyr::mutate(
+    Porcentaje = paste0(round(Porcentaje, 1), "%")
+  )
+
+# Calcular y añadir la fila total
+df_total <- data.frame(
+  f_Lugar.Habitual = "Total",
+  Frecuencia = sum(df_tabla_lugar$Frecuencia),
+  Porcentaje = "100.0%"
+)
+
+# Unir el data frame de frecuencias con la fila total
+df_tabla_final <- bind_rows(df_tabla_lugar, df_total)
+
+# Generación de la tabla (flextable)
+ft <- flextable::flextable(df_tabla_final) %>%
+
+flextable::set_caption(caption = "Tabla 2. Distribución de frecuencias para Lugar habitual en el que se come fuera de casa.") %>%
+  
+  # Renombrar las cabeceras
+  flextable::set_header_labels(
+    f_Lugar.Habitual = "Lugar Habitual",
+    Frecuencia = "Frecuencia (n)",
+    Porcentaje = "Porcentaje"
+  ) %>%
+  
+  # Aplicar negrita y bordes a la fila "Total"
+  flextable::bold(i = nrow(df_tabla_final), part = "body") %>% # Negrita a la última fila (Total)
+  flextable::border_remove() %>% # Quitar bordes predeterminados
+  flextable::theme_booktabs() %>% # Aplicar un tema con líneas horizontales
+  
+  # Formato de alineación y cabecera
+  flextable::align(j = 1, align = "left", part = "body") %>%     # Columna 1 (Motivo) a la izquierda
+  flextable::align(j = 2:3, align = "center", part = "all") %>% # Columnas 2 y 3 (Datos) CENTRADAS
+  flextable::align(align = "center", part = "header") %>%        # Encabezados CENTRADOS
+  
+  # Añadir una línea superior a la fila "Total" para separarla
+  flextable::hline(i = nrow(df_tabla_final) - 1, border = officer::fp_border(width = 1.5, color = "black")) %>%
+  
+  # Ajustar el ancho de las columnas
+  flextable::autofit()
+
+# Mostrar la tabla
+ft
+```
+
+#### `f_Tipo.Comida.Rapida`
+Las categorías de `f_Tipo.Comida.Rapida` son si los encuestados comen fuera de casa, si eligen comida rápida o no. Se trata de una variable cuyas categorías no guardan una relación de orden entre sí. Por ese motivo no se definieron los `levels` al factorizarla.
+
+```{r P2_Tipo_Comida_Rapida, fig.height=5}
+# 1. PREPARACIÓN DE DATOS
+# Contamos la frecuencia (n) y calculamos el porcentaje
+df_rapida <- datos %>%
+  dplyr::count(f_Tipo.Comida.Rapida, name = "Frecuencia") %>%
+  dplyr::mutate(
+    Porcentaje = Frecuencia / sum(Frecuencia) * 100
+  )
+
+# 2. GENERACIÓN DEL GRÁFICO DE BARRAS (ggplot2)
+ggplot(df_rapida, aes(x = f_Tipo.Comida.Rapida, y = Frecuencia, fill = f_Tipo.Comida.Rapida)) +
+  # Barras
+  geom_bar(stat = "identity") +
+  # Etiquetas de Porcentaje sobre las barras
+  geom_text(aes(label = paste0(round(Porcentaje, 1), "%")), 
+            vjust = -0.5, # Ajuste vertical para que quede sobre la barra
+            size = 5) + 
+  
+  # Se añade una expansión del 10% en el límite superior del eje Y
+  scale_y_continuous(expand = expansion(mult = c(0, 0.1))) + 
+  
+  # 4. Títulos y Etiquetas
+  labs(
+    title = "Figura 3. Consumo de Comida Rápida",
+    x = "Consume Comida Rápida",
+    y = "Frecuencia (n)",
+    fill = "Consume" # Título de la leyenda
+  ) +
+  # 5. Personalización de color
+  scale_fill_brewer(palette = "Set1")
+```
