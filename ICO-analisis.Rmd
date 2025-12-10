@@ -442,88 +442,144 @@ ft
 ```
 
 #### `f_Tipo.Comida`
-Las categorías de `f_Tipo.Comida` hacen referencia al tipo de comida que los encuestados suelen comer cuando comen fuera de casa. Es importante destacar que esta variable proviene de una pregunta con respuesta multiple por lo que la suma de los porcentajes superará el 100%.
-
-```{r P4-barras, fig.height=5}
-# Definir las variables a analizar del grupo "Tipo de Comida"
+Las categorías de `f_Tipo.Comida` hacen referencia al tipo de comida que los encuestados suelen comer cuando comen fuera de casa. Es importante destacar que esta variable proviene de una pregunta con respuesta multiple por lo que optamos por un gráfico de barras multiples basandonos en si ha se ha seleccionado cada respuesta o no.
+```{r P4-barras, fig.height=6, fig.width=10}
+# Definir las variables a analizar (P4: Tipo de Comida)
 multi_vars <- c("f_Tipo.Comida.Rapida", "f_Tipo.Comida.Restaurante", "f_Tipo.Comida.Super", 
                 "f_Tipo.Comida.Propia")
 
-# Calcular Frecuencia (n) y Porcentaje (%) de 'Sí'
-df_multi_res <- datos %>%
-  # Seleccionar solo las variables del grupo P4
+# Transformar a formato largo y contar frecuencias de SÍ/NO
+df_barras_dobles <- datos %>%
   dplyr::select(all_of(multi_vars)) %>%
-  # Sumar el número de 'Sí' para cada columna
-  dplyr::summarise(across(everything(), ~sum(. == 'Sí'))) %>%
-  # Transformar de formato ancho a largo (una fila por opción)
-  tidyr::pivot_longer(everything(), 
-                      names_to = "Tipo_de_Comida", 
-                      values_to = "Frecuencia") %>%
-  # Calcular el porcentaje y limpiar el texto de las etiquetas
-  dplyr::mutate(
-    Porcentaje = (Frecuencia / n.filas) * 100,
-    # Usamos fixed = TRUE para tratar el patrón como texto literal.
-    Tipo_de_Comida = gsub("f_Tipo.Comida.", "", Tipo_de_Comida, fixed = TRUE),
-    # Capitalizar la primera letra para mejor presentación
-    Tipo_de_Comida = tools::toTitleCase(Tipo_de_Comida) 
+  tidyr::pivot_longer(
+    cols = everything(), 
+    names_to = "Tipo_de_Comida", 
+    values_to = "Respuesta"
   ) %>%
-  # Excluir la opción que nadie marcó (si existiera)
-  dplyr::filter(Frecuencia > 0)
-
-
-# Generación del Gráfico de Barras (horizontal)
-ggplot(df_multi_res, aes(x = Porcentaje, y = reorder(Tipo_de_Comida, Porcentaje))) +
-  # Barras horizontales
-  geom_bar(stat = "identity", fill = "#3182bd") +
-  # Etiquetas de Porcentaje sobre las barras
-  geom_text(aes(label = paste0(round(Porcentaje, 1), "%")), 
-            hjust = -0.1,  # Ajuste horizontal para que quede a la derecha de la barra
-            size = 4) + 
-  
-  # Corrección del eje X para dejar espacio al texto y evitar cortes
-  scale_x_continuous(expand = expansion(mult = c(0, 0.2))) + 
-  
-  # Títulos y Etiquetas
-  labs(
-    title = "Figura 3. Tipos de Comida Consumida Habitualmente",
-    x = "Porcentaje de Encuestados",
-    y = NULL # No necesitamos título en el eje Y
+  dplyr::count(Tipo_de_Comida, Respuesta, name = "Frecuencia") %>%
+  dplyr::mutate(
+    Tipo_de_Comida = gsub("f_Tipo.Comida.", "", Tipo_de_Comida, fixed = TRUE),
+    Tipo_de_Comida = tools::toTitleCase(Tipo_de_Comida),
+    Respuesta = factor(Respuesta, levels = c("No", "Sí")) 
   )
-```
-Se observa una clara dominancia del consumo de comida de restaurante (con un 77,1%), seguido de comida de elaboración propia (con un 31,4%). Estos resultados sugieren que los consumidores están acostumbrados a un formato de comida que prioriza una comida preparada y de calidad.
 
-```{r P4-tabla, fig.height=5}
+# Generación del Gráfico de Barras Agrupadas (Horizontal)
+ggplot(df_barras_dobles, aes(x = Tipo_de_Comida, y = Frecuencia, fill = Respuesta)) +
+  
+  # Barras agrupadas
+  geom_bar(stat = "identity", position = position_dodge(width = 0.9)) + 
+  
+  # Etiquetas de Frecuencia
+  geom_text(
+    aes(label = Frecuencia),
+    position = position_dodge(width = 0.9),
+    hjust = -0.2, # Mueve la etiqueta -0.2 unidades a lo largo del eje X (separa de la barra)
+    size = 3.5
+  ) +
+  
+  # Títulos y Ejes
+  labs(
+    title = "Figura 3. Gráfico de barras (Sí/No) por Tipo de Comida",
+    x = "Tipo de Comida Consumida",
+    y = "Número de Encuestados",
+    fill = "Consumo"
+  ) +
+  
+  # Colores
+  scale_fill_manual(values = c("No" = "#a6cee3", "Sí" = "#1f78b4")) + 
+  
+  # Invertir coordenadas para hacerlo horizontal
+  coord_flip() + 
+  
+  # Ajuste del eje para que no se corten las etiquetas (Aumentamos el espacio)
+  scale_y_continuous(expand = expansion(mult = c(0, 0.20))) + 
+  
+  # Ajuste de Tema
+  theme(legend.position = "bottom")
+```
+Se observa una clara dominancia del consumo de comida de restaurante (con 27 respuestas afirmativas), seguido de comida de elaboración propia (con 11 respuestas afirmativas). Estos resultados sugieren que los consumidores están acostumbrados a un formato de comida que prioriza una comida preparada y de calidad.
+
+```{r P4-tabla}
+# Transformar a formato largo, contar frecuencias de SÍ/NO y calcular porcentajes
+df_tabla_temp <- datos %>%
+  dplyr::select(all_of(multi_vars)) %>%
+  tidyr::pivot_longer(
+    cols = everything(), 
+    names_to = "Tipo_de_Comida_Raw", 
+    values_to = "Respuesta" 
+  ) %>%
+  dplyr::count(Tipo_de_Comida_Raw, Respuesta, name = "Frecuencia") %>%
+  dplyr::mutate(
+    Porcentaje = (Frecuencia / n.filas) * 100
+  ) %>%
+  tidyr::pivot_wider(
+    names_from = Respuesta, 
+    values_from = c(Frecuencia, Porcentaje),
+    values_fill = 0 
+  ) %>%
+  dplyr::mutate(
+    Tipo_de_Comida = gsub("f_Tipo.Comida.", "", Tipo_de_Comida_Raw, fixed = TRUE),
+    Tipo_de_Comida = tools::toTitleCase(Tipo_de_Comida)
+  ) %>%
+  dplyr::select(
+    Tipo_de_Comida,
+    `Frecuencia_Sí`, `Porcentaje_Sí`,
+    `Frecuencia_No`, `Porcentaje_No`
+  )
+
+
+# Fila de Total
+df_total <- data.frame(
+  Tipo_de_Comida = "TOTAL MENCIONES",
+  Frecuencia_Sí = sum(df_tabla_temp$Frecuencia_Sí),
+  Porcentaje_Sí = NA, # No se suma, sería engañoso
+  Frecuencia_No = sum(df_tabla_temp$Frecuencia_No),
+  Porcentaje_No = NA # No se suma, sería engañoso
+)
+
+# Unir el data frame con la fila total
+df_tabla_final <- bind_rows(df_tabla_temp, df_total)
+
+
 # Generación de la tabla (flextable)
-ft_multi <- flextable::flextable(df_multi_res) %>%
+ft_si_no <- flextable::flextable(df_tabla_final) %>%
   
   # Añadir Título
-  flextable::set_caption(caption = "Tabla 3. Distribución de respuestas para Tipo de Comida (Respuestas Múltiples)") %>%
+  flextable::set_caption(caption = "Tabla 3. Distribución de Frecuencias (Sí/No) para Tipos de Comida") %>%
   
-  # Renombrar cabeceras
+  # Renombrar cabeceras (se usan para la segunda fila de la cabecera)
   flextable::set_header_labels(
-    Opcion = "Tipo de Comida",
-    Frecuencia = "Frecuencia (n)",
-    Porcentaje = "Porcentaje (%)"
+    Tipo_de_Comida = "Tipo de Comida",
+    Frecuencia_Sí = "Frecuencia (n)",
+    Porcentaje_Sí = "Porcentaje",
+    Frecuencia_No = "Frecuencia (n)",
+    Porcentaje_No = "Porcentaje"
   ) %>%
   
-  # Formato de datos
-  # Aplicamos formato de doble, asumiendo que el porcentaje es numérico (sin el % aún)
-  flextable::colformat_double(j = 3, digits = 1, suffix = "%") %>% 
+  # Agrupar las columnas 'Sí' y 'No' en una fila superior
+  flextable::add_header_row(
+    values = c(" ", "SÍ", "NO"),
+    colwidths = c(1, 2, 2)
+  ) %>%
   
-  # Aplicar tema y limpiar bordes (se elimina la redundancia)
-  flextable::border_remove() %>% 
+  # Formato y Tema
+  flextable::colformat_double(j = c(3, 5), digits = 1, suffix = "%", na_str = "") %>% 
+  
   flextable::theme_booktabs() %>% 
   
-  # Alineación y Cabecera
-  flextable::align(j = 2:3, align = "center", part = "body") %>%
-  flextable::align(j = 1, align = "left", part = "body") %>%
-  flextable::align(align = "center", part = "header") %>%
-  flextable::bold(part = "header") %>%
+  # Alineación
+  # Aplicar negrita y bordes a la fila "Total" (la última fila)
+  flextable::bold(i = nrow(df_tabla_final), part = "body") %>% 
+  flextable::hline(i = nrow(df_tabla_final) - 1, border = officer::fp_border(width = 1.5, color = "black")) %>%
   
-  # Ajustar automáticamente
+  # Alineación
+  flextable::align(align = "center", part = "all") %>%
+  flextable::align(j = 1, align = "left", part = "body") %>%
+  
+  # Ajustar
   flextable::autofit()
 
 # Mostrar la tabla
-ft_multi
+ft_si_no
 ```
 
