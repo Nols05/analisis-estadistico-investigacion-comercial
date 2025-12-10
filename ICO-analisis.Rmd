@@ -159,7 +159,7 @@ datos$f_Disposicion.Pago <- factor(datos$Disposicion.Pago,
   labels = c('<4€', '4-5.5€', '5.5-7€', '7-9.5€', '>9.5€'))
 
 datos$f_Edad <- factor(datos$Edad,
-  levels = c('Menor de 18', '18-24', '25-44', '45-64', '65+'))
+  levels = c('Menor de 18', '18 - 24', '25 - 44', '45 - 64', '65+'))
 
 datos$f_Nivel.Educativo <- factor(datos$Nivel.Educativo,
   levels = c('ESO (antiguo BUP)', 'FP medio o Bachillerato (antiguo COU)', 'FP superior', 'Universitario/a'),
@@ -198,7 +198,7 @@ datos$f_Super.Lidl      <- factor(datos$Supermercado.Habitual_Lidl, levels = c(0
 datos$f_Super.Aldi      <- factor(datos$Supermercado.Habitual_Aldi, levels = c(0, 1), labels = c('No', 'Sí'))
 datos$f_Super.Masymas   <- factor(datos$Supermercado.Habitual_Masymas, levels = c(0, 1), labels = c('No', 'Sí'))
 datos$f_Super.Alcampo   <- factor(datos$Supermercado.Habitual_Alcampo, levels = c(0, 1), labels = c('No', 'Sí'))
-#datos$f_Super.Gadis     <- factor(datos$Supermercado.Habitual_Gadis, levels = c(0, 1), labels = c('No', 'Sí'))
+datos$f_Super.Gadis     <- factor(datos$Supermercado.Habitual_Gadis, levels = c(0, 1), labels = c('No', 'Sí'))
 datos$f_Super.Fnac      <- factor(datos$Supermercado.Habitual_Fnac, levels = c(0, 1), labels = c('No', 'Sí'))
 datos$f_Super.DIA       <- factor(datos$Supermercado.Habitual_DIA, levels = c(0, 1), labels = c('No', 'Sí'))
 datos$f_Super.Dialprix  <- factor(datos$Supermercado.Habitual_Dialprix, levels = c(0, 1), labels = c('No', 'Sí'))
@@ -257,8 +257,7 @@ Hemos introducido un control de consistencia en la pregunta sobre el supermercad
 
 n.filas.bruto <- dim(datos)[1]
 
-datos <- subset(datos, !(Supermercado.Habitual %in% 'Fnac'))
-datos <- subset(datos, !(Supermercado.Habitual %in% 'Lefties'))
+datos <- subset(datos, !grepl('Fnac|Lefties', Supermercado.Habitual))
 
 n.filas <- dim(datos)[1]
 
@@ -266,12 +265,12 @@ n.filas <- dim(datos)[1]
 
 En el trabajo de campo recogimos inicialmente `r n.filas.bruto` cuestionarios. Tras realizar el control de consistencia, nuestra muestra efectiva es de `r n.filas` cuestionarios válidos.
 
-# Estadísticos descriptivos (Análisis Univariante)
+# Estadísticos descriptivos (Análisis Univariante) {.tabset}
 Vamos a distinguir tres tipos de variables: categóricas, numéricas y cualitativas. Cada una tiene un tratamiento descriptivo diferente.
 
 ## Variables catégoricas
 
-### Caso de variables catégoricas carentes de orden
+### Caso de variables con categorías carentes de orden
 
 #### `f_Motivo`
 Las categorías de `f_Motivo` son los motivos por los que los encuestados comen fuera de casa. Se trata de una variable cuyas categorías no guardan una relación de orden entre sí.
@@ -299,7 +298,7 @@ pie(datos_grafico$Porcentaje,
     col = RColorBrewer::brewer.pal(n = nrow(datos_grafico), name = "Set3"))
 
 ```
-Se observa que `Conveniencia` es el principal motivo por el que los encuestados comen fuera de casa, representando el 38.9% de la muestra. A continuación presentamos los resultados en formato de tabla:
+Se observa que `Conveniencia` es el principal motivo por el que los encuestados comen fuera de casa, representando el 38.1% de la muestra. A continuación presentamos los resultados en formato de tabla:
 
 ```{r P1-tabla}
 # Preparación de datos
@@ -383,7 +382,7 @@ pie(datos_grafico$Porcentaje,
     col = RColorBrewer::brewer.pal(n = nrow(datos_grafico), name = "Set3"))
 
 ```
-Se observa que `Restaurante/Bar` es el principal lugar en el que los encuestados comen fuera de casa, representando el 71.4% de la muestra. A continuación presentamos los resultados en formato de tabla:
+Se observa que `Restaurante/Bar` es el principal lugar en el que los encuestados comen fuera de casa, representando el 66.7% de la muestra. A continuación presentamos los resultados en formato de tabla:
 
 ```{r P3-tabla}
 # Preparación de datos
@@ -497,7 +496,7 @@ ggplot(df_barras_dobles, aes(x = Tipo_de_Comida, y = Frecuencia, fill = Respuest
   # Ajuste de Tema
   theme(legend.position = "bottom")
 ```
-Se observa una clara dominancia del consumo de comida de restaurante (con 27 respuestas afirmativas), seguido de comida de elaboración propia (con 11 respuestas afirmativas). Estos resultados sugieren que los consumidores están acostumbrados a un formato de comida que prioriza una comida preparada y de calidad. A  continuación presentamos los resultados en formato de tabla:
+Se observa una clara dominancia del consumo de comida de restaurante (con 43 respuestas afirmativas), seguido de comida de elaboración propia (con 19 respuestas afirmativas). Estos resultados sugieren que los consumidores están acostumbrados a un formato de comida que prioriza una comida preparada y de calidad. A  continuación presentamos los resultados en formato de tabla:
 
 ```{r P4-tabla}
 # Transformar a formato largo, contar frecuencias de SÍ/NO y calcular porcentajes
@@ -640,7 +639,7 @@ ggplot(df_barras_dobles, aes(x = Supermercado_Habitual, y = Frecuencia, fill = R
   theme(legend.position = "bottom")
 ```
 
-Se observa una clara dominancia de Mercadona (con 30 respuestas afirmativas), seguido de Consum (con 12 respuestas afirmativas). A continuación presentamos los resultados en formato de tabla:
+Se observa una clara dominancia de Mercadona (con 51 respuestas afirmativas), seguido de Consum (con 30 respuestas afirmativas). A continuación presentamos los resultados en formato de tabla:
 
 ```{r P6-tabla}
 # Transformar a formato largo, contar frecuencias de SÍ/NO y calcular porcentajes
@@ -753,7 +752,7 @@ pie(datos_grafico$Porcentaje,
 
 ```
 
-Se observa que la mayoría de los encuestados no habían probado una barra de ensaladas (%), frente a los que si (%). A continuación presentamos los resultados en formato de tabla:
+Se observa que la mayoría de los encuestados no habían probado una barra de ensaladas (73%), frente a los que si (27%). A continuación presentamos los resultados en formato de tabla:
 
 ```{r P8-tabla}
 # Preparación de datos
@@ -867,7 +866,7 @@ ggplot(df_barras_dobles, aes(x = Situaciones_Uso, y = Frecuencia, fill = Respues
   theme(legend.position = "bottom")
 ```
 
-A
+Se observa que se optaría por tomar la ensalada para llevar al trabajo/universidad (con 25 respuestas afirmativas) o bien para comer en el momento (con 30 respuestas afirmativas). A continuación presentamos los resultados en formato de tabla:
 
 ```{r P10-tabla}
 # Transformar a formato largo, contar frecuencias de SÍ/NO y calcular porcentajes
@@ -979,8 +978,8 @@ pie(datos_grafico$Porcentaje,
     col = RColorBrewer::brewer.pal(n = nrow(datos_grafico), name = "Set3"))
 
 ```
+Se observa que la mayoría optaría por un formato donde el precio de las ensaldas es fijo (81%), frente a los que prefieren que se pagara la ensalada por peso (19%).
 
-A
 ```{r P11-tabla}
 # Preparación de datos
 df_tabla_formato <- datos %>%
@@ -1799,5 +1798,574 @@ flextable::set_caption(caption = "Tabla 14. Distribución de frecuencias para Si
 
 # Mostrar la tabla
 ft
+```
+
+### Caso de variables con categorías ordenadas
+
+#### `f_Frecuencia`
+Las categorías de `f_Frecuencia` miden la frecuencia con la que los encuestados comer fuera de casa. La variable tiene 5 categorías, que se ordenan desde menos tiempo a más tiempo: Nunca, Rara/Ocasionalmente, 1-2 veces por semana, 3-4 veces por semana y más de 5 veces por semana. Este orden se fijó mediante el parámetro levels de la instrucción factor().
+```{r P2-barra, fig.height=6}
+df_frecuencia_tiempo <- datos %>%
+  # Contar la frecuencia de cada nivel (respeta el orden del factor f_Frecuencia)
+  dplyr::count(f_Frecuencia, name = "Frecuencia") %>%
+  
+  # Calcular porcentajes y porcentaje acumulado
+  dplyr::mutate(
+    Porcentaje = Frecuencia / sum(Frecuencia) * 100,
+    Porcentaje_Acumulado = cumsum(Porcentaje)
+  ) %>%
+  
+  dplyr::mutate(
+    Porcentaje = round(Porcentaje, 1), # Redondeado a 1 decimal
+    Porcentaje_Acumulado = round(Porcentaje_Acumulado, 1)
+  )
+
+
+# Generación del gráfico de barras
+ggplot(df_frecuencia_tiempo, aes(x = f_Frecuencia, y = Frecuencia)) +
+  # Barras
+  geom_bar(stat = "identity", fill = "#1f78b4") +
+  
+  # Etiquetas de Porcentaje sobre las barras
+  geom_text(aes(label = paste0(Porcentaje, "%")), 
+            vjust = -0.5, # Ajuste vertical para que quede sobre la barra
+            size = 4) +
+  
+  # Títulos y Ejes
+  labs(
+    title = 'Figura 15. Frecuencia de Comer Fuera de Casa',
+    x = "Frecuencia",
+    y = "Numero de respuestas"
+  ) +
+  
+  # Corrección del eje Y para evitar el recorte de las etiquetas
+  scale_y_continuous(expand = expansion(mult = c(0, 0.15)))
+```
+A
+
+```{r P2-tabla}
+# Preparación de datos
+df_tabla_freq <- datos %>%
+  # Contar la frecuencia de cada nivel
+  dplyr::count(f_Frecuencia, name = "Frecuencia") %>%
+  # Calcular porcentajes
+  dplyr::mutate(
+    Porcentaje = Frecuencia / sum(Frecuencia) * 100
+  ) %>%
+  # Redondear y formatear los porcentajes
+  dplyr::mutate(
+    Porcentaje = paste0(round(Porcentaje, 1), "%")
+  )
+
+# Calcular y añadir la fila total
+df_total <- data.frame(
+  f_Frecuencia = "Total",
+  Frecuencia = sum(df_tabla_freq$Frecuencia),
+  Porcentaje = "100.0%"
+)
+
+# Unir el data frame de frecuencias con la fila total
+df_tabla_final <- bind_rows(df_tabla_freq, df_total)
+
+# Generación de la tabla (flextable)
+ft <- flextable::flextable(df_tabla_final) %>%
+
+flextable::set_caption(caption = "Tabla 15. Distribución de frecuencias para Frecuencia de Comer Fuera de Casa") %>%
+  
+  # Renombrar las cabeceras
+  flextable::set_header_labels(
+    f_Frecuencia = "Frecuencia de comer fuera de casa",
+    Frecuencia = "Frecuencia (n)",
+    Porcentaje = "Porcentaje"
+  ) %>%
+  
+  # Aplicar negrita y bordes a la fila "Total"
+  flextable::bold(i = nrow(df_tabla_final), part = "body") %>% # Negrita a la última fila (Total)
+  flextable::border_remove() %>% # Quitar bordes predeterminados
+  flextable::theme_booktabs() %>% # Aplicar un tema con líneas horizontales
+  
+  # Formato de alineación y cabecera
+  flextable::align(j = 1, align = "left", part = "body") %>%
+  flextable::align(j = 2:3, align = "center", part = "all") %>% # Columnas 2 y 3 (Datos) CENTRADAS
+  flextable::align(align = "center", part = "header") %>%        # Encabezados CENTRADOS
+  
+  # Añadir una línea superior a la fila "Total" para separarla
+  flextable::hline(i = nrow(df_tabla_final) - 1, border = officer::fp_border(width = 1.5, color = "black")) %>%
+  
+  # Ajustar el ancho de las columnas
+  flextable::autofit()
+
+# Mostrar la tabla
+ft
+```
+
+#### `f_Frecuncia.Comida.Preparada`
+Las categorías de `f_Frecuencia.Comida.Preparada` miden la frecuencia con la que los encuestados compran comida preparada en un supermercado. La variable tiene 5 categorías, que se ordenan desde menos tiempo a más tiempo: Nunca, Rara/Ocasionalmente, 1-2 veces por semana, 3-4 veces por semana y más de 5 veces por semana. Este orden se fijó mediante el parámetro levels de la instrucción factor().
+```{r P5-barra, fig.height=6}
+df_frecuencia_tiempo <- datos %>%
+  # Contar la frecuencia de cada nivel (respeta el orden del factor f_Frecuencia.Comida.Preparada)
+  dplyr::count(f_Frecuencia.Comida.Preparada, name = "Frecuencia") %>%
+  
+  # Calcular porcentajes y porcentaje acumulado
+  dplyr::mutate(
+    Porcentaje = Frecuencia / sum(Frecuencia) * 100,
+    Porcentaje_Acumulado = cumsum(Porcentaje)
+  ) %>%
+  
+  dplyr::mutate(
+    Porcentaje = round(Porcentaje, 1), # Redondeado a 1 decimal
+    Porcentaje_Acumulado = round(Porcentaje_Acumulado, 1)
+  )
+
+
+# Generación del gráfico de barras
+ggplot(df_frecuencia_tiempo, aes(x = f_Frecuencia.Comida.Preparada, y = Frecuencia)) +
+  # Barras
+  geom_bar(stat = "identity", fill = "#1f78b4") +
+  
+  # Etiquetas de Porcentaje sobre las barras
+  geom_text(aes(label = paste0(Porcentaje, "%")), 
+            vjust = -0.5, # Ajuste vertical para que quede sobre la barra
+            size = 4) +
+  
+  # Títulos y Ejes
+  labs(
+    title = 'Figura 16. Frecuencia de Comprar Comida Preparada en Supermercados',
+    x = "Frecuencia de Comprar Comida Preparada en Supermercados",
+    y = "Numero de respuestas"
+  ) +
+  
+  # Corrección del eje Y para evitar el recorte de las etiquetas
+  scale_y_continuous(expand = expansion(mult = c(0, 0.15)))
+```
+A
+```{r P5-tabla}
+# Preparación de datos
+df_tabla_freq_prep <- datos %>%
+  # Contar la frecuencia de cada nivel
+  dplyr::count(f_Frecuencia.Comida.Preparada, name = "Frecuencia") %>%
+  # Calcular porcentajes
+  dplyr::mutate(
+    Porcentaje = Frecuencia / sum(Frecuencia) * 100
+  ) %>%
+  # Redondear y formatear los porcentajes
+  dplyr::mutate(
+    Porcentaje = paste0(round(Porcentaje, 1), "%")
+  )
+
+# Calcular y añadir la fila total
+df_total <- data.frame(
+  f_Frecuencia.Comida.Preparada = "Total",
+  Frecuencia = sum(df_tabla_freq_prep$Frecuencia),
+  Porcentaje = "100.0%"
+)
+
+# Unir el data frame de frecuencias con la fila total
+df_tabla_final <- bind_rows(df_tabla_freq_prep, df_total)
+
+# Generación de la tabla (flextable)
+ft <- flextable::flextable(df_tabla_final) %>%
+
+flextable::set_caption(caption = "Tabla 16. Distribución de frecuencias para Frecuencia de Comprar Comida Preparada en un Supermercado") %>%
+  
+  # Renombrar las cabeceras
+  flextable::set_header_labels(
+    f_Frecuencia.Comida.Preparada = "Frecuencia de comprar comida preparada en un supermercado",
+    Frecuencia = "Frecuencia (n)",
+    Porcentaje = "Porcentaje"
+  ) %>%
+  
+  # Aplicar negrita y bordes a la fila "Total"
+  flextable::bold(i = nrow(df_tabla_final), part = "body") %>% # Negrita a la última fila (Total)
+  flextable::border_remove() %>% # Quitar bordes predeterminados
+  flextable::theme_booktabs() %>% # Aplicar un tema con líneas horizontales
+  
+  # Formato de alineación y cabecera
+  flextable::align(j = 1, align = "left", part = "body") %>%
+  flextable::align(j = 2:3, align = "center", part = "all") %>% # Columnas 2 y 3 (Datos) CENTRADAS
+  flextable::align(align = "center", part = "header") %>%        # Encabezados CENTRADOS
+  
+  # Añadir una línea superior a la fila "Total" para separarla
+  flextable::hline(i = nrow(df_tabla_final) - 1, border = officer::fp_border(width = 1.5, color = "black")) %>%
+  
+  # Ajustar el ancho de las columnas
+  flextable::autofit()
+
+# Mostrar la tabla
+ft
+```
+
+####`f_Disposicion.Pago`
+Las categorías de `f_Disposicion.Pago` miden la disposición a pagar de los encuestados por las ensaladas de la barra. La variable tiene 5 categorías, que se ordenan desde menos dinero a más dinero: Menos de 4€, Entre 4 y 5,49€, Entre 5,50 y 7€, Entre 7 y 9,50€ y más de 9,50€. Este orden se fijó mediante el parámetro levels de la instrucción factor().
+```{r P16-barra, fig.height=6}
+df_frecuencia_tiempo <- datos %>%
+  # Contar la frecuencia de cada nivel (respeta el orden del factor f_Disposicion.Pago)
+  dplyr::count(f_Disposicion.Pago, name = "Frecuencia") %>%
+  
+  # Calcular porcentajes y porcentaje acumulado
+  dplyr::mutate(
+    Porcentaje = Frecuencia / sum(Frecuencia) * 100,
+    Porcentaje_Acumulado = cumsum(Porcentaje)
+  ) %>%
+  
+  dplyr::mutate(
+    Porcentaje = round(Porcentaje, 1), # Redondeado a 1 decimal
+    Porcentaje_Acumulado = round(Porcentaje_Acumulado, 1)
+  )
+
+
+# Generación del gráfico de barras
+ggplot(df_frecuencia_tiempo, aes(x = f_Disposicion.Pago, y = Frecuencia)) +
+  # Barras
+  geom_bar(stat = "identity", fill = "#1f78b4") +
+  
+  # Etiquetas de Porcentaje sobre las barras
+  geom_text(aes(label = paste0(Porcentaje, "%")), 
+            vjust = -0.5, # Ajuste vertical para que quede sobre la barra
+            size = 4) +
+  
+  # Títulos y Ejes
+  labs(
+    title = 'Figura 17. Disposición a Pagar',
+    x = "Disposición a Pagar",
+    y = "Numero de respuestas"
+  ) +
+  
+  # Corrección del eje Y para evitar el recorte de las etiquetas
+  scale_y_continuous(expand = expansion(mult = c(0, 0.15)))
+```
+A
+```{r P16-tabla}
+# Preparación de datos
+df_tabla_disp <- datos %>%
+  # Contar la frecuencia de cada nivel
+  dplyr::count(f_Disposicion.Pago, name = "Frecuencia") %>%
+  # Calcular porcentajes
+  dplyr::mutate(
+    Porcentaje = Frecuencia / sum(Frecuencia) * 100
+  ) %>%
+  # Redondear y formatear los porcentajes
+  dplyr::mutate(
+    Porcentaje = paste0(round(Porcentaje, 1), "%")
+  )
+
+# Calcular y añadir la fila total
+df_total <- data.frame(
+  f_Disposicion.Pago = "Total",
+  Frecuencia = sum(df_tabla_disp$Frecuencia),
+  Porcentaje = "100.0%"
+)
+
+# Unir el data frame de frecuencias con la fila total
+df_tabla_final <- bind_rows(df_tabla_disp, df_total)
+
+# Generación de la tabla (flextable)
+ft <- flextable::flextable(df_tabla_final) %>%
+
+flextable::set_caption(caption = "Tabla 17. Distribución de frecuencias para la Disposición a Pagar") %>%
+  
+  # Renombrar las cabeceras
+  flextable::set_header_labels(
+    f_Disposicion.Pago = "Disposición a Pagar",
+    Frecuencia = "Frecuencia (n)",
+    Porcentaje = "Porcentaje"
+  ) %>%
+  
+  # Aplicar negrita y bordes a la fila "Total"
+  flextable::bold(i = nrow(df_tabla_final), part = "body") %>% # Negrita a la última fila (Total)
+  flextable::border_remove() %>% # Quitar bordes predeterminados
+  flextable::theme_booktabs() %>% # Aplicar un tema con líneas horizontales
+  
+  # Formato de alineación y cabecera
+  flextable::align(j = 1, align = "left", part = "body") %>%
+  flextable::align(j = 2:3, align = "center", part = "all") %>% # Columnas 2 y 3 (Datos) CENTRADAS
+  flextable::align(align = "center", part = "header") %>%        # Encabezados CENTRADOS
+  
+  # Añadir una línea superior a la fila "Total" para separarla
+  flextable::hline(i = nrow(df_tabla_final) - 1, border = officer::fp_border(width = 1.5, color = "black")) %>%
+  
+  # Ajustar el ancho de las columnas
+  flextable::autofit()
+
+# Mostrar la tabla
+ft
+```
+
+#### `f.Edad`
+Las categorías de `f_Edad` miden la edad de los encuestados. La variable tiene 5 categorías, que se ordenan desde menor a edad a más edad: Menos de 18, Entre 18-24 años, Entre 25-44 años, Entre 45-64 años y más de 65 años. Este orden se fijó mediante el parámetro levels de la instrucción factor().
+```{r P20-barra, fig.height=6}
+df_frecuencia_tiempo <- datos %>%
+  # Contar la frecuencia de cada nivel (respeta el orden del factor f_Edad)
+  dplyr::count(f_Edad, name = "Frecuencia") %>%
+  
+  # Calcular porcentajes y porcentaje acumulado
+  dplyr::mutate(
+    Porcentaje = Frecuencia / sum(Frecuencia) * 100,
+    Porcentaje_Acumulado = cumsum(Porcentaje)
+  ) %>%
+  
+  dplyr::mutate(
+    Porcentaje = round(Porcentaje, 1), # Redondeado a 1 decimal
+    Porcentaje_Acumulado = round(Porcentaje_Acumulado, 1)
+  )
+
+
+# Generación del gráfico de barras
+ggplot(df_frecuencia_tiempo, aes(x = f_Edad, y = Frecuencia)) +
+  # Barras
+  geom_bar(stat = "identity", fill = "#1f78b4") +
+  
+  # Etiquetas de Porcentaje sobre las barras
+  geom_text(aes(label = paste0(Porcentaje, "%")), 
+            vjust = -0.5, # Ajuste vertical para que quede sobre la barra
+            size = 4) +
+  
+  # Títulos y Ejes
+  labs(
+    title = 'Figura 18. Edad',
+    x = "Edad",
+    y = "Numero de respuestas"
+  ) +
+  
+  # Corrección del eje Y para evitar el recorte de las etiquetas
+  scale_y_continuous(expand = expansion(mult = c(0, 0.15)))
+```
+A
+```{r P20-tabla}
+# Preparación de datos
+df_tabla_edad <- datos %>%
+  # Contar la frecuencia de cada nivel
+  dplyr::count(f_Edad, name = "Frecuencia") %>%
+  # Calcular porcentajes
+  dplyr::mutate(
+    Porcentaje = Frecuencia / sum(Frecuencia) * 100
+  ) %>%
+  # Redondear y formatear los porcentajes
+  dplyr::mutate(
+    Porcentaje = paste0(round(Porcentaje, 1), "%")
+  )
+
+# Calcular y añadir la fila total
+df_total <- data.frame(
+  f_Edad = "Total",
+  Frecuencia = sum(df_tabla_edad$Frecuencia),
+  Porcentaje = "100.0%"
+)
+
+# Unir el data frame de frecuencias con la fila total
+df_tabla_final <- bind_rows(df_tabla_edad, df_total)
+
+# Generación de la tabla (flextable)
+ft <- flextable::flextable(df_tabla_final) %>%
+
+flextable::set_caption(caption = "Tabla 18. Distribución de frecuencias por Edad") %>%
+  
+  # Renombrar las cabeceras
+  flextable::set_header_labels(
+    f_Edad = "Edad",
+    Frecuencia = "Frecuencia (n)",
+    Porcentaje = "Porcentaje"
+  ) %>%
+  
+  # Aplicar negrita y bordes a la fila "Total"
+  flextable::bold(i = nrow(df_tabla_final), part = "body") %>% # Negrita a la última fila (Total)
+  flextable::border_remove() %>% # Quitar bordes predeterminados
+  flextable::theme_booktabs() %>% # Aplicar un tema con líneas horizontales
+  
+  # Formato de alineación y cabecera
+  flextable::align(j = 1, align = "left", part = "body") %>%
+  flextable::align(j = 2:3, align = "center", part = "all") %>% # Columnas 2 y 3 (Datos) CENTRADAS
+  flextable::align(align = "center", part = "header") %>%        # Encabezados CENTRADOS
+  
+  # Añadir una línea superior a la fila "Total" para separarla
+  flextable::hline(i = nrow(df_tabla_final) - 1, border = officer::fp_border(width = 1.5, color = "black")) %>%
+  
+  # Ajustar el ancho de las columnas
+  flextable::autofit()
+
+# Mostrar la tabla
+ft
+```
+
+#### `f_Nivel.Educativo`
+Las categorías de `f_Nivel.Educativo` miden el nivel educativo máximo alcanzado de los encuestados. La variable tiene 4 categorías, que se ordenan desde menos nivel a más nivel: ESO, FP medio/Bachillerato, FP superior y Universitario. Este orden se fijó mediante el parámetro levels de la instrucción factor().
+```{r P22-barra, fig.height=6}
+df_frecuencia_tiempo <- datos %>%
+  # Contar la frecuencia de cada nivel (respeta el orden del factor f_Nivel.Educativo)
+  dplyr::count(f_Nivel.Educativo, name = "Frecuencia") %>%
+  
+  # Calcular porcentajes y porcentaje acumulado
+  dplyr::mutate(
+    Porcentaje = Frecuencia / sum(Frecuencia) * 100,
+    Porcentaje_Acumulado = cumsum(Porcentaje)
+  ) %>%
+  
+  dplyr::mutate(
+    Porcentaje = round(Porcentaje, 1), # Redondeado a 1 decimal
+    Porcentaje_Acumulado = round(Porcentaje_Acumulado, 1)
+  )
+
+
+# Generación del gráfico de barras
+ggplot(df_frecuencia_tiempo, aes(x = f_Nivel.Educativo, y = Frecuencia)) +
+  # Barras
+  geom_bar(stat = "identity", fill = "#1f78b4") +
+  
+  # Etiquetas de Porcentaje sobre las barras
+  geom_text(aes(label = paste0(Porcentaje, "%")), 
+            vjust = -0.5, # Ajuste vertical para que quede sobre la barra
+            size = 4) +
+  
+  # Títulos y Ejes
+  labs(
+    title = 'Figura 19. Nivel Educativo Máximo Alcanzado',
+    x = "Nivel Educativo",
+    y = "Numero de respuestas"
+  ) +
+  
+  # Corrección del eje Y para evitar el recorte de las etiquetas
+  scale_y_continuous(expand = expansion(mult = c(0, 0.15)))
+```
+A
+```{r P22-tabla}
+# Preparación de datos
+df_tabla_edu <- datos %>%
+  # Contar la frecuencia de cada nivel
+  dplyr::count(f_Nivel.Educativo, name = "Frecuencia") %>%
+  # Calcular porcentajes
+  dplyr::mutate(
+    Porcentaje = Frecuencia / sum(Frecuencia) * 100
+  ) %>%
+  # Redondear y formatear los porcentajes
+  dplyr::mutate(
+    Porcentaje = paste0(round(Porcentaje, 1), "%")
+  )
+
+# Calcular y añadir la fila total
+df_total <- data.frame(
+  f_Nivel.Educativo = "Total",
+  Frecuencia = sum(df_tabla_edu$Frecuencia),
+  Porcentaje = "100.0%"
+)
+
+# Unir el data frame de frecuencias con la fila total
+df_tabla_final <- bind_rows(df_tabla_edu, df_total)
+
+# Generación de la tabla (flextable)
+ft <- flextable::flextable(df_tabla_final) %>%
+
+flextable::set_caption(caption = "Tabla 19. Distribución de frecuencias para Nivel Educativo Máximo Alcanzado") %>%
+  
+  # Renombrar las cabeceras
+  flextable::set_header_labels(
+    f_Nivel.Educativo = "Nivel Educativo Máximo Alcanzado",
+    Frecuencia = "Frecuencia (n)",
+    Porcentaje = "Porcentaje"
+  ) %>%
+  
+  # Aplicar negrita y bordes a la fila "Total"
+  flextable::bold(i = nrow(df_tabla_final), part = "body") %>% # Negrita a la última fila (Total)
+  flextable::border_remove() %>% # Quitar bordes predeterminados
+  flextable::theme_booktabs() %>% # Aplicar un tema con líneas horizontales
+  
+  # Formato de alineación y cabecera
+  flextable::align(j = 1, align = "left", part = "body") %>%
+  flextable::align(j = 2:3, align = "center", part = "all") %>% # Columnas 2 y 3 (Datos) CENTRADAS
+  flextable::align(align = "center", part = "header") %>%        # Encabezados CENTRADOS
+  
+  # Añadir una línea superior a la fila "Total" para separarla
+  flextable::hline(i = nrow(df_tabla_final) - 1, border = officer::fp_border(width = 1.5, color = "black")) %>%
+  
+  # Ajustar el ancho de las columnas
+  flextable::autofit()
+
+# Mostrar la tabla
+ft
+```
+
+## Variables númericas
+
+### Figuras de las variables de escala Likert
+La representación de las variables con escala Likert resulta más visual con un diagrama de barras acumulado:
+```{r P7-P12-P17-likert, fig.height=8, fig.width=10}
+# 1. Definir los vectores de variables y etiquetas para mayor claridad
+
+# Variables de escala Likert (factores)
+likert_factors <- c(
+  "f_Importancia.Saludable", 
+  "f_Imp.Sostenibilidad", "f_Imp.Origen.Local", "f_Imp.Variedad", 
+  "f_Imp.Sabor", "f_Imp.Precio", "f_Imp.Higiene", "f_Imp.Rapidez", 
+  "f_Aptitud.Social"
+)
+
+# Etiquetas descriptivas correspondientes para el gráfico (Eje Y)
+likert_labels <- c(
+  'Me importa comer saludable',
+  'Doy importancia a la sostenibilidad',
+  'Doy importancia a productos de origen local',
+  'Doy importancia a la variedad de ingredientes',
+  'Doy importancia al sabor',
+  'Doy importancia al precio',
+  'Doy importancia a la higiene',
+  'Doy importancia a la rapidez',
+  'Considero las ensaladas una comida social'
+)
+
+
+# 2. SELECCIONAR DATOS (Sustitución de variables)
+datos.likert <- datos[likert_factors]
+
+# 3. CAMBIAR EL NOMBRE DE LAS COLUMNAS para que aparezcan las afirmaciones evaluadas
+names(datos.likert) <- likert_labels
+
+# 4. GENERAR LA FIGURA
+# Se mantiene 'likert.bar.plot' y 'centered = FALSE' para replicar el formato del profesor
+fig.likert <- likert::likert.bar.plot(
+  likert::likert(datos.likert),
+  
+  # Orden de los ítems (se mantiene el orden de las etiquetas)
+  group.order = likert_labels,      
+  
+  # Configuración para hacer un gráfico de barras apiladas simple (NO divergente)
+  centered = FALSE,
+  plot.percent.low = FALSE,
+  plot.percent.high = FALSE,
+  plot.percent.neutral = FALSE,
+  
+  # Leyenda que explica las respuestas
+  legend.position = 'right',
+  legend = 'Respuesta (1-5)'
+) +
+  # Título de la figura (Actualizado)
+  labs(
+    title = 'Figura 20. Valoración de Factores de Importancia (Escala 1-5)',
+    y = 'Porcentaje (%)',
+    x = NULL
+  )
+
+# Imprimimos la figura
+fig.likert
+
+```
+A
+
+## Variables cualitativas
+
+La variable `Mala.Experiencia.Descripcion` se ha registrado mediante una pregunta abierta. El motivo de que fuera abierta, sin que se proporcionara un conjunto cerrado de respuestas, es que se quiere conocer con un poco más de detalle algunas experiencias negativas previas para relacionarla con el grado de aceptación. Por tanto, se trata de una variable cualitativa, y por este motivo se planteó en forma de pregunta abierta.
+
+Este tipo de variables no puede ser tratada estadísticamente. Su análisis tiene que llevarse a cabo de forma manual. Lo que sí vamos a hacer es seleccionar las respuestas válidas mediante R para después proceder a su análisis cualitativo
+
+```{r}
+# generamos una tabla con las filas que contienen alguna razón para no usar el escáner
+datos.cualitativos <- drop_na(datos, 'Mala.Experiencia.Descripcion')
+
+# imprimimos únicamente esa columna
+flextable(
+  # convertimos a un dataframe
+  as.data.frame(datos.cualitativos$Mala.Experiencia.Descripcion)) %>% 
+  # establecemos el título de la tabla
+  set_caption('Tabla 20. Malas experiencias con comida preparada o autoservicio.') %>%
+  # ajustamos la tabla para que pueda leerse mejor en la página
+  autofit()
 ```
 
