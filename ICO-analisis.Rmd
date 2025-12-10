@@ -481,7 +481,7 @@ ggplot(df_barras_dobles, aes(x = Tipo_de_Comida, y = Frecuencia, fill = Respuest
   labs(
     title = "Figura 3. Gráfico de barras (Sí/No) por Tipo de Comida",
     x = "Tipo de Comida Consumida",
-    y = "Número de Encuestados",
+    y = "Número de Respuestas",
     fill = "Consumo"
   ) +
   
@@ -530,7 +530,7 @@ df_tabla_temp <- datos %>%
 
 # Fila de Total
 df_total <- data.frame(
-  Tipo_de_Comida = "TOTAL MENCIONES",
+  Tipo_de_Comida = "Total",
   Frecuencia_Sí = sum(df_tabla_temp$Frecuencia_Sí),
   Porcentaje_Sí = NA, # No se suma, sería engañoso
   Frecuencia_No = sum(df_tabla_temp$Frecuencia_No),
@@ -623,7 +623,7 @@ ggplot(df_barras_dobles, aes(x = Supermercado_Habitual, y = Frecuencia, fill = R
   labs(
     title = "Figura 4. Gráfico de barras (Sí/No) por Supermercado",
     x = "Supermercado Habitual",
-    y = "Número de Encuestados",
+    y = "Número de Respuestas",
     fill = "Elegido"
   ) +
   
@@ -673,7 +673,7 @@ df_tabla_temp <- datos %>%
 
 # Fila de Total
 df_total <- data.frame(
-  Supermercado_Habitual = "TOTAL MENCIONES",
+  Supermercado_Habitual = "Total",
   Frecuencia_Sí = sum(df_tabla_temp$Frecuencia_Sí),
   Porcentaje_Sí = NA, # No se suma, sería engañoso
   Frecuencia_No = sum(df_tabla_temp$Frecuencia_No),
@@ -727,7 +727,7 @@ ft_si_no
 ```
 
 #### `f_Experiencia.Barra`
-Las categorías de `f_Experiencia.Barra` hacen referencia a si el encuestado a probado una barra de ensaladas previamente. Se trata de una variable cuyas categorías no guardan una relación de orden entre sí. Por ese motivo no se definieron los `levels` al factorizarla.
+Las categorías de `f_Experiencia.Barra` hacen referencia a si el encuestado a probado una barra de ensaladas previamente. Se trata de una variable cuyas categorías no guardan una relación de orden entre sí.
 
 ```{r P8-tarta}
 # Crear el data frame de frecuencias y porcentajes usando dplyr
@@ -850,7 +850,7 @@ ggplot(df_barras_dobles, aes(x = Situaciones_Uso, y = Frecuencia, fill = Respues
   labs(
     title = "Figura 6. Gráfico de barras (Sí/No) por Situaciones de Uso",
     x = "Situación de Uso",
-    y = "Número de Encuestados",
+    y = "Número de Respuestas",
     fill = "Usaría"
   ) +
   
@@ -900,7 +900,7 @@ df_tabla_temp <- datos %>%
 
 # Fila de Total
 df_total <- data.frame(
-  Situaciones_Uso = "TOTAL MENCIONES",
+  Situaciones_Uso = "Total",
   Frecuencia_Sí = sum(df_tabla_temp$Frecuencia_Sí),
   Porcentaje_Sí = NA, # No se suma, sería engañoso
   Frecuencia_No = sum(df_tabla_temp$Frecuencia_No),
@@ -953,4 +953,851 @@ ft_si_no <- flextable::flextable(df_tabla_final) %>%
 ft_si_no
 ```
 
-#### `f_`
+#### `f_Formato.Preferido`
+Las categorías de `f_Formato.Preferido` se diferencian en si el encuestado prefiere que las ensaladas se paguen por peso o tengan un precio fijado. Se trata de una variable cuyas categorías no guardan una relación de orden entre sí.
+
+```{r P11-tarta}
+# Crear el data frame de frecuencias y porcentajes usando dplyr
+datos_grafico <- datos %>%
+  # Contar la frecuencia de cada nivel de la variable f_Formato.Preferido
+  count(f_Formato.Preferido, name = "Frecuencia") %>%
+  # Calcular el porcentaje y el texto de la etiqueta
+  mutate(
+    Porcentaje = Frecuencia / sum(Frecuencia) * 100,
+    Etiquetas = paste0(f_Formato.Preferido, "\n(", round(Porcentaje, 1), "%)") # Etiqueta para el gráfico
+  ) %>%
+  # Eliminar filas con 0% si existen, y categorías no deseadas
+  filter(Porcentaje > 0 & f_Formato.Preferido != "Total") # Se filtra 'Total' aunque dplyr no lo añade
+
+# Usamos el vector de Porcentaje para el tamaño de las porciones
+pie(datos_grafico$Porcentaje,
+    # Usamos las Etiquetas que combinan nombre y porcentaje
+    labels = datos_grafico$Etiquetas,
+    # Título
+    main = 'Figura 7. Formato preferido',
+    # Asignar un color diferente a cada porción
+    col = RColorBrewer::brewer.pal(n = nrow(datos_grafico), name = "Set3"))
+
+```
+
+A
+```{r P11-tabla}
+# Preparación de datos
+df_tabla_formato <- datos %>%
+  # Contar la frecuencia de cada nivel
+  dplyr::count(f_Formato.Preferido, name = "Frecuencia") %>%
+  # Calcular porcentajes
+  dplyr::mutate(
+    Porcentaje = Frecuencia / sum(Frecuencia) * 100
+  ) %>%
+  # Redondear y formatear los porcentajes
+  dplyr::mutate(
+    Porcentaje = paste0(round(Porcentaje, 1), "%")
+  )
+
+# Calcular y añadir la fila total
+df_total <- data.frame(
+  f_Formato.Preferido = "Total",
+  Frecuencia = sum(df_tabla_formato$Frecuencia),
+  Porcentaje = "100.0%"
+)
+
+# Unir el data frame de frecuencias con la fila total
+df_tabla_final <- bind_rows(df_tabla_formato, df_total)
+
+# Generación de la tabla (flextable)
+ft <- flextable::flextable(df_tabla_final) %>%
+
+flextable::set_caption(caption = "Tabla 7. Distribución de frecuencias para Formato preferido") %>%
+  
+  # Renombrar las cabeceras
+  flextable::set_header_labels(
+    f_Formato.Preferido = "Formato Preferido",
+    Frecuencia = "Frecuencia (n)",
+    Porcentaje = "Porcentaje"
+  ) %>%
+  
+  # Aplicar negrita y bordes a la fila "Total"
+  flextable::bold(i = nrow(df_tabla_final), part = "body") %>% # Negrita a la última fila (Total)
+  flextable::border_remove() %>% # Quitar bordes predeterminados
+  flextable::theme_booktabs() %>% # Aplicar un tema con líneas horizontales
+  
+  # Formato de alineación y cabecera
+  flextable::align(j = 1, align = "left", part = "body") %>%
+  flextable::align(j = 2:3, align = "center", part = "all") %>% # Columnas 2 y 3 (Datos) CENTRADAS
+  flextable::align(align = "center", part = "header") %>%        # Encabezados CENTRADOS
+  
+  # Añadir una línea superior a la fila "Total" para separarla
+  flextable::hline(i = nrow(df_tabla_final) - 1, border = officer::fp_border(width = 1.5, color = "black")) %>%
+  
+  # Ajustar el ancho de las columnas
+  flextable::autofit()
+
+# Mostrar la tabla
+ft
+```
+
+#### `f_Preferencia.Base`
+Las categorías de `f_Preferencia.Base` hacen referencia a las bases para la ensalada que los encuestados aplicarían a sus ensaladas. Es importante destacar que esta variable proviene de una pregunta con respuesta múltiple por lo que optamos por un gráfico de barras múltiple basándonos en si ha se ha seleccionado cada respuesta o no.
+```{r P13-barras, fig.height=6, fig.width=10}
+# Definir las variables a analizar (P10: Situaciones de Uso)
+multi_vars <- c("f_Base.Lechuga", "f_Base.Verde", "f_Base.Pasta", "f_Base.Quinoa", "f_Base.Cuscus", "f_Base.Legum")
+
+# Transformar a formato largo y contar frecuencias de SÍ/NO
+df_barras_dobles <- datos %>%
+  dplyr::select(all_of(multi_vars)) %>%
+  tidyr::pivot_longer(
+    cols = everything(), 
+    names_to = "Preferencia_Base", 
+    values_to = "Respuesta"
+  ) %>%
+  dplyr::count(Preferencia_Base, Respuesta, name = "Frecuencia") %>%
+  dplyr::mutate(
+    Preferencia_Base = gsub("f_Base.", "", Preferencia_Base, fixed = TRUE),
+    Preferencia_Base = tools::toTitleCase(Preferencia_Base),
+    Respuesta = factor(Respuesta, levels = c("No", "Sí")) 
+  )
+
+# Generación del Gráfico de Barras Agrupadas (Horizontal)
+ggplot(df_barras_dobles, aes(x = Preferencia_Base, y = Frecuencia, fill = Respuesta)) +
+  
+  # Barras agrupadas
+  geom_bar(stat = "identity", position = position_dodge(width = 0.9)) + 
+  
+  # Etiquetas de Frecuencia
+  geom_text(
+    aes(label = Frecuencia),
+    position = position_dodge(width = 0.9),
+    hjust = -0.2, # Mueve la etiqueta -0.2 unidades a lo largo del eje X (separa de la barra)
+    size = 3.5
+  ) +
+  
+  # Títulos y Ejes
+  labs(
+    title = "Figura 8. Gráfico de barras (Sí/No) por Preferencia de Base",
+    x = "Preferencia Base",
+    y = "Número de Respuestas",
+    fill = "Usaría"
+  ) +
+  
+  # Colores
+  scale_fill_manual(values = c("No" = "#a6cee3", "Sí" = "#1f78b4")) + 
+  
+  # Invertir coordenadas para hacerlo horizontal
+  coord_flip() + 
+  
+  # Ajuste del eje para que no se corten las etiquetas (Aumentamos el espacio)
+  scale_y_continuous(expand = expansion(mult = c(0, 0.20))) + 
+  
+  # Ajuste de Tema
+  theme(legend.position = "bottom")
+```
+
+A
+
+```{r P13-tabla}
+# Transformar a formato largo, contar frecuencias de SÍ/NO y calcular porcentajes
+df_tabla_temp <- datos %>%
+  dplyr::select(all_of(multi_vars)) %>%
+  tidyr::pivot_longer(
+    cols = everything(), 
+    names_to = "Preferencia_Base_Raw", 
+    values_to = "Respuesta" 
+  ) %>%
+  dplyr::count(Preferencia_Base_Raw, Respuesta, name = "Frecuencia") %>%
+  dplyr::mutate(
+    Porcentaje = (Frecuencia / n.filas) * 100
+  ) %>%
+  tidyr::pivot_wider(
+    names_from = Respuesta, 
+    values_from = c(Frecuencia, Porcentaje),
+    values_fill = 0 
+  ) %>%
+  dplyr::mutate(
+    Preferencia_Base = gsub("f_Base.", "", Preferencia_Base_Raw, fixed = TRUE),
+    Preferencia_Base = tools::toTitleCase(Preferencia_Base)
+  ) %>%
+  dplyr::select(
+    Preferencia_Base,
+    `Frecuencia_Sí`, `Porcentaje_Sí`,
+    `Frecuencia_No`, `Porcentaje_No`
+  )
+
+
+# Fila de Total
+df_total <- data.frame(
+  Preferencia_Base = "Total",
+  Frecuencia_Sí = sum(df_tabla_temp$Frecuencia_Sí),
+  Porcentaje_Sí = NA, # No se suma, sería engañoso
+  Frecuencia_No = sum(df_tabla_temp$Frecuencia_No),
+  Porcentaje_No = NA # No se suma, sería engañoso
+)
+
+# Unir el data frame con la fila total
+df_tabla_final <- bind_rows(df_tabla_temp, df_total)
+
+
+# Generación de la tabla (flextable)
+ft_si_no <- flextable::flextable(df_tabla_final) %>%
+  
+  # Añadir Título
+  flextable::set_caption(caption = "Tabla 8. Distribución de Frecuencias (Sí/No) para Preferencia Base") %>%
+  
+  # Renombrar cabeceras (se usan para la segunda fila de la cabecera)
+  flextable::set_header_labels(
+    Preferencia_Base = "Preferencia Base",
+    Frecuencia_Sí = "Frecuencia (n)",
+    Porcentaje_Sí = "Porcentaje",
+    Frecuencia_No = "Frecuencia (n)",
+    Porcentaje_No = "Porcentaje"
+  ) %>%
+  
+  # Agrupar las columnas 'Sí' y 'No' en una fila superior
+  flextable::add_header_row(
+    values = c(" ", "SÍ", "NO"),
+    colwidths = c(1, 2, 2)
+  ) %>%
+  
+  # Formato y Tema
+  flextable::colformat_double(j = c(3, 5), digits = 1, suffix = "%", na_str = "") %>% 
+  
+  flextable::theme_booktabs() %>% 
+  
+  # Alineación
+  # Aplicar negrita y bordes a la fila "Total" (la última fila)
+  flextable::bold(i = nrow(df_tabla_final), part = "body") %>% 
+  flextable::hline(i = nrow(df_tabla_final) - 1, border = officer::fp_border(width = 1.5, color = "black")) %>%
+  
+  # Alineación
+  flextable::align(align = "center", part = "all") %>%
+  flextable::align(j = 1, align = "left", part = "body") %>%
+  
+  # Ajustar
+  flextable::autofit()
+
+# Mostrar la tabla
+ft_si_no
+```
+
+#### `f_Preferencia.Proteina`
+Las categorías de `f_Preferencia.Proteina` hacen referencia a las proteínas que los encuestados utilizarían pondrían en sus ensaladas. Es importante destacar que esta variable proviene de una pregunta con respuesta múltiple por lo que optamos por un gráfico de barras múltiple basándonos en si ha se ha seleccionado cada respuesta o no.
+
+```{r P14-barras, fig.height=6, fig.width=10}
+# Definir las variables a analizar (P10: Situaciones de Uso)
+multi_vars <- c("f_Prot.Pollo", "f_Prot.Pescado", "f_Prot.Huevo", "f_Prot.Queso", "f_Prot.Tofu", "f_Prot.Marisco", "f_Prot.Carne")
+
+# Transformar a formato largo y contar frecuencias de SÍ/NO
+df_barras_dobles <- datos %>%
+  dplyr::select(all_of(multi_vars)) %>%
+  tidyr::pivot_longer(
+    cols = everything(), 
+    names_to = "Prerencia_Proteina", 
+    values_to = "Respuesta"
+  ) %>%
+  dplyr::count(Prerencia_Proteina, Respuesta, name = "Frecuencia") %>%
+  dplyr::mutate(
+    Prerencia_Proteina = gsub("f_Prot.", "", Prerencia_Proteina, fixed = TRUE),
+    Prerencia_Proteina = tools::toTitleCase(Prerencia_Proteina),
+    Respuesta = factor(Respuesta, levels = c("No", "Sí")) 
+  )
+
+# Generación del Gráfico de Barras Agrupadas (Horizontal)
+ggplot(df_barras_dobles, aes(x = Prerencia_Proteina, y = Frecuencia, fill = Respuesta)) +
+  
+  # Barras agrupadas
+  geom_bar(stat = "identity", position = position_dodge(width = 0.9)) + 
+  
+  # Etiquetas de Frecuencia
+  geom_text(
+    aes(label = Frecuencia),
+    position = position_dodge(width = 0.9),
+    hjust = -0.2, # Mueve la etiqueta -0.2 unidades a lo largo del eje X (separa de la barra)
+    size = 3.5
+  ) +
+  
+  # Títulos y Ejes
+  labs(
+    title = "Figura 9. Gráfico de barras (Sí/No) por Preferencia de Proteínas",
+    x = "Preferencia de Proteínas",
+    y = "Número de Respuestas",
+    fill = "Usaría"
+  ) +
+  
+  # Colores
+  scale_fill_manual(values = c("No" = "#a6cee3", "Sí" = "#1f78b4")) + 
+  
+  # Invertir coordenadas para hacerlo horizontal
+  coord_flip() + 
+  
+  # Ajuste del eje para que no se corten las etiquetas (Aumentamos el espacio)
+  scale_y_continuous(expand = expansion(mult = c(0, 0.20))) + 
+  
+  # Ajuste de Tema
+  theme(legend.position = "bottom")
+```
+
+A
+
+```{r P14-tabla}
+# Transformar a formato largo, contar frecuencias de SÍ/NO y calcular porcentajes
+df_tabla_temp <- datos %>%
+  dplyr::select(all_of(multi_vars)) %>%
+  tidyr::pivot_longer(
+    cols = everything(), 
+    names_to = "Preferencia_Proteina_Raw", 
+    values_to = "Respuesta" 
+  ) %>%
+  dplyr::count(Preferencia_Proteina_Raw, Respuesta, name = "Frecuencia") %>%
+  dplyr::mutate(
+    Porcentaje = (Frecuencia / n.filas) * 100
+  ) %>%
+  tidyr::pivot_wider(
+    names_from = Respuesta, 
+    values_from = c(Frecuencia, Porcentaje),
+    values_fill = 0 
+  ) %>%
+  dplyr::mutate(
+    Preferencia_Proteina = gsub("f_Prot.", "", Preferencia_Proteina_Raw, fixed = TRUE),
+    Preferencia_Proteina = tools::toTitleCase(Preferencia_Proteina)
+  ) %>%
+  dplyr::select(
+    Preferencia_Proteina,
+    `Frecuencia_Sí`, `Porcentaje_Sí`,
+    `Frecuencia_No`, `Porcentaje_No`
+  )
+
+
+# Fila de Total
+df_total <- data.frame(
+  Preferencia_Proteina = "Total",
+  Frecuencia_Sí = sum(df_tabla_temp$Frecuencia_Sí),
+  Porcentaje_Sí = NA, # No se suma, sería engañoso
+  Frecuencia_No = sum(df_tabla_temp$Frecuencia_No),
+  Porcentaje_No = NA # No se suma, sería engañoso
+)
+
+# Unir el data frame con la fila total
+df_tabla_final <- bind_rows(df_tabla_temp, df_total)
+
+
+# Generación de la tabla (flextable)
+ft_si_no <- flextable::flextable(df_tabla_final) %>%
+  
+  # Añadir Título
+  flextable::set_caption(caption = "Tabla 9. Distribución de Frecuencias (Sí/No) para Preferencia de Proteína") %>%
+  
+  # Renombrar cabeceras (se usan para la segunda fila de la cabecera)
+  flextable::set_header_labels(
+    Preferencia_Proteina = "Preferencia de Proteína",
+    Frecuencia_Sí = "Frecuencia (n)",
+    Porcentaje_Sí = "Porcentaje",
+    Frecuencia_No = "Frecuencia (n)",
+    Porcentaje_No = "Porcentaje"
+  ) %>%
+  
+  # Agrupar las columnas 'Sí' y 'No' en una fila superior
+  flextable::add_header_row(
+    values = c(" ", "SÍ", "NO"),
+    colwidths = c(1, 2, 2)
+  ) %>%
+  
+  # Formato y Tema
+  flextable::colformat_double(j = c(3, 5), digits = 1, suffix = "%", na_str = "") %>% 
+  
+  flextable::theme_booktabs() %>% 
+  
+  # Alineación
+  # Aplicar negrita y bordes a la fila "Total" (la última fila)
+  flextable::bold(i = nrow(df_tabla_final), part = "body") %>% 
+  flextable::hline(i = nrow(df_tabla_final) - 1, border = officer::fp_border(width = 1.5, color = "black")) %>%
+  
+  # Alineación
+  flextable::align(align = "center", part = "all") %>%
+  flextable::align(j = 1, align = "left", part = "body") %>%
+  
+  # Ajustar
+  flextable::autofit()
+
+# Mostrar la tabla
+ft_si_no
+```
+
+#### 'f_Preferencia.Complementos'
+Las categorías de `f_Preferencia.Complementos` hacen referencia a los complementos que los encuestados añadirían a sus ensaladas. Es importante destacar que esta variable proviene de una pregunta con respuesta múltiple por lo que optamos por un gráfico de barras múltiple basándonos en si ha se ha seleccionado cada respuesta o no.
+
+```{r P15-barras, fig.height=6, fig.width=10}
+# Definir las variables a analizar (P10: Situaciones de Uso)
+multi_vars <- c("f_Complem.Frutas", "f_Complem.Secos", "f_Complem.Verduras", "f_Complem.Salsas", "f_Complem.Especias")
+
+# Transformar a formato largo y contar frecuencias de SÍ/NO
+df_barras_dobles <- datos %>%
+  dplyr::select(all_of(multi_vars)) %>%
+  tidyr::pivot_longer(
+    cols = everything(), 
+    names_to = "Preferenica_Complementos", 
+    values_to = "Respuesta"
+  ) %>%
+  dplyr::count(Preferenica_Complementos, Respuesta, name = "Frecuencia") %>%
+  dplyr::mutate(
+    Preferenica_Complementos = gsub("f_Complem.", "", Preferenica_Complementos, fixed = TRUE),
+    Preferenica_Complementos = tools::toTitleCase(Preferenica_Complementos),
+    Respuesta = factor(Respuesta, levels = c("No", "Sí")) 
+  )
+
+# Generación del Gráfico de Barras Agrupadas (Horizontal)
+ggplot(df_barras_dobles, aes(x = Preferenica_Complementos, y = Frecuencia, fill = Respuesta)) +
+  
+  # Barras agrupadas
+  geom_bar(stat = "identity", position = position_dodge(width = 0.9)) + 
+  
+  # Etiquetas de Frecuencia
+  geom_text(
+    aes(label = Frecuencia),
+    position = position_dodge(width = 0.9),
+    hjust = -0.2, # Mueve la etiqueta -0.2 unidades a lo largo del eje X (separa de la barra)
+    size = 3.5
+  ) +
+  
+  # Títulos y Ejes
+  labs(
+    title = "Figura 10. Gráfico de barras (Sí/No) por Preferencia Complementos",
+    x = "Preferencia Complementos",
+    y = "Número de Respuestas",
+    fill = "Pondría"
+  ) +
+  
+  # Colores
+  scale_fill_manual(values = c("No" = "#a6cee3", "Sí" = "#1f78b4")) + 
+  
+  # Invertir coordenadas para hacerlo horizontal
+  coord_flip() + 
+  
+  # Ajuste del eje para que no se corten las etiquetas (Aumentamos el espacio)
+  scale_y_continuous(expand = expansion(mult = c(0, 0.20))) + 
+  
+  # Ajuste de Tema
+  theme(legend.position = "bottom")
+```
+
+A
+
+```{r P15-tabla}
+# Transformar a formato largo, contar frecuencias de SÍ/NO y calcular porcentajes
+df_tabla_temp <- datos %>%
+  dplyr::select(all_of(multi_vars)) %>%
+  tidyr::pivot_longer(
+    cols = everything(), 
+    names_to = "Preferenica_Complementos_Raw", 
+    values_to = "Respuesta" 
+  ) %>%
+  dplyr::count(Preferenica_Complementos_Raw, Respuesta, name = "Frecuencia") %>%
+  dplyr::mutate(
+    Porcentaje = (Frecuencia / n.filas) * 100
+  ) %>%
+  tidyr::pivot_wider(
+    names_from = Respuesta, 
+    values_from = c(Frecuencia, Porcentaje),
+    values_fill = 0 
+  ) %>%
+  dplyr::mutate(
+    Preferenica_Complementos = gsub("f_Complem.", "", Preferenica_Complementos_Raw, fixed = TRUE),
+    Preferenica_Complementos = tools::toTitleCase(Preferenica_Complementos)
+  ) %>%
+  dplyr::select(
+    Preferenica_Complementos,
+    `Frecuencia_Sí`, `Porcentaje_Sí`,
+    `Frecuencia_No`, `Porcentaje_No`
+  )
+
+
+# Fila de Total
+df_total <- data.frame(
+  Preferenica_Complementos = "Total",
+  Frecuencia_Sí = sum(df_tabla_temp$Frecuencia_Sí),
+  Porcentaje_Sí = NA, # No se suma, sería engañoso
+  Frecuencia_No = sum(df_tabla_temp$Frecuencia_No),
+  Porcentaje_No = NA # No se suma, sería engañoso
+)
+
+# Unir el data frame con la fila total
+df_tabla_final <- bind_rows(df_tabla_temp, df_total)
+
+
+# Generación de la tabla (flextable)
+ft_si_no <- flextable::flextable(df_tabla_final) %>%
+  
+  # Añadir Título
+  flextable::set_caption(caption = "Tabla 10. Distribución de Frecuencias (Sí/No) para Preferencia de Complementos") %>%
+  
+  # Renombrar cabeceras (se usan para la segunda fila de la cabecera)
+  flextable::set_header_labels(
+    Preferenica_Complementos = "Preferencia Complementos",
+    Frecuencia_Sí = "Frecuencia (n)",
+    Porcentaje_Sí = "Porcentaje",
+    Frecuencia_No = "Frecuencia (n)",
+    Porcentaje_No = "Porcentaje"
+  ) %>%
+  
+  # Agrupar las columnas 'Sí' y 'No' en una fila superior
+  flextable::add_header_row(
+    values = c(" ", "SÍ", "NO"),
+    colwidths = c(1, 2, 2)
+  ) %>%
+  
+  # Formato y Tema
+  flextable::colformat_double(j = c(3, 5), digits = 1, suffix = "%", na_str = "") %>% 
+  
+  flextable::theme_booktabs() %>% 
+  
+  # Alineación
+  # Aplicar negrita y bordes a la fila "Total" (la última fila)
+  flextable::bold(i = nrow(df_tabla_final), part = "body") %>% 
+  flextable::hline(i = nrow(df_tabla_final) - 1, border = officer::fp_border(width = 1.5, color = "black")) %>%
+  
+  # Alineación
+  flextable::align(align = "center", part = "all") %>%
+  flextable::align(j = 1, align = "left", part = "body") %>%
+  
+  # Ajustar
+  flextable::autofit()
+
+# Mostrar la tabla
+ft_si_no
+```
+
+#### `f_Preferencia.Dispensacion`
+Las categorías de `f_Preferencia.Dispensacion`hacen referencia a los 3 formatos de dispensación presentados para la barra de ensaladas. Se trata de una variable cuyas categorías no guardan una relación de orden entre sí.
+
+```{r P18-tarta}
+# Crear el data frame de frecuencias y porcentajes usando dplyr
+datos_grafico <- datos %>%
+  # Contar la frecuencia de cada nivel de la variable f_Preferencia.Dispensacion
+  count(f_Preferencia.Dispensacion, name = "Frecuencia") %>%
+  # Calcular el porcentaje y el texto de la etiqueta
+  mutate(
+    Porcentaje = Frecuencia / sum(Frecuencia) * 100,
+    Etiquetas = paste0(f_Preferencia.Dispensacion, "\n(", round(Porcentaje, 1), "%)") # Etiqueta para el gráfico
+  ) %>%
+  # Eliminar filas con 0% si existen, y categorías no deseadas
+  filter(Porcentaje > 0 & f_Preferencia.Dispensacion != "Total") # Se filtra 'Total' aunque dplyr no lo añade
+
+# Usamos el vector de Porcentaje para el tamaño de las porciones
+pie(datos_grafico$Porcentaje,
+    # Usamos las Etiquetas que combinan nombre y porcentaje
+    labels = datos_grafico$Etiquetas,
+    # Título
+    main = 'Figura 11. Preferencia del Formato de Dispensación',
+    # Asignar un color diferente a cada porción
+    col = RColorBrewer::brewer.pal(n = nrow(datos_grafico), name = "Set3"))
+
+```
+A
+
+```{r P18-tabla}
+# Preparación de datos
+df_tabla_dispensacion <- datos %>%
+  # Contar la frecuencia de cada nivel
+  dplyr::count(f_Preferencia.Dispensacion, name = "Frecuencia") %>%
+  # Calcular porcentajes
+  dplyr::mutate(
+    Porcentaje = Frecuencia / sum(Frecuencia) * 100
+  ) %>%
+  # Redondear y formatear los porcentajes
+  dplyr::mutate(
+    Porcentaje = paste0(round(Porcentaje, 1), "%")
+  )
+
+# Calcular y añadir la fila total
+df_total <- data.frame(
+  f_Preferencia.Dispensacion = "Total",
+  Frecuencia = sum(df_tabla_dispensacion$Frecuencia),
+  Porcentaje = "100.0%"
+)
+
+# Unir el data frame de frecuencias con la fila total
+df_tabla_final <- bind_rows(df_tabla_dispensacion, df_total)
+
+# Generación de la tabla (flextable)
+ft <- flextable::flextable(df_tabla_final) %>%
+
+flextable::set_caption(caption = "Tabla 11. Distribución de frecuencias para Formato de Dispensación Preferido") %>%
+  
+  # Renombrar las cabeceras
+  flextable::set_header_labels(
+    f_Preferencia.Dispensacion = "Formato de Dispensación",
+    Frecuencia = "Frecuencia (n)",
+    Porcentaje = "Porcentaje"
+  ) %>%
+  
+  # Aplicar negrita y bordes a la fila "Total"
+  flextable::bold(i = nrow(df_tabla_final), part = "body") %>% # Negrita a la última fila (Total)
+  flextable::border_remove() %>% # Quitar bordes predeterminados
+  flextable::theme_booktabs() %>% # Aplicar un tema con líneas horizontales
+  
+  # Formato de alineación y cabecera
+  flextable::align(j = 1, align = "left", part = "body") %>%
+  flextable::align(j = 2:3, align = "center", part = "all") %>% # Columnas 2 y 3 (Datos) CENTRADAS
+  flextable::align(align = "center", part = "header") %>%        # Encabezados CENTRADOS
+  
+  # Añadir una línea superior a la fila "Total" para separarla
+  flextable::hline(i = nrow(df_tabla_final) - 1, border = officer::fp_border(width = 1.5, color = "black")) %>%
+  
+  # Ajustar el ancho de las columnas
+  flextable::autofit()
+
+# Mostrar la tabla
+ft
+```
+
+#### `f_Intencion.Uso`
+Las categorías de `f_Intencion.Uso` hacen referencia a si los encuestados utilizarían nuestra barra de ensaladas o no (grado de aceptación). Se trata de una variable cuyas categorías no guardan una relación de orden entre sí.
+
+```{r P19-tarta}
+# Crear el data frame de frecuencias y porcentajes usando dplyr
+datos_grafico <- datos %>%
+  # Contar la frecuencia de cada nivel de la variable f_Intencion.Uso
+  count(f_Intencion.Uso, name = "Frecuencia") %>%
+  # Calcular el porcentaje y el texto de la etiqueta
+  mutate(
+    Porcentaje = Frecuencia / sum(Frecuencia) * 100,
+    Etiquetas = paste0(f_Intencion.Uso, "\n(", round(Porcentaje, 1), "%)") # Etiqueta para el gráfico
+  ) %>%
+  # Eliminar filas con 0% si existen, y categorías no deseadas
+  filter(Porcentaje > 0 & f_Intencion.Uso != "Total") # Se filtra 'Total' aunque dplyr no lo añade
+
+# Usamos el vector de Porcentaje para el tamaño de las porciones
+pie(datos_grafico$Porcentaje,
+    # Usamos las Etiquetas que combinan nombre y porcentaje
+    labels = datos_grafico$Etiquetas,
+    # Título
+    main = 'Figura 12. Grado de Aceptación',
+    # Asignar un color diferente a cada porción
+    col = RColorBrewer::brewer.pal(n = nrow(datos_grafico), name = "Set3"))
+
+```
+A
+
+```{r P19-tabla}
+# Preparación de datos
+df_tabla_aceptacion <- datos %>%
+  # Contar la frecuencia de cada nivel
+  dplyr::count(f_Intencion.Uso, name = "Frecuencia") %>%
+  # Calcular porcentajes
+  dplyr::mutate(
+    Porcentaje = Frecuencia / sum(Frecuencia) * 100
+  ) %>%
+  # Redondear y formatear los porcentajes
+  dplyr::mutate(
+    Porcentaje = paste0(round(Porcentaje, 1), "%")
+  )
+
+# Calcular y añadir la fila total
+df_total <- data.frame(
+  f_Intencion.Uso = "Total",
+  Frecuencia = sum(df_tabla_aceptacion$Frecuencia),
+  Porcentaje = "100.0%"
+)
+
+# Unir el data frame de frecuencias con la fila total
+df_tabla_final <- bind_rows(df_tabla_aceptacion, df_total)
+
+# Generación de la tabla (flextable)
+ft <- flextable::flextable(df_tabla_final) %>%
+
+flextable::set_caption(caption = "Tabla 12. Distribución de frecuencias para el Grado de Aceptación") %>%
+  
+  # Renombrar las cabeceras
+  flextable::set_header_labels(
+    f_Intencion.Uso = "Grado de Aceptación",
+    Frecuencia = "Frecuencia (n)",
+    Porcentaje = "Porcentaje"
+  ) %>%
+  
+  # Aplicar negrita y bordes a la fila "Total"
+  flextable::bold(i = nrow(df_tabla_final), part = "body") %>% # Negrita a la última fila (Total)
+  flextable::border_remove() %>% # Quitar bordes predeterminados
+  flextable::theme_booktabs() %>% # Aplicar un tema con líneas horizontales
+  
+  # Formato de alineación y cabecera
+  flextable::align(j = 1, align = "left", part = "body") %>%
+  flextable::align(j = 2:3, align = "center", part = "all") %>% # Columnas 2 y 3 (Datos) CENTRADAS
+  flextable::align(align = "center", part = "header") %>%        # Encabezados CENTRADOS
+  
+  # Añadir una línea superior a la fila "Total" para separarla
+  flextable::hline(i = nrow(df_tabla_final) - 1, border = officer::fp_border(width = 1.5, color = "black")) %>%
+  
+  # Ajustar el ancho de las columnas
+  flextable::autofit()
+
+# Mostrar la tabla
+ft
+```
+
+#### `f_Genero`
+Las categorías de `f_Genero` diferencia el género del encuestado. Se trata de una variable cuyas categorías no guardan una relación de orden entre sí.
+
+```{r P21-tarta}
+# Crear el data frame de frecuencias y porcentajes usando dplyr
+datos_grafico <- datos %>%
+  # Contar la frecuencia de cada nivel de la variable f_Genero
+  count(f_Genero, name = "Frecuencia") %>%
+  # Calcular el porcentaje y el texto de la etiqueta
+  mutate(
+    Porcentaje = Frecuencia / sum(Frecuencia) * 100,
+    Etiquetas = paste0(f_Genero, "\n(", round(Porcentaje, 1), "%)") # Etiqueta para el gráfico
+  ) %>%
+  # Eliminar filas con 0% si existen, y categorías no deseadas
+  filter(Porcentaje > 0 & f_Genero != "Total") # Se filtra 'Total' aunque dplyr no lo añade
+
+# Usamos el vector de Porcentaje para el tamaño de las porciones
+pie(datos_grafico$Porcentaje,
+    # Usamos las Etiquetas que combinan nombre y porcentaje
+    labels = datos_grafico$Etiquetas,
+    # Título
+    main = 'Figura 13. Género',
+    # Asignar un color diferente a cada porción
+    col = RColorBrewer::brewer.pal(n = nrow(datos_grafico), name = "Set3"))
+
+```
+A
+
+```{r P21-tabla}
+# Preparación de datos
+df_tabla_genero <- datos %>%
+  # Contar la frecuencia de cada nivel
+  dplyr::count(f_Genero, name = "Frecuencia") %>%
+  # Calcular porcentajes
+  dplyr::mutate(
+    Porcentaje = Frecuencia / sum(Frecuencia) * 100
+  ) %>%
+  # Redondear y formatear los porcentajes
+  dplyr::mutate(
+    Porcentaje = paste0(round(Porcentaje, 1), "%")
+  )
+
+# Calcular y añadir la fila total
+df_total <- data.frame(
+  f_Genero = "Total",
+  Frecuencia = sum(df_tabla_genero$Frecuencia),
+  Porcentaje = "100.0%"
+)
+
+# Unir el data frame de frecuencias con la fila total
+df_tabla_final <- bind_rows(df_tabla_genero, df_total)
+
+# Generación de la tabla (flextable)
+ft <- flextable::flextable(df_tabla_final) %>%
+
+flextable::set_caption(caption = "Tabla 13. Distribución de frecuencias para Género") %>%
+  
+  # Renombrar las cabeceras
+  flextable::set_header_labels(
+    f_Genero = "Género",
+    Frecuencia = "Frecuencia (n)",
+    Porcentaje = "Porcentaje"
+  ) %>%
+  
+  # Aplicar negrita y bordes a la fila "Total"
+  flextable::bold(i = nrow(df_tabla_final), part = "body") %>% # Negrita a la última fila (Total)
+  flextable::border_remove() %>% # Quitar bordes predeterminados
+  flextable::theme_booktabs() %>% # Aplicar un tema con líneas horizontales
+  
+  # Formato de alineación y cabecera
+  flextable::align(j = 1, align = "left", part = "body") %>%
+  flextable::align(j = 2:3, align = "center", part = "all") %>% # Columnas 2 y 3 (Datos) CENTRADAS
+  flextable::align(align = "center", part = "header") %>%        # Encabezados CENTRADOS
+  
+  # Añadir una línea superior a la fila "Total" para separarla
+  flextable::hline(i = nrow(df_tabla_final) - 1, border = officer::fp_border(width = 1.5, color = "black")) %>%
+  
+  # Ajustar el ancho de las columnas
+  flextable::autofit()
+
+# Mostrar la tabla
+ft
+```
+
+#### `f_Situacion.Laboral`
+Las categorías de `f_Situacion.Laboral` indican la situación laboral del encuestado. Se trata de una variable cuyas categorías no guardan una relación de orden entre sí.
+
+```{r P23-tarta}
+# Crear el data frame de frecuencias y porcentajes usando dplyr
+datos_grafico <- datos %>%
+  # Contar la frecuencia de cada nivel de la variable f_Situacion.Laboral
+  count(f_Situacion.Laboral, name = "Frecuencia") %>%
+  # Calcular el porcentaje y el texto de la etiqueta
+  mutate(
+    Porcentaje = Frecuencia / sum(Frecuencia) * 100,
+    Etiquetas = paste0(f_Situacion.Laboral, "\n(", round(Porcentaje, 1), "%)") # Etiqueta para el gráfico
+  ) %>%
+  # Eliminar filas con 0% si existen, y categorías no deseadas
+  filter(Porcentaje > 0 & f_Situacion.Laboral != "Total") # Se filtra 'Total' aunque dplyr no lo añade
+
+# Usamos el vector de Porcentaje para el tamaño de las porciones
+pie(datos_grafico$Porcentaje,
+    # Usamos las Etiquetas que combinan nombre y porcentaje
+    labels = datos_grafico$Etiquetas,
+    # Título
+    main = 'Figura 14. Situación Laboral',
+    # Asignar un color diferente a cada porción
+    col = RColorBrewer::brewer.pal(n = nrow(datos_grafico), name = "Set3"))
+
+```
+A
+
+```{r P23-tabla}
+# Preparación de datos
+df_tabla_laboral <- datos %>%
+  # Contar la frecuencia de cada nivel
+  dplyr::count(f_Situacion.Laboral, name = "Frecuencia") %>%
+  # Calcular porcentajes
+  dplyr::mutate(
+    Porcentaje = Frecuencia / sum(Frecuencia) * 100
+  ) %>%
+  # Redondear y formatear los porcentajes
+  dplyr::mutate(
+    Porcentaje = paste0(round(Porcentaje, 1), "%")
+  )
+
+# Calcular y añadir la fila total
+df_total <- data.frame(
+  f_Situacion.Laboral = "Total",
+  Frecuencia = sum(df_tabla_laboral$Frecuencia),
+  Porcentaje = "100.0%"
+)
+
+# Unir el data frame de frecuencias con la fila total
+df_tabla_final <- bind_rows(df_tabla_laboral, df_total)
+
+# Generación de la tabla (flextable)
+ft <- flextable::flextable(df_tabla_final) %>%
+
+flextable::set_caption(caption = "Tabla 14. Distribución de frecuencias para Situación Laboral") %>%
+  
+  # Renombrar las cabeceras
+  flextable::set_header_labels(
+    f_Situacion.Laboral = "Situación Laboral",
+    Frecuencia = "Frecuencia (n)",
+    Porcentaje = "Porcentaje"
+  ) %>%
+  
+  # Aplicar negrita y bordes a la fila "Total"
+  flextable::bold(i = nrow(df_tabla_final), part = "body") %>% # Negrita a la última fila (Total)
+  flextable::border_remove() %>% # Quitar bordes predeterminados
+  flextable::theme_booktabs() %>% # Aplicar un tema con líneas horizontales
+  
+  # Formato de alineación y cabecera
+  flextable::align(j = 1, align = "left", part = "body") %>%
+  flextable::align(j = 2:3, align = "center", part = "all") %>% # Columnas 2 y 3 (Datos) CENTRADAS
+  flextable::align(align = "center", part = "header") %>%        # Encabezados CENTRADOS
+  
+  # Añadir una línea superior a la fila "Total" para separarla
+  flextable::hline(i = nrow(df_tabla_final) - 1, border = officer::fp_border(width = 1.5, color = "black")) %>%
+  
+  # Ajustar el ancho de las columnas
+  flextable::autofit()
+
+# Mostrar la tabla
+ft
+```
+
