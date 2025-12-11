@@ -1092,7 +1092,7 @@ ggplot(df_barras_dobles, aes(x = Preferencia_Base, y = Frecuencia, fill = Respue
   theme(legend.position = "bottom")
 ```
 
-A
+Se observa que la base más que se usaría seria la mezcla verde de rúcula, canónigos, espinacas... (con 38 respuestas afirmativas), seguido de pasta (con 29 respuestas afirmativas).
 
 ```{r P13-tabla}
 # Transformar a formato largo, contar frecuencias de SÍ/NO y calcular porcentajes
@@ -1219,7 +1219,7 @@ ggplot(df_barras_dobles, aes(x = Prerencia_Proteina, y = Frecuencia, fill = Resp
     title = "Figura 9. Gráfico de barras (Sí/No) por Preferencia de Proteínas",
     x = "Preferencia de Proteínas",
     y = "Número de Respuestas",
-    fill = "Usaría"
+    fill = "Pondría"
   ) +
   
   # Colores
@@ -1235,7 +1235,7 @@ ggplot(df_barras_dobles, aes(x = Prerencia_Proteina, y = Frecuencia, fill = Resp
   theme(legend.position = "bottom")
 ```
 
-A
+Se observa que la proteína que más se pondría en la ensalada sería pollo (con 40 respuestas afirmativas), seguido de huevo (con 29 respuestas afirmativas).
 
 ```{r P14-tabla}
 # Transformar a formato largo, contar frecuencias de SÍ/NO y calcular porcentajes
@@ -1378,7 +1378,7 @@ ggplot(df_barras_dobles, aes(x = Preferenica_Complementos, y = Frecuencia, fill 
   theme(legend.position = "bottom")
 ```
 
-A
+Se observa que el complemento que más se pondría en la ensalada sería frutos secos (con 37 respuestas afirmativas), seguido de verduras cocinadas (con 27 respuestas de afirmativas).
 
 ```{r P15-tabla}
 # Transformar a formato largo, contar frecuencias de SÍ/NO y calcular porcentajes
@@ -1490,7 +1490,7 @@ pie(datos_grafico$Porcentaje,
     col = RColorBrewer::brewer.pal(n = nrow(datos_grafico), name = "Set3"))
 
 ```
-A
+Se observa que el formato de dispensación preferido es que tiene protección fija y los ingredientes no son accesibles (con el 38.1%), seguido del formato en el que los ingredientes esta protegidos por una mampara de cristal que se abre (con el34.9&)
 
 ```{r P18-tabla}
 # Preparación de datos
@@ -1574,7 +1574,7 @@ pie(datos_grafico$Porcentaje,
     col = RColorBrewer::brewer.pal(n = nrow(datos_grafico), name = "Set3"))
 
 ```
-A
+Podemos concluir que la mayoría de los encuestados aceptarían el producto y lo usarían, siendo del 73%.
 
 ```{r P19-tabla}
 # Preparación de datos
@@ -1658,7 +1658,7 @@ pie(datos_grafico$Porcentaje,
     col = RColorBrewer::brewer.pal(n = nrow(datos_grafico), name = "Set3"))
 
 ```
-A
+Se puede observar que la mayoría de los encuestados son hombres con un 50.8%, mientras que las mujeres representan el 46% de la respuestas.
 
 ```{r P21-tabla}
 # Preparación de datos
@@ -1742,7 +1742,7 @@ pie(datos_grafico$Porcentaje,
     col = RColorBrewer::brewer.pal(n = nrow(datos_grafico), name = "Set3"))
 
 ```
-A
+Se observa que la mayoría de encuestados son estudiantes(con un 61,9%), seguidos de trabajadores por cuenta ajena (con un 25,4%).
 
 ```{r P23-tabla}
 # Preparación de datos
@@ -1841,7 +1841,7 @@ ggplot(df_frecuencia_tiempo, aes(x = f_Frecuencia, y = Frecuencia)) +
   # Corrección del eje Y para evitar el recorte de las etiquetas
   scale_y_continuous(expand = expansion(mult = c(0, 0.15)))
 ```
-A
+Se observa que la mayoría de los encuestados salen a comer fuera de casa entre 1 y 2 veces por semana (con un 34.9%). También se observa que el gráfico tiene una ligera asimetría a la derecha.
 
 ```{r P2-tabla}
 # Preparación de datos
@@ -1938,7 +1938,9 @@ ggplot(df_frecuencia_tiempo, aes(x = f_Frecuencia.Comida.Preparada, y = Frecuenc
   # Corrección del eje Y para evitar el recorte de las etiquetas
   scale_y_continuous(expand = expansion(mult = c(0, 0.15)))
 ```
-A
+
+Se observa que la mayoría de encuestados compran ocasionalmante comida preparada en supermercados (con un 36.5%), seguido de que los que directamente no compran o rara vez lo hacen (con un 34.9%).
+
 ```{r P5-tabla}
 # Preparación de datos
 df_tabla_freq_prep <- datos %>%
@@ -2034,7 +2036,9 @@ ggplot(df_frecuencia_tiempo, aes(x = f_Disposicion.Pago, y = Frecuencia)) +
   # Corrección del eje Y para evitar el recorte de las etiquetas
   scale_y_continuous(expand = expansion(mult = c(0, 0.15)))
 ```
-A
+
+Se observa que la mayoría de los encuestados estan dispuestos a pagar entre 4 y 5,50€ (con un 41.3%), seguido de los que estan dispuestos a pagar entre 5,50 y 7€ (con un 28.6%).
+
 ```{r P16-tabla}
 # Preparación de datos
 df_tabla_disp <- datos %>%
@@ -2130,7 +2134,9 @@ ggplot(df_frecuencia_tiempo, aes(x = f_Edad, y = Frecuencia)) +
   # Corrección del eje Y para evitar el recorte de las etiquetas
   scale_y_continuous(expand = expansion(mult = c(0, 0.15)))
 ```
-A
+
+Se observa que la edad de la mayoría de los encuestados se encuentra entre 18 y 24 años (con un 63.5%), seguido del rango de edades entre 45 y 64 años (con un 19%).
+
 ```{r P20-tabla}
 # Preparación de datos
 df_tabla_edad <- datos %>%
@@ -2226,7 +2232,9 @@ ggplot(df_frecuencia_tiempo, aes(x = f_Nivel.Educativo, y = Frecuencia)) +
   # Corrección del eje Y para evitar el recorte de las etiquetas
   scale_y_continuous(expand = expansion(mult = c(0, 0.15)))
 ```
-A
+
+Se observa que el nivel educativo alcanzado por la mayoría de encuestados es el universitario (con un 61.9%), seguido de encuestados con nivel máximo alcanzado de bachillerato o FP media (con un 20.6%).
+
 ```{r P22-tabla}
 # Preparación de datos
 df_tabla_edu <- datos %>%
@@ -2347,7 +2355,8 @@ fig.likert <- likert::likert.bar.plot(
 fig.likert
 
 ```
-A
+
+Según la valoración de los factores de importancia en una escala Likert, existe una clara jerarquía de prioridades: los aspectos más cruciales son la Higiene, el Sabor y el Precio, ya que la inmensa mayoría de los encuestados los considera "muy importantes" (categorías 4 y 5); les siguen en importancia la Variedad de Ingredientes, el Origen Local y el valor de Comer Saludable. Por otro lado, la Sostenibilidad es el factor que recibe la mayor proporción de valoraciones bajas en comparación con los demás, y la Rapidez también muestra una importancia variable. Finalmente, una conclusión de opinión destacada es que la mayoría de los encuestados no percibe las ensaladas como una comida social.
 
 ## Variables cualitativas
 
@@ -2368,4 +2377,88 @@ flextable(
   # ajustamos la tabla para que pueda leerse mejor en la página
   autofit()
 ```
+Hemos optado por agrupar las respuestas por categorías para poder analizarlas en mayor profundidad. Nos hemos decantado por 7 categorías:
+1. No han tenido malas experiencias.
+2. Relacionadas con la higiene, salud y contaminación.
+3. Relacionadas con la frescura y calidad.
+4. Relacionadas con el sabor y la preparación.
+5. Relacionadas con el servicio y la logística detrás de este.
+6. Relacionadas con la variedad de ingredientes y la cantidad de porción.
+7. Otros (no queda claro donde categorizarlas).
 
+```{r p9_Categorizacion_Cualitativa}
+# Simulamos la columna de datos (asumimos que esta columna no se cargó como factor)
+respuestas_raw <- c(
+  "No he tenido experiencias previas", "No he tenido ninguna mala experiencia que recuerde. No suelo usarlo.", "comida grasienta", "Alguna vez no tenía muy buena pinta, posiblemente había algo en mal estado", "Falta de higiene", "No", "Ninguna", "No", "No", "no", 
+  "Me ha aparecido un trozo de madera con pintura en la comida", "Se me olvidaron coger cubiertos y luego no tenía como comer, así que me tocó comer de malas maneras.", "Ocasionalmente el menú de hamburguesas del trinquet, tanto las patatas como la hamburguesa saben a cartón, como si estuviese comiendo pared de casa americana, pero como en relación abusiva, tarde o temprano vuelvo porque está vez cambiaran. También nunca hay pan grande, lo cual es una blasfemia contra la moral pública.", "no", "Comida mal preparada o congelada.", "No he tenido ninguna mala experiencia.", "No", "Un gusano", "Si, que me cuesta mucho decidir que coger", "No", 
+  "Algun ingrediente de hojas verdes sin cocinar poco fresco o algo deteriorado por ser un vegetal delicado para conservar", "Falta de frescura", "Control sanitario / Reposición / Dosificación / bacterizacion por contaminacion de clientela, mendigos, viejos, niños", "Los ingredientes no parecían estar muy frescos, o había muy poca variedad de ingredientes.", "Qué esté la comida fría o por lo menos se note que lleva mucho tiempo hecha.", "No", "no", "si", "Buffet de hoteles con poca variedad. La calidad de la comida baja.", "Productos en mal estado", 
+  "No he tenido, pero prefiero hacerme las ensaladas en cada", "Es cara y no sabe a nada en específico, pura quimica", "Una vez me intoxique con la comida preparada de Mercadona. A partir de ese momento me lo pienso bastante para volver a comprar los platos preaprados", "No recuerdo", "Ninguna", "En las barras de ensalada ponen mucha lechuga y poco condumio", "No he tenido", "Nunca he tenido malas experiencias", "La verdad es que mientras los productos estén frescos, no.", "No", 
+  "No he tenido", "No", "No","No", "Ninguna", "Me preocupa la falta de higiene en la manipulación de los alimentos", "Princi son saludables, no puedo cocinar o calentar los platos preparados", "No", "No he tenido ninguna mala experiencia", "No he tenido ninguna mala experiencia", "no podría describir ninguna. ya que los bares, cafeterías y supermercados en los que suelo comer fuera de casa no tienen implementado esta función de autoservicio.", "No he tenido ninguna", "Falta de higiene", "Problemas con la higiene", "El Sibo", 
+  "No comer en Pompeya", "No he tenido", "Comida con mala pinta", "no", "no he tenido", "no", "No he tenido.", "No"
+)
+# Creamos un dataframe temporal para la categorización
+df_cualitativo <- tibble::tibble(respuesta_raw = respuestas_raw)
+
+# Categorización usando case_when (patrones de texto)
+df_categorizado <- df_cualitativo %>%
+  dplyr::mutate(
+    Categoria = dplyr::case_when(
+      # Higiene, Salud y Contaminación (Máxima Prioridad)
+      stringr::str_detect(respuesta_raw, stringr::regex("gusano|intoxique|madera|higiene|sanitario|contaminacion|Sibo|saludables", ignore_case = TRUE)) ~ "Higiene / Contaminación / Salud",
+      
+      # Frescura y Calidad
+      stringr::str_detect(respuesta_raw, stringr::regex("frescura|fresco|deteriorado|mal estado|mala pinta|fría|baja", ignore_case = TRUE)) ~ "Calidad / Frescura",
+      
+      # Sabor y Preparación
+      stringr::str_detect(respuesta_raw, stringr::regex("grasienta|mal preparada|congelada|cartón|química|saben|caras", ignore_case = TRUE)) ~ "Sabor / Preparación",
+      
+      # Variedad y Porción
+      stringr::str_detect(respuesta_raw, stringr::regex("poca variedad|mucha lechuga|poco condumio|buffet de hoteles", ignore_case = TRUE)) ~ "Variedad / Porción",
+      
+      # Logística / Servicio
+      stringr::str_detect(respuesta_raw, stringr::regex("cubiertos|decidir|calentar|problema|lento", ignore_case = TRUE)) ~ "Logística / Servicio",
+      
+      # No Mala Experiencia
+      stringr::str_detect(respuesta_raw, stringr::regex("no|ninguna|nunca|recuerdo|previas|prefiero|suelo comer fuera|Pompeya", ignore_case = TRUE)) ~ "No Mala Experiencia",
+      
+      # Por defecto
+      TRUE ~ "Otros (No Categorizado)"
+    )
+  )
+
+# Crear tabla de frecuencias
+df_resumen <- df_categorizado %>%
+  dplyr::count(Categoria, name = "Frecuencia") %>%
+  dplyr::mutate(
+    Porcentaje = (Frecuencia / sum(Frecuencia)) * 100
+  ) %>%
+  dplyr::arrange(desc(Frecuencia)) # Ordenar por frecuencia
+
+
+# Añadir Fila Total y Formato (como en la guía)
+df_total <- data.frame(
+  Categoria = "TOTAL",
+  Frecuencia = sum(df_resumen$Frecuencia),
+  Porcentaje = 100.0
+)
+df_resumen_final <- bind_rows(df_resumen, df_total)
+
+# Generación de la tabla (flextable)
+ft_resumen <- flextable::flextable(df_resumen_final) %>%
+  flextable::set_caption(caption = "Tabla 21. Agrupación de Motivos de Mala Experiencia (Respuestas Abiertas)") %>%
+  flextable::set_header_labels(
+    Categoria = "Categoría de Fallo",
+    Frecuencia = "Frecuencia (n)",
+    Porcentaje = "Porcentaje (%)"
+  ) %>%
+  flextable::colformat_double(j = 3, digits = 1, suffix = "%") %>%
+  flextable::theme_booktabs() %>%
+  flextable::bold(i = nrow(df_resumen_final), part = "body") %>%
+  flextable::hline(i = nrow(df_resumen_final) - 1, border = officer::fp_border(width = 1.5, color = "black")) %>%
+  flextable::align(align = "center", part = "all") %>%
+  flextable::align(j = 1, align = "left", part = "body") %>%
+  flextable::autofit()
+
+# Mostrar la tabla
+ft_resumen
+````
