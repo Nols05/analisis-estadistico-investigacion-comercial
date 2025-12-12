@@ -2461,4 +2461,241 @@ ft_resumen <- flextable::flextable(df_resumen_final) %>%
 
 # Mostrar la tabla
 ft_resumen
-````
+```
+
+Procedemos al análisis bivariante-----------------------------------------
+
+
+Vamos a comprobar si la frecuencia con el que el encuestado come fuera de casa depende del motivo por el que lo hace. Primero, inspeccionaremos la distribución de los casos mediante una tabla de contingencia:
+
+```{r}
+# tabla de contingencia
+proc_freq(datos, 'f_Motivo',
+'f_Frecuencia',
+ # indicamos qué porcentajes queremos
+ include.row_percent = TRUE,
+ include.column_percent = FALSE,
+ include.table_percent = FALSE) %>%
+ # ajustamos los nombres de las variables en la tabla
+ compose(i=2, j=1, value = as_paragraph('Motivo'), part =
+'header') %>%
+ compose(i=1, j=3, value = as_paragraph('Frecuencia'), part =
+'header') %>%
+ # indicamos el título
+ set_caption('Tabla 8. Tabla de contingencia entre el motivo y
+la frecuencia.') %>%
+ # ajustamos la tabla a la página
+ autofit()
+
+```
+Se observa que el 50% de los encuestados que comen fuera de casa por un motivo de conveniencia (trabajo, estudios, etc), lo hacen entre 3 y 4 veces por semana. Además,los encuestados cuyas comidas extradomésticas suelen ser por placer suelen comer fuera de casa ocasionalmente o entre 1 y 2 veces por semana. Finalmente, el 50% de aquellos cuya razón habitual son razones extraordinarias rara vez comen fuera de casa.
+Se aprecia una diferencia de uso entre los distintos grupos y todo lo observado tiene sentido lógico, lo que sugiere que es posible que haya una dependencia.
+
+Para confirmarlo, realizamos un test chi-cuadrado:
+
+
+```{r}
+
+chisq.test(x=datos$f_Motivo, y=datos$f_Frecuencia)
+
+# test del chi cuadrado
+res.chisq <- chisq_test(
+ x = datos$f_Motivo,
+ y = datos$f_Frecuencia)
+# resultado de la evaluación
+res.chisq %>%
+ # imprimimos la tabla
+ flextable() %>%
+ # indicamos el título
+ set_caption('Resultados del test del chi cuadrado entre el
+motivo de comer fuera y la frecuencia.') %>%
+ # arreglamos la coma de los decimales y el punto de los miles
+ colformat_num(
+ j = c("statistic", "p"),
+ big.mark = ".",
+ decimal.mark = ","
+ ) %>%
+ # ajustamos la tabla a la página
+ autofit()
+
+
+
+```
+
+
+
+```{r}
+# sacamos los estadísticos descriptivos del test
+chisq_descriptives(res.chisq) %>%
+ # renombramos las columnas x e y
+ rename(
+ Motivo = 'x',
+ Frecuencia = 'y') %>%
+ # imprimimos la tabla
+ flextable() %>%
+ # indicamos el título
+ set_caption('Estadísticos del test del chi cuadrado entre el
+motivo y la frecuencia.') %>%
+ # arreglamos la coma de los decimales y el punto de los miles
+ colformat_num(
+ j = c("prop", "row.prop", "col.prop", "expected", "resid",
+"std.resid"),
+ big.mark = ".",
+ decimal.mark = ","
+ ) %>%
+ # ajustamos la tabla a la página
+ autofit()
+```
+
+
+Al consultar la tabla con los estadísticos descriptivos del test observamos que en la columna "expected" hay valores que son menores de 5. Por tanto el test no puede considerarse válido al no cumplirse una de las condiciones de validez de esta prueba.
+Para solucionar este problema, agrupamos las categorías para asegurar que se cumpla esta condición. En este caso, unificamos las categorías "Nunca/Rara" y "Ocasionalmente", así como "3-4/sem" y "5+/sem".
+
+```{r}
+# creamos la nueva variable
+datos$f_Frecuencia2 <-
+datos$f_Frecuencia
+levels(datos$f_Frecuencia2) <- list(
+ 'Nunca/Ocasional' = c('Nunca/Rara','Ocasional'),
+ '1-2/sem' = '1-2/sem',
+ '3+/sem' = c('3-4/sem', '5+/sem'))
+
+# tabla de contingencia
+proc_freq(datos, 'f_Motivo', 'f_Frecuencia2',
+ # indicamos qué porcentajes queremos
+ include.row_percent = TRUE,
+ include.column_percent = FALSE,
+ include.table_percent = FALSE) %>%
+ # ajustamos los nombres de las variables en la tabla
+ compose(i=2, j=1, value = as_paragraph('Motivo'), part =
+'header') %>%
+ compose(i=1, j=3, value = as_paragraph('Frecuencia'), part = # Etiqueta de la nueva variable
+'header') %>%
+ # indicamos el título
+ set_caption('Tabla de contingencia entre el motivo y la frecuencia') %>% # Título ajustado
+ # ajustamos la tabla a la página
+ autofit()
+                   
+```
+```{r}
+
+
+
+# test del chi cuadrado
+res.chisq <- chisq_test(
+ x = datos$f_Motivo,
+ y = datos$f_Frecuencia2)
+# resultado de la evaluación
+res.chisq %>%
+  # imprimimos la tabla
+ flextable() %>%
+ # indicamos el título
+ set_caption('Resultados del test del chi cuadrado entre el
+motivo y la frecuencia') %>%
+ # arreglamos la coma de los decimales y el punto de los miles
+ colformat_num(
+ j = c("statistic", "p"),
+ big.mark = ".",
+ decimal.mark = ","
+ ) %>%
+ # ajustamos la tabla a la página
+ autofit()
+```
+
+
+
+```{r}
+
+# sacamos los estadísticos descriptivos del test
+chisq_descriptives(res.chisq) %>%
+ # renombramos las columnas x e y
+ rename(
+ Motivo = 'x',
+ Frecuencia = 'y') %>%
+ # imprimimos la tabla
+ flextable() %>%
+ # indicamos el título
+ set_caption('Estadísticos del test del chi cuadrado entre el
+motivo y la frecuencia.') %>%
+ # arreglamos la coma de los decimales y el punto de los miles
+ colformat_num(
+ j = c("prop", "row.prop", "col.prop", "expected", "resid",
+"std.resid"),
+ big.mark = ".",
+ decimal.mark = ","
+ ) %>%
+ # ajustamos la tabla a la página
+ autofit()
+```
+Sigue habiendo valores en la columna "expected" menores de 5. Vamos a agrupar "Nunca/Ocasional" con "1-2/sem".
+
+```{r}
+# Creamos la nueva variable
+datos$f_Frecuencia3 <- datos$f_Frecuencia
+
+# Definimos los nuevos niveles agrupando como has pedido
+levels(datos$f_Frecuencia3) <- list(
+  '0-2/sem' = c('Nunca/Rara', 'Ocasional', '1-2/sem'),
+  '3+/sem'  = c('3-4/sem', '5+/sem')
+)
+
+# Tabla de contingencia
+proc_freq(datos, 'f_Motivo', 'f_Frecuencia3',
+  include.row_percent = TRUE,
+  include.column_percent = FALSE,
+  include.table_percent = FALSE) %>%
+  compose(i=2, j=1, value = as_paragraph('Motivo'), part = 'header') %>%
+  compose(i=1, j=3, value = as_paragraph('Frecuencia (Agrupada)'), part = 'header') %>%
+  set_caption('Tabla de contingencia: Motivo vs Frecuencia (0-2/sem vs 3+/sem)') %>%
+  autofit()
+```
+
+```{r}
+
+# test del chi cuadrado
+res.chisq <- chisq_test(
+ x = datos$f_Motivo,
+ y = datos$f_Frecuencia3)
+# resultado de la evaluación
+res.chisq %>%
+  # imprimimos la tabla
+ flextable() %>%
+ # indicamos el título
+ set_caption('Resultados del test del chi cuadrado entre el
+motivo y la frecuencia') %>%
+ # arreglamos la coma de los decimales y el punto de los miles
+ colformat_num(
+ j = c("statistic", "p"),
+ big.mark = ".",
+ decimal.mark = ","
+ ) %>%
+ # ajustamos la tabla a la página
+ autofit()
+```
+
+
+```{r}
+# sacamos los estadísticos descriptivos del test
+chisq_descriptives(res.chisq) %>%
+ # renombramos las columnas x e y
+ rename(
+ Motivo = 'x',
+ Frecuencia = 'y') %>%
+ # imprimimos la tabla
+ flextable() %>%
+ # indicamos el título
+ set_caption('Estadísticos del test del chi cuadrado entre el
+motivo y la frecuencia.') %>%
+ # arreglamos la coma de los decimales y el punto de los miles
+ colformat_num(
+ j = c("prop", "row.prop", "col.prop", "expected", "resid",
+"std.resid"),
+ big.mark = ".",
+ decimal.mark = ","
+ ) %>%
+ # ajustamos la tabla a la página
+ autofit()
+```
+La nueva tabla cumple la condición para validar el test del chi cuadrado (valores expected mayores o igual a 5).
+Además, el p-valor es menor que 0,05 y por tanto podemos rechazar la hiótesis nula y afirmar que existe una dependencia entre el motivo por el que los encuestados comen fuera y la frecuencia con la que lo hacen. El  54.2% de aquellos cuyo motivo es la conveniencia suelen comer fuera 3 o más veces por semana, mientras que los que comen por placer o por eventos extraordinarios, suelen hacerlo de forma más esporádica, entre 0 y 2 veces por semana.
+
