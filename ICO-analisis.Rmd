@@ -3055,5 +3055,365 @@ Observando la tabla de contingencia, se aprecia que ambos grupos cuentan con pro
 
 #### 4. Establecer la relación entre los lugares a los que se acude cuando se come fuera de casa (bar o restaurante, trabajo o centro educativo, vía pública) y el tipo de comida elegido (rápida, platos preparados, de elaboración propia o comida preparada en un restaurante).
 
-El objetivo es determinar si el lugar donde se consume influye en el tipo de comida elegido.
-Al tratarse de una variable de respuesta múltiple, analizaremos la dependencia por separado para las opciones más relevantes: comida de elaboración propia, comida rápida y platos preparados de supermercado.
+El objetivo es determinar si el lugar elegido para comer fuera de casa condiciona el tipo de comida consumida.
+Dado que la variable sobre el tipo de comida permite respuesta múltiple, se analizará la asociación de forma individualizada para las categorías principales.
+
+##### 4.1. Asociación con Comida de Rápida
+
+Primero, verificamos la relación entre el lugar habitual y el consumo de comida preparada en restaurantes de comida rápida.
+
+```{r}
+# Tabla de contingencia: Lugar vs Comida Rápida
+proc_freq(datos, 'f_Lugar.Habitual', 'f_Tipo.Comida.Rapida',
+ include.row_percent = TRUE,
+ include.column_percent = FALSE,
+ include.table_percent = FALSE) %>%
+ compose(i=2, j=1, value = as_paragraph('Lugar Habitual'), part = 'header') %>%
+ compose(i=1, j=3, value = as_paragraph('Consume Comida Rápida'), part = 'header') %>%
+ set_caption('Tabla 26. Contingencia: Lugar Habitual vs Comida Rápida.') %>%
+ autofit()
+
+# Test Chi-cuadrado
+res.chisq.rapida <- chisq_test(
+ x = datos$f_Lugar.Habitual,
+ y = datos$f_Tipo.Comida.Rapida)
+
+res.chisq.rapida %>%
+ flextable() %>%
+ set_caption('Resultados del test Chi-cuadrado (Comida Rápida).') %>%
+ colformat_num(j = c("statistic", "p"), big.mark = ".", decimal.mark = ",") %>%
+ autofit()
+
+# Verificación de los valores esperados
+chisq_descriptives(res.chisq.rapida) %>%
+ rename(Lugar = 'x', Comida_Rapida = 'y') %>%
+ flextable() %>%
+ set_caption('Estadísticos y valores esperados: Lugar vs Comida Rápida.') %>%
+ colformat_num(
+   j = c("prop", "row.prop", "col.prop", "expected", "resid", "std.resid"),
+   big.mark = ".", decimal.mark = ","
+ ) %>%
+ autofit()
+```
+
+Encontramos valores expected \< 5.
+Por tanto, el test no es válido.
+Para solucionarlo, agruparemos los lugares en 2 categorías lógicas, y los próximos análisis.
+
+-   Hostelería: Bar o restaurante
+
+-   Otros espacios: Lugares donde no sirven la comida y requieren un tupper (Vía pública, oficina/centro educativo)
+
+```{r}
+# --- CREACIÓN DE LA VARIABLE AGRUPADA ---
+datos$f_Lugar_Agrupado <- datos$f_Lugar.Habitual
+levels(datos$f_Lugar_Agrupado) <- list(
+  'Restauración (Bar/Rte)' = 'Restaurante/Bar',
+  'Otros (Oficina/Centro/Calle)' = c('Oficina/Centro', 'Vía Pública')
+)
+
+```
+
+A continuación, realizamos los análisis de los 4 lugares con esta variable agrupada.\
+
+\
+
+```{r}
+# Tabla de contingencia
+proc_freq(datos, 'f_Lugar_Agrupado', 'f_Tipo.Comida.Rapida',
+ include.row_percent = TRUE, include.column_percent = FALSE, include.table_percent = FALSE) %>%
+ compose(i=2, j=1, value = as_paragraph('Lugar (Agrupado)'), part = 'header') %>%
+ compose(i=1, j=3, value = as_paragraph('Consume Comida Rápida'), part = 'header') %>%
+ set_caption('Tabla 26. Contingencia: Lugar vs Comida Rápida.') %>%
+ autofit()
+
+# Test Chi-cuadrado
+res.chisq.rapida <- chisq_test(x = datos$f_Lugar_Agrupado, y = datos$f_Tipo.Comida.Rapida)
+res.chisq.rapida %>% flextable() %>%
+ set_caption('Test Chi-cuadrado (Comida Rápida).') %>%
+ colformat_num(j = c("statistic", "p"), big.mark = ".", decimal.mark = ",") %>% autofit()
+
+# Validación (Esperados)
+chisq_descriptives(res.chisq.rapida) %>%
+ rename(Lugar = 'x', Comida_Rapida = 'y') %>% flextable() %>%
+ set_caption('Estadísticos y residuos (Comida Rápida).') %>%
+ colformat_num(j = c("expected", "std.resid"), big.mark = ".", decimal.mark = ",") %>% autofit()
+```
+
+Todos los valores expected son mayores que 5, así que consideramos que el test es válido.
+
+Únicamente un 14.3% de los encuestados que comen en la calle, la oficina o en su centro educativo come comida rápida, frente a un porcentaje ligeramente mayor, 35.7%, para los que comen en bares o restaurantes.
+
+El test calcula un p-valor \> 0,05, por lo que no podemos rechazar la hipótesis nula.
+Por tanto, no podemos determinar una dependencia significativa entre el motivo por el que se come fuera y el consumo de comida rápida.
+
+##### 4.2. Asociación con Platos Preparados de Supermercado
+
+Observamos si el consumo de platos de supermercado (listos para comer) destaca en alguno de los dos entornos.
+
+```{r}
+# Tabla de contingencia
+proc_freq(datos, 'f_Lugar_Agrupado', 'f_Tipo.Comida.Super',
+ include.row_percent = TRUE, include.column_percent = FALSE, include.table_percent = FALSE) %>%
+ compose(i=2, j=1, value = as_paragraph('Lugar (Agrupado)'), part = 'header') %>%
+ compose(i=1, j=3, value = as_paragraph('Consume Platos Super'), part = 'header') %>%
+ set_caption('Tabla 27. Contingencia: Lugar vs Platos de Supermercado.') %>%
+ autofit()
+
+# Test Chi-cuadrado
+res.chisq.super <- chisq_test(x = datos$f_Lugar_Agrupado, y = datos$f_Tipo.Comida.Super)
+res.chisq.super %>% flextable() %>%
+ set_caption('Test Chi-cuadrado (Platos Supermercado).') %>%
+ colformat_num(j = c("statistic", "p"), big.mark = ".", decimal.mark = ",") %>% autofit()
+
+# Validación
+chisq_descriptives(res.chisq.super) %>%
+ rename(Lugar = 'x', Comida_Super = 'y') %>% flextable() %>%
+ set_caption('Estadísticos y residuos (Platos Supermercado).') %>%
+ colformat_num(j = c("expected", "std.resid"), big.mark = ".", decimal.mark = ",") %>% autofit()
+```
+
+Consideramos el test como válido aunque haya un valor excepted ligaramente menor que 5.
+Es difícil agrupar más las categorías sin perder información esencial.
+El problema viene principalmente de una muestra de tamaño reducido.\
+
+\
+Solo un 11.9% de personas que suelen comer en bares o restaurantes suele comer comida preparada de supermercados cuando comen fuera, frente al 38,1% de las personas que suelen comer en la calle, la oficina o centro educativo.\
+El test nos proporciona un p-valor \< 0,05, por lo que podemos rechazar la hipótesis nula y afirmar que existe una dependencia significativa entre el lugar donde se suele comer fuera de casa y el consumo de platos preparados de supermercado.
+Los encuestados que suelen comer en restaurantes son los que menos consumen este tipo de platos.
+
+##### 4.3. Asociación con Comida de Elaboración Propia (Tupper)
+
+```{r}
+# Tabla de contingencia
+proc_freq(datos, 'f_Lugar_Agrupado', 'f_Tipo.Comida.Propia',
+ include.row_percent = TRUE, include.column_percent = FALSE, include.table_percent = FALSE) %>%
+ compose(i=2, j=1, value = as_paragraph('Lugar (Agrupado)'), part = 'header') %>%
+ compose(i=1, j=3, value = as_paragraph('Consume Comida Propia'), part = 'header') %>%
+ set_caption('Tabla 28. Contingencia: Lugar vs Comida Propia.') %>%
+ autofit()
+
+# Test Chi-cuadrado
+res.chisq.propia <- chisq_test(x = datos$f_Lugar_Agrupado, y = datos$f_Tipo.Comida.Propia)
+res.chisq.propia %>% flextable() %>%
+ set_caption('Test Chi-cuadrado (Comida Propia).') %>%
+ colformat_num(j = c("statistic", "p"), big.mark = ".", decimal.mark = ",") %>% autofit()
+
+# Validación y Residuos
+chisq_descriptives(res.chisq.propia) %>%
+ rename(Lugar = 'x', Comida_Propia = 'y') %>% flextable() %>%
+ set_caption('Estadísticos y residuos (Comida Propia).') %>%
+ colformat_num(j = c("expected", "std.resid"), big.mark = ".", decimal.mark = ",") %>% autofit()
+```
+
+![](images/clipboard-1362719507.png)
+
+\
+Solo un 21.4% de personas que suelen comer en bares o restaurantes suele comer comida preparada en casa cuando comen fuera, frente al 47,6% de las personas que suelen comer en la calle, la oficina o centro educativo.\
+
+\
+Al realizar el test de Chi-cuadrado, obtenemos un p-valor ligeramente superior a 0,05 (p = 0,065), lo que técnicamente no permite rechazar la hipótesis nula de independencia con el criterio del 95% de confianza.
+
+Sin embargo, es crucial observar la tabla de contingencia: el consumo de comida propia es del **47,6%** en los entornos de 'Otros' (Oficina/Centro/Vía Pública), frente a solo un 21,4% en 'Restauración'.
+Esta diferencia sustancial de más de 26 puntos porcentuales sugiere una tendencia clara hacia la dependencia, que no ha alcanzado la significatividad estadística debido probablemente al tamaño limitado de la muestra.
+
+##### 4.4. Asociación con Comida de Bar o Restaurante
+
+Finalmente, verificamos la consistencia de las respuestas cruzando el lugar con el consumo de menú o platos de restaurante.
+
+```{r}
+# Tabla de contingencia
+proc_freq(datos, 'f_Lugar_Agrupado', 'f_Tipo.Comida.Restaurante',
+ include.row_percent = TRUE, include.column_percent = FALSE, include.table_percent = FALSE) %>%
+ compose(i=2, j=1, value = as_paragraph('Lugar (Agrupado)'), part = 'header') %>%
+ compose(i=1, j=3, value = as_paragraph('Consume Comida Restaurante'), part = 'header') %>%
+ set_caption('Tabla 29. Contingencia: Lugar vs Comida de Restaurante.') %>%
+ autofit()
+
+# Test Chi-cuadrado
+res.chisq.rest <- chisq_test(x = datos$f_Lugar_Agrupado, y = datos$f_Tipo.Comida.Restaurante)
+res.chisq.rest %>% flextable() %>%
+ set_caption('Test Chi-cuadrado (Comida Restaurante).') %>%
+ colformat_num(j = c("statistic", "p"), big.mark = ".", decimal.mark = ",") %>% autofit()
+
+# Validación
+chisq_descriptives(res.chisq.rest) %>%
+ rename(Lugar = 'x', Comida_Restaurante = 'y') %>% flextable() %>%
+ set_caption('Estadísticos y residuos (Comida Restaurante).') %>%
+ colformat_num(j = c("expected", "std.resid"), big.mark = ".", decimal.mark = ",") %>% autofit()
+```
+
+El test nos proporciona un p-valor \< 0,05.
+Por lo tanto, podemos rechazar la hipótesis nula de independencia y afirmar que existe una dependencia estadísticamente significativa entre el lugar habitual donde se come fuera de casa y la elección de comida preparada en un bar o restaurante.
+
+El análisis de la distribución (porcentajes por fila) confirma la dirección de esta dependencia:
+
+-   Un 81,0% de los encuestados que come en un entorno de restauración elige consumir comida de restaurante.
+
+-   En contraste, solo un 42,9% de los encuestados que come en otros espacios elige este tipo de comida.
+
+##### 6. Relación entre la sensación de saciedad y la aceptación
+
+Evaluamos si la percepción del producto como una opción "ligera" (que no llena mucho) o como un "plato principal" influye en la intención de uso.
+Para ello, hemos creado una nueva variable (`f_Perfil_Saciedad`) que agrupa a los usuarios que indicaron que usarían la barra para una "cena ligera" o como un "complemento" frente al resto.
+
+```{r}
+# 1. Creación de la variable de Perfil de Saciedad
+# Si el usuario marcó 'Sí' en Cena Ligera O en Complemento, lo clasificamos como "Ligero"
+datos <- datos %>%
+  dplyr::mutate(
+    f_Perfil_Saciedad = dplyr::case_when(
+      f_Uso.Cena == 'Sí' | f_Uso.Complem == 'Sí' ~ "Percibe como Ligero/Complemento",
+      TRUE ~ "Percibe como Plato Principal"
+    )
+  )
+
+# Convertimos a factor para el análisis
+datos$f_Perfil_Saciedad <- factor(datos$f_Perfil_Saciedad)
+
+# 2. Tabla de contingencia
+proc_freq(datos, 'f_Perfil_Saciedad', 'f_Intencion.Uso',
+  include.row_percent = TRUE,
+  include.column_percent = FALSE,
+  include.table_percent = FALSE) %>%
+  compose(i=2, j=1, value = as_paragraph('Percepción de Saciedad'), part = 'header') %>%
+  compose(i=1, j=3, value = as_paragraph('Intención de Uso'), part = 'header') %>%
+  set_caption('Tabla 28. Tabla de contingencia: Percepción de Saciedad vs Intención de Uso.') %>%
+  autofit()
+
+# 3. Test Chi-cuadrado
+res.chisq.saciedad <- chisq_test(
+ x = datos$f_Perfil_Saciedad,
+ y = datos$f_Intencion.Uso)
+
+# Mostrar resultados del test
+res.chisq.saciedad %>%
+  flextable() %>%
+  set_caption('Resultados del test Chi-cuadrado (Saciedad).') %>%
+  colformat_num(j = c("statistic", "p"), big.mark = ".", decimal.mark = ",") %>%
+  autofit()
+
+# 4. Estadísticos descriptivos y residuos
+chisq_descriptives(res.chisq.saciedad) %>%
+ rename(Perfil_Saciedad = 'x', Intencion = 'y') %>%
+ flextable() %>%
+ set_caption('Estadísticos del test (Valores esperados y residuos).') %>%
+ colformat_num(
+   j = c("prop", "row.prop", "col.prop", "expected", "resid", "std.resid"),
+   big.mark = ".", decimal.mark = ","
+ ) %>%
+ autofit()
+
+```
+
+Todos los valores expected \> 5, consideramos el test como válido.
+El valor del p-valor \< 0,05 permite rechazar la hipótesis nula.
+Existe una relación de dependencia estadísticamente significativa entre cómo percibe el usuario la capacidad de saciar del producto y su intención de usarlo.
+
+Los usuarios que conciben la ensalada como una cena ligera o un acompañamiento muestran una aceptación abrumadora del 87,9%.
+Por el contrario, aquellos que la utilizarían como plato único principal (comida en el momento o para llevar al trabajo) muestran una aceptación considerablemente menor, del 56,7%.
+
+Este hallazgo es crucial para el posicionamiento del producto.
+La barra de ensaladas tiene un éxito casi garantizado si se comercializa como una solución para cenas ligeras o como complemento saludable, mientras que genera más dudas entre quienes buscan una comida completa y contundente.
+Esto sugiere que, para captar al segmento de "Plato Principal", quizás sería necesario reforzar la percepción de saciedad (por ejemplo, destacando proteínas o bases más pesadas como pasta/arroz en la comunicación).
+
+##### 7. Relacionar la relevancia de comer saludable con la aceptación de la barra de ensaladas
+
+Primero, observamos la distribución inicial con los 5 niveles de la escala Likert.
+
+```{r}
+# Tabla de contingencia inicial (Escala completa 1-5)
+proc_freq(datos, 'f_Importancia.Saludable', 'f_Intencion.Uso',
+ include.row_percent = TRUE,
+ include.column_percent = FALSE,
+ include.table_percent = FALSE) %>%
+ compose(i=2, j=1, value = as_paragraph('Importancia Saludable (1-5)'), part = 'header') %>%
+ compose(i=1, j=3, value = as_paragraph('Intención de Uso'), part = 'header') %>%
+ set_caption('Tabla 26. Tabla de contingencia: Importancia Saludable vs Intención de Uso.') %>%
+ autofit()
+
+# Test Chi-cuadrado inicial
+res.chisq.salud <- chisq_test(
+ x = datos$f_Importancia.Saludable,
+ y = datos$f_Intencion.Uso)
+
+# Mostrar resultados del test
+res.chisq.salud %>%
+ flextable() %>%
+ set_caption('Resultados del test Chi-cuadrado (Sin agrupar).') %>%
+ colformat_num(j = c("statistic", "p"), big.mark = ".", decimal.mark = ",") %>%
+ autofit()
+
+# Verificación de condiciones (Valores esperados)
+chisq_descriptives(res.chisq.salud) %>%
+ rename(Importancia = 'x', Intencion = 'y') %>%
+ flextable() %>%
+ set_caption('Estadísticos del test (Valores esperados y residuos).') %>%
+ colformat_num(
+   j = c("expected", "std.resid"),
+   big.mark = ".", decimal.mark = ","
+ ) %>%
+ autofit()
+```
+
+Debido a la presencia de valores expected \< 5, agruparemos la importancia en 2 niveles.
+
+-   Baja/Media: 1, 2 y 3
+
+-   Alta: 4 y 5
+
+    \
+
+```{r}
+# 1. Creación de la variable agrupada
+datos$f_Imp_Salud_Agrupada <- datos$f_Importancia.Saludable
+levels(datos$f_Imp_Salud_Agrupada) <- list(
+  'Baja/Media (1-3)' = c('1', '2', '3'),
+  'Alta (4-5)'       = c('4', '5')
+)
+
+# 2. Tabla de contingencia agrupada
+proc_freq(datos, 'f_Imp_Salud_Agrupada', 'f_Intencion.Uso',
+  include.row_percent = TRUE,
+  include.column_percent = FALSE,
+  include.table_percent = FALSE) %>%
+  compose(i=2, j=1, value = as_paragraph('Importancia Saludable (Agrupada)'), part = 'header') %>%
+  compose(i=1, j=3, value = as_paragraph('Intención de Uso'), part = 'header') %>%
+  set_caption('Tabla 27. Tabla de contingencia: Importancia (Agrupada) vs Intención de Uso.') %>%
+  autofit()
+
+# 3. Test Chi-cuadrado final
+res.chisq.salud.final <- chisq_test(
+ x = datos$f_Imp_Salud_Agrupada,
+ y = datos$f_Intencion.Uso)
+
+# Mostrar resultados
+res.chisq.salud.final %>%
+  flextable() %>%
+  set_caption('Resultados del test Chi-cuadrado (Variable Agrupada).') %>%
+  colformat_num(j = c("statistic", "p"), big.mark = ".", decimal.mark = ",") %>%
+  autofit()
+
+# 4. Estadísticos descriptivos finales
+chisq_descriptives(res.chisq.salud.final) %>%
+ rename(Importancia_Agrupada = 'x', Intencion = 'y') %>%
+ flextable() %>%
+ set_caption('Estadísticos finales del test y residuos estandarizados.') %>%
+ colformat_num(
+   j = c("prop", "row.prop", "col.prop", "expected", "resid", "std.resid"),
+   big.mark = ".", decimal.mark = ","
+ ) %>%
+ autofit()
+```
+
+Consideramos que el test es válido ya que todos los valores expected \> 5.
+
+El p-valor es mayor que 0,05, por lo que no podemos rechazar la hipótesis nula.
+No existe una dependencia estadísticamente significativa entre la importancia que el consumidor asigna a comer saludable y su intención de usar la barra de ensaladas.
+
+-   El grupo que da poca o media importancia a la salud muestra una aceptación del 74,2%.
+
+-   El grupo que da mucha importancia a la salud muestra una aceptación del 71,9%.
+
+Ambos porcentajes son muy similares.
+Esto sugiere que la barra de ensaladas es un producto transversal: atrae tanto a los consumidores concienciados con la salud como a aquellos que no lo priorizan tanto, probablemente debido a otros factores como la conveniencia.
