@@ -14,6 +14,9 @@ output:
   pdf_document:
     toc: true
 subtitle: 'Asignatura: Investigación Comercial'
+editor_options: 
+  markdown: 
+    wrap: sentence
 ---
 
 ```{r setup, include=FALSE}
@@ -22,7 +25,6 @@ knitr::opts_chunk$set(echo = TRUE, message = FALSE, warning = FALSE, fig.align =
 ```
 
 # Preparación del Entorno
-
 
 ```{r librerias}
 # Carga de librerías y configuraciones
@@ -42,7 +44,7 @@ theme_set(theme_minimal() +
                   legend.position = "bottom"))
 ```
 
----
+------------------------------------------------------------------------
 
 # Ingesta y Limpieza de Datos {.tabset}
 
@@ -92,7 +94,8 @@ colnames(datos) <- nuevos_nombres
 ```
 
 ## Transformación de Variables
-Definimos las variables como categóricas. 
+
+Definimos las variables como categóricas.
 
 ```{r transformacion}
 
@@ -250,8 +253,12 @@ datos$f_Complem.Especias    <- factor(datos$Preferencia.Complementos_Especias, l
 # Verificación final
 colnames(datos)
 ```
+
 ## Control de consistencia
-Hemos introducido un control de consistencia en la pregunta sobre el supermercado en el que el encuestado compra comida habitualmente. Dos de las posibles respuestas son `Fnac` y `Lefties`, que no son supermercados. Por tanto, tendremos que descartar aquellos cuestionarios que tengan marcada alguna de estas respuestas, ya que es muy probable que hayan sido respondidos al azar o de forma poca seria.
+
+Hemos introducido un control de consistencia en la pregunta sobre el supermercado en el que el encuestado compra comida habitualmente.
+Dos de las posibles respuestas son `Fnac` y `Lefties`, que no son supermercados.
+Por tanto, tendremos que descartar aquellos cuestionarios que tengan marcada alguna de estas respuestas, ya que es muy probable que hayan sido respondidos al azar o de forma poca seria.
 
 ```{r control consistencia}
 
@@ -261,19 +268,24 @@ datos <- subset(datos, !grepl('Fnac|Lefties', Supermercado.Habitual))
 
 n.filas <- dim(datos)[1]
 
-``` 
+```
 
-En el trabajo de campo recogimos inicialmente `r n.filas.bruto` cuestionarios. Tras realizar el control de consistencia, nuestra muestra efectiva es de `r n.filas` cuestionarios válidos.
+En el trabajo de campo recogimos inicialmente `r n.filas.bruto` cuestionarios.
+Tras realizar el control de consistencia, nuestra muestra efectiva es de `r n.filas` cuestionarios válidos.
 
 # Estadísticos descriptivos (Análisis Univariante) {.tabset}
-Vamos a distinguir tres tipos de variables: categóricas, numéricas y cualitativas. Cada una tiene un tratamiento descriptivo diferente.
+
+Vamos a distinguir tres tipos de variables: categóricas, numéricas y cualitativas.
+Cada una tiene un tratamiento descriptivo diferente.
 
 ## Variables catégoricas
 
 ### Caso de variables con categorías carentes de orden
 
 #### `f_Motivo`
-Las categorías de `f_Motivo` son los motivos por los que los encuestados comen fuera de casa. Se trata de una variable cuyas categorías no guardan una relación de orden entre sí.
+
+Las categorías de `f_Motivo` son los motivos por los que los encuestados comen fuera de casa.
+Se trata de una variable cuyas categorías no guardan una relación de orden entre sí.
 
 ```{r P1-tarta}
 # Crear el data frame de frecuencias y porcentajes usando dplyr
@@ -298,7 +310,9 @@ pie(datos_grafico$Porcentaje,
     col = RColorBrewer::brewer.pal(n = nrow(datos_grafico), name = "Set3"))
 
 ```
-Se observa que `Conveniencia` es el principal motivo por el que los encuestados comen fuera de casa, representando el 38.1% de la muestra. A continuación presentamos los resultados en formato de tabla:
+
+Se observa que `Conveniencia` es el principal motivo por el que los encuestados comen fuera de casa, representando el 38.1% de la muestra.
+A continuación presentamos los resultados en formato de tabla:
 
 ```{r P1-tabla}
 # Preparación de datos
@@ -357,7 +371,9 @@ ft
 ```
 
 #### `f_Lugar.Habitual`
-Las categorías de `f_Lugar.Habitual` son los lugares en los que los encuestados comen fuera de casa. Se trata de una variable cuyas categorías no guardan una relación de orden entre sí.
+
+Las categorías de `f_Lugar.Habitual` son los lugares en los que los encuestados comen fuera de casa.
+Se trata de una variable cuyas categorías no guardan una relación de orden entre sí.
 
 ```{r P3-tarta}
 # Crear el data frame de frecuencias y porcentajes usando dplyr
@@ -382,7 +398,9 @@ pie(datos_grafico$Porcentaje,
     col = RColorBrewer::brewer.pal(n = nrow(datos_grafico), name = "Set3"))
 
 ```
-Se observa que `Restaurante/Bar` es el principal lugar en el que los encuestados comen fuera de casa, representando el 66.7% de la muestra. A continuación presentamos los resultados en formato de tabla:
+
+Se observa que `Restaurante/Bar` es el principal lugar en el que los encuestados comen fuera de casa, representando el 66.7% de la muestra.
+A continuación presentamos los resultados en formato de tabla:
 
 ```{r P3-tabla}
 # Preparación de datos
@@ -441,7 +459,10 @@ ft
 ```
 
 #### `f_Tipo.Comida`
-Las categorías de `f_Tipo.Comida` hacen referencia al tipo de comida que los encuestados suelen comer cuando comen fuera de casa. Es importante destacar que esta variable proviene de una pregunta con respuesta múltiple por lo que optamos por un gráfico de barras múltiple basándonos en si ha se ha seleccionado cada respuesta o no.
+
+Las categorías de `f_Tipo.Comida` hacen referencia al tipo de comida que los encuestados suelen comer cuando comen fuera de casa.
+Es importante destacar que esta variable proviene de una pregunta con respuesta múltiple por lo que optamos por un gráfico de barras múltiple basándonos en si ha se ha seleccionado cada respuesta o no.
+
 ```{r P4-barras, fig.height=6, fig.width=10}
 # Definir las variables a analizar (P4: Tipo de Comida)
 multi_vars <- c("f_Tipo.Comida.Rapida", "f_Tipo.Comida.Restaurante", "f_Tipo.Comida.Super", 
@@ -496,7 +517,10 @@ ggplot(df_barras_dobles, aes(x = Tipo_de_Comida, y = Frecuencia, fill = Respuest
   # Ajuste de Tema
   theme(legend.position = "bottom")
 ```
-Se observa una clara dominancia del consumo de comida de restaurante (con 43 respuestas afirmativas), seguido de comida de elaboración propia (con 19 respuestas afirmativas). Estos resultados sugieren que los consumidores están acostumbrados a un formato de comida que prioriza una comida preparada y de calidad. A  continuación presentamos los resultados en formato de tabla:
+
+Se observa una clara dominancia del consumo de comida de restaurante (con 43 respuestas afirmativas), seguido de comida de elaboración propia (con 19 respuestas afirmativas).
+Estos resultados sugieren que los consumidores están acostumbrados a un formato de comida que prioriza una comida preparada y de calidad.
+A continuación presentamos los resultados en formato de tabla:
 
 ```{r P4-tabla}
 # Transformar a formato largo, contar frecuencias de SÍ/NO y calcular porcentajes
@@ -583,7 +607,11 @@ ft_si_no
 ```
 
 #### `f_Supermercado.Habitual`
-Las categorías de `f_Supermercado.Habitual` hacen referencia al supermercado en el que los encuestados suelen comprar comida. Es importante destacar que esta variable proviene de una pregunta con respuesta múltiple por lo que optamos por un gráfico de barras múltiple basándonos en si ha se ha seleccionado cada respuesta o no. También destacamos que esta pregunta es de control y no tiene más trascendencia.
+
+Las categorías de `f_Supermercado.Habitual` hacen referencia al supermercado en el que los encuestados suelen comprar comida.
+Es importante destacar que esta variable proviene de una pregunta con respuesta múltiple por lo que optamos por un gráfico de barras múltiple basándonos en si ha se ha seleccionado cada respuesta o no.
+También destacamos que esta pregunta es de control y no tiene más trascendencia.
+
 ```{r P6-barras, fig.height=8, fig.width=14}
 # Definir las variables a analizar (P6: Supermercado)
 multi_vars <- c("f_Super.Carrefour", "f_Super.Lidl", "f_Super.Mercadona", "f_Super.Consum", "f_Super.Aldi", "f_Super.Masymas", "f_Super.Alcampo", "f_Super.DIA", "f_Super.Dialprix")
@@ -639,7 +667,8 @@ ggplot(df_barras_dobles, aes(x = Supermercado_Habitual, y = Frecuencia, fill = R
   theme(legend.position = "bottom")
 ```
 
-Se observa una clara dominancia de Mercadona (con 51 respuestas afirmativas), seguido de Consum (con 30 respuestas afirmativas). A continuación presentamos los resultados en formato de tabla:
+Se observa una clara dominancia de Mercadona (con 51 respuestas afirmativas), seguido de Consum (con 30 respuestas afirmativas).
+A continuación presentamos los resultados en formato de tabla:
 
 ```{r P6-tabla}
 # Transformar a formato largo, contar frecuencias de SÍ/NO y calcular porcentajes
@@ -726,7 +755,9 @@ ft_si_no
 ```
 
 #### `f_Experiencia.Barra`
-Las categorías de `f_Experiencia.Barra` hacen referencia a si el encuestado a probado una barra de ensaladas previamente. Se trata de una variable cuyas categorías no guardan una relación de orden entre sí.
+
+Las categorías de `f_Experiencia.Barra` hacen referencia a si el encuestado a probado una barra de ensaladas previamente.
+Se trata de una variable cuyas categorías no guardan una relación de orden entre sí.
 
 ```{r P8-tarta}
 # Crear el data frame de frecuencias y porcentajes usando dplyr
@@ -752,7 +783,8 @@ pie(datos_grafico$Porcentaje,
 
 ```
 
-Se observa que la mayoría de los encuestados no habían probado una barra de ensaladas (73%), frente a los que si (27%). A continuación presentamos los resultados en formato de tabla:
+Se observa que la mayoría de los encuestados no habían probado una barra de ensaladas (73%), frente a los que si (27%).
+A continuación presentamos los resultados en formato de tabla:
 
 ```{r P8-tabla}
 # Preparación de datos
@@ -811,7 +843,10 @@ ft
 ```
 
 #### `f_Situaciones.Uso`
-Las categorías de `f_Situaciones.Uso` hacen referencia a las situaciones en que los encuestados utilizarían la barra de ensaladas. Es importante destacar que esta variable proviene de una pregunta con respuesta múltiple por lo que optamos por un gráfico de barras múltiple basándonos en si ha se ha seleccionado cada respuesta o no.
+
+Las categorías de `f_Situaciones.Uso` hacen referencia a las situaciones en que los encuestados utilizarían la barra de ensaladas.
+Es importante destacar que esta variable proviene de una pregunta con respuesta múltiple por lo que optamos por un gráfico de barras múltiple basándonos en si ha se ha seleccionado cada respuesta o no.
+
 ```{r P10-barras, fig.height=6, fig.width=10}
 # Definir las variables a analizar (P10: Situaciones de Uso)
 multi_vars <- c("f_Uso.Momento", "f_Uso.Llevar", "f_Uso.Cena", "f_Uso.Complem", "f_Uso.Nunca")
@@ -866,7 +901,8 @@ ggplot(df_barras_dobles, aes(x = Situaciones_Uso, y = Frecuencia, fill = Respues
   theme(legend.position = "bottom")
 ```
 
-Se observa que se optaría por tomar la ensalada para llevar al trabajo/universidad (con 25 respuestas afirmativas) o bien para comer en el momento (con 30 respuestas afirmativas). A continuación presentamos los resultados en formato de tabla:
+Se observa que se optaría por tomar la ensalada para llevar al trabajo/universidad (con 25 respuestas afirmativas) o bien para comer en el momento (con 30 respuestas afirmativas).
+A continuación presentamos los resultados en formato de tabla:
 
 ```{r P10-tabla}
 # Transformar a formato largo, contar frecuencias de SÍ/NO y calcular porcentajes
@@ -953,7 +989,9 @@ ft_si_no
 ```
 
 #### `f_Formato.Preferido`
-Las categorías de `f_Formato.Preferido` se diferencian en si el encuestado prefiere que las ensaladas se paguen por peso o tengan un precio fijado. Se trata de una variable cuyas categorías no guardan una relación de orden entre sí.
+
+Las categorías de `f_Formato.Preferido` se diferencian en si el encuestado prefiere que las ensaladas se paguen por peso o tengan un precio fijado.
+Se trata de una variable cuyas categorías no guardan una relación de orden entre sí.
 
 ```{r P11-tarta}
 # Crear el data frame de frecuencias y porcentajes usando dplyr
@@ -978,6 +1016,7 @@ pie(datos_grafico$Porcentaje,
     col = RColorBrewer::brewer.pal(n = nrow(datos_grafico), name = "Set3"))
 
 ```
+
 Se observa que la mayoría optaría por un formato donde el precio de las ensaldas es fijo (81%), frente a los que prefieren que se pagara la ensalada por peso (19%).
 
 ```{r P11-tabla}
@@ -1037,7 +1076,10 @@ ft
 ```
 
 #### `f_Preferencia.Base`
-Las categorías de `f_Preferencia.Base` hacen referencia a las bases para la ensalada que los encuestados aplicarían a sus ensaladas. Es importante destacar que esta variable proviene de una pregunta con respuesta múltiple por lo que optamos por un gráfico de barras múltiple basándonos en si ha se ha seleccionado cada respuesta o no.
+
+Las categorías de `f_Preferencia.Base` hacen referencia a las bases para la ensalada que los encuestados aplicarían a sus ensaladas.
+Es importante destacar que esta variable proviene de una pregunta con respuesta múltiple por lo que optamos por un gráfico de barras múltiple basándonos en si ha se ha seleccionado cada respuesta o no.
+
 ```{r P13-barras, fig.height=6, fig.width=10}
 # Definir las variables a analizar (P10: Situaciones de Uso)
 multi_vars <- c("f_Base.Lechuga", "f_Base.Verde", "f_Base.Pasta", "f_Base.Quinoa", "f_Base.Cuscus", "f_Base.Legum")
@@ -1092,7 +1134,8 @@ ggplot(df_barras_dobles, aes(x = Preferencia_Base, y = Frecuencia, fill = Respue
   theme(legend.position = "bottom")
 ```
 
-Se observa que la base más que se usaría seria la mezcla verde de rúcula, canónigos, espinacas... (con 38 respuestas afirmativas), seguido de pasta (con 29 respuestas afirmativas).
+Se observa que la base más que se usaría seria la mezcla verde de rúcula, canónigos, espinacas...
+(con 38 respuestas afirmativas), seguido de pasta (con 29 respuestas afirmativas).
 
 ```{r P13-tabla}
 # Transformar a formato largo, contar frecuencias de SÍ/NO y calcular porcentajes
@@ -1179,7 +1222,9 @@ ft_si_no
 ```
 
 #### `f_Preferencia.Proteina`
-Las categorías de `f_Preferencia.Proteina` hacen referencia a las proteínas que los encuestados utilizarían pondrían en sus ensaladas. Es importante destacar que esta variable proviene de una pregunta con respuesta múltiple por lo que optamos por un gráfico de barras múltiple basándonos en si ha se ha seleccionado cada respuesta o no.
+
+Las categorías de `f_Preferencia.Proteina` hacen referencia a las proteínas que los encuestados utilizarían pondrían en sus ensaladas.
+Es importante destacar que esta variable proviene de una pregunta con respuesta múltiple por lo que optamos por un gráfico de barras múltiple basándonos en si ha se ha seleccionado cada respuesta o no.
 
 ```{r P14-barras, fig.height=6, fig.width=10}
 # Definir las variables a analizar (P10: Situaciones de Uso)
@@ -1322,7 +1367,9 @@ ft_si_no
 ```
 
 #### 'f_Preferencia.Complementos'
-Las categorías de `f_Preferencia.Complementos` hacen referencia a los complementos que los encuestados añadirían a sus ensaladas. Es importante destacar que esta variable proviene de una pregunta con respuesta múltiple por lo que optamos por un gráfico de barras múltiple basándonos en si ha se ha seleccionado cada respuesta o no.
+
+Las categorías de `f_Preferencia.Complementos` hacen referencia a los complementos que los encuestados añadirían a sus ensaladas.
+Es importante destacar que esta variable proviene de una pregunta con respuesta múltiple por lo que optamos por un gráfico de barras múltiple basándonos en si ha se ha seleccionado cada respuesta o no.
 
 ```{r P15-barras, fig.height=6, fig.width=10}
 # Definir las variables a analizar (P10: Situaciones de Uso)
@@ -1465,7 +1512,9 @@ ft_si_no
 ```
 
 #### `f_Preferencia.Dispensacion`
-Las categorías de `f_Preferencia.Dispensacion`hacen referencia a los 3 formatos de dispensación presentados para la barra de ensaladas. Se trata de una variable cuyas categorías no guardan una relación de orden entre sí.
+
+Las categorías de `f_Preferencia.Dispensacion`hacen referencia a los 3 formatos de dispensación presentados para la barra de ensaladas.
+Se trata de una variable cuyas categorías no guardan una relación de orden entre sí.
 
 ```{r P18-tarta}
 # Crear el data frame de frecuencias y porcentajes usando dplyr
@@ -1490,6 +1539,7 @@ pie(datos_grafico$Porcentaje,
     col = RColorBrewer::brewer.pal(n = nrow(datos_grafico), name = "Set3"))
 
 ```
+
 Se observa que el formato de dispensación preferido es que tiene protección fija y los ingredientes no son accesibles (con el 38.1%), seguido del formato en el que los ingredientes esta protegidos por una mampara de cristal que se abre (con el34.9&)
 
 ```{r P18-tabla}
@@ -1549,7 +1599,9 @@ ft
 ```
 
 #### `f_Intencion.Uso`
-Las categorías de `f_Intencion.Uso` hacen referencia a si los encuestados utilizarían nuestra barra de ensaladas o no (grado de aceptación). Se trata de una variable cuyas categorías no guardan una relación de orden entre sí.
+
+Las categorías de `f_Intencion.Uso` hacen referencia a si los encuestados utilizarían nuestra barra de ensaladas o no (grado de aceptación).
+Se trata de una variable cuyas categorías no guardan una relación de orden entre sí.
 
 ```{r P19-tarta}
 # Crear el data frame de frecuencias y porcentajes usando dplyr
@@ -1574,6 +1626,7 @@ pie(datos_grafico$Porcentaje,
     col = RColorBrewer::brewer.pal(n = nrow(datos_grafico), name = "Set3"))
 
 ```
+
 Podemos concluir que la mayoría de los encuestados aceptarían el producto y lo usarían, siendo del 73%.
 
 ```{r P19-tabla}
@@ -1633,7 +1686,9 @@ ft
 ```
 
 #### `f_Genero`
-Las categorías de `f_Genero` diferencia el género del encuestado. Se trata de una variable cuyas categorías no guardan una relación de orden entre sí.
+
+Las categorías de `f_Genero` diferencia el género del encuestado.
+Se trata de una variable cuyas categorías no guardan una relación de orden entre sí.
 
 ```{r P21-tarta}
 # Crear el data frame de frecuencias y porcentajes usando dplyr
@@ -1658,6 +1713,7 @@ pie(datos_grafico$Porcentaje,
     col = RColorBrewer::brewer.pal(n = nrow(datos_grafico), name = "Set3"))
 
 ```
+
 Se puede observar que la mayoría de los encuestados son hombres con un 50.8%, mientras que las mujeres representan el 46% de la respuestas.
 
 ```{r P21-tabla}
@@ -1717,7 +1773,9 @@ ft
 ```
 
 #### `f_Situacion.Laboral`
-Las categorías de `f_Situacion.Laboral` indican la situación laboral del encuestado. Se trata de una variable cuyas categorías no guardan una relación de orden entre sí.
+
+Las categorías de `f_Situacion.Laboral` indican la situación laboral del encuestado.
+Se trata de una variable cuyas categorías no guardan una relación de orden entre sí.
 
 ```{r P23-tarta}
 # Crear el data frame de frecuencias y porcentajes usando dplyr
@@ -1742,6 +1800,7 @@ pie(datos_grafico$Porcentaje,
     col = RColorBrewer::brewer.pal(n = nrow(datos_grafico), name = "Set3"))
 
 ```
+
 Se observa que la mayoría de encuestados son estudiantes(con un 61,9%), seguidos de trabajadores por cuenta ajena (con un 25,4%).
 
 ```{r P23-tabla}
@@ -1803,7 +1862,11 @@ ft
 ### Caso de variables con categorías ordenadas
 
 #### `f_Frecuencia`
-Las categorías de `f_Frecuencia` miden la frecuencia con la que los encuestados comer fuera de casa. La variable tiene 5 categorías, que se ordenan desde menos tiempo a más tiempo: Nunca, Rara/Ocasionalmente, 1-2 veces por semana, 3-4 veces por semana y más de 5 veces por semana. Este orden se fijó mediante el parámetro levels de la instrucción factor().
+
+Las categorías de `f_Frecuencia` miden la frecuencia con la que los encuestados comer fuera de casa.
+La variable tiene 5 categorías, que se ordenan desde menos tiempo a más tiempo: Nunca, Rara/Ocasionalmente, 1-2 veces por semana, 3-4 veces por semana y más de 5 veces por semana.
+Este orden se fijó mediante el parámetro levels de la instrucción factor().
+
 ```{r P2-barra, fig.height=6}
 df_frecuencia_tiempo <- datos %>%
   # Contar la frecuencia de cada nivel (respeta el orden del factor f_Frecuencia)
@@ -1841,7 +1904,9 @@ ggplot(df_frecuencia_tiempo, aes(x = f_Frecuencia, y = Frecuencia)) +
   # Corrección del eje Y para evitar el recorte de las etiquetas
   scale_y_continuous(expand = expansion(mult = c(0, 0.15)))
 ```
-Se observa que la mayoría de los encuestados salen a comer fuera de casa entre 1 y 2 veces por semana (con un 34.9%). También se observa que el gráfico tiene una ligera asimetría a la derecha.
+
+Se observa que la mayoría de los encuestados salen a comer fuera de casa entre 1 y 2 veces por semana (con un 34.9%).
+También se observa que el gráfico tiene una ligera asimetría a la derecha.
 
 ```{r P2-tabla}
 # Preparación de datos
@@ -1900,7 +1965,11 @@ ft
 ```
 
 #### `f_Frecuncia.Comida.Preparada`
-Las categorías de `f_Frecuencia.Comida.Preparada` miden la frecuencia con la que los encuestados compran comida preparada en un supermercado. La variable tiene 5 categorías, que se ordenan desde menos tiempo a más tiempo: Nunca, Rara/Ocasionalmente, 1-2 veces por semana, 3-4 veces por semana y más de 5 veces por semana. Este orden se fijó mediante el parámetro levels de la instrucción factor().
+
+Las categorías de `f_Frecuencia.Comida.Preparada` miden la frecuencia con la que los encuestados compran comida preparada en un supermercado.
+La variable tiene 5 categorías, que se ordenan desde menos tiempo a más tiempo: Nunca, Rara/Ocasionalmente, 1-2 veces por semana, 3-4 veces por semana y más de 5 veces por semana.
+Este orden se fijó mediante el parámetro levels de la instrucción factor().
+
 ```{r P5-barra, fig.height=6}
 df_frecuencia_tiempo <- datos %>%
   # Contar la frecuencia de cada nivel (respeta el orden del factor f_Frecuencia.Comida.Preparada)
@@ -1997,8 +2066,10 @@ flextable::set_caption(caption = "Tabla 16. Distribución de frecuencias para Fr
 ft
 ```
 
-####`f_Disposicion.Pago`
-Las categorías de `f_Disposicion.Pago` miden la disposición a pagar de los encuestados por las ensaladas de la barra. La variable tiene 5 categorías, que se ordenan desde menos dinero a más dinero: Menos de 4€, Entre 4 y 5,49€, Entre 5,50 y 7€, Entre 7 y 9,50€ y más de 9,50€. Este orden se fijó mediante el parámetro levels de la instrucción factor().
+\####`f_Disposicion.Pago` Las categorías de `f_Disposicion.Pago` miden la disposición a pagar de los encuestados por las ensaladas de la barra.
+La variable tiene 5 categorías, que se ordenan desde menos dinero a más dinero: Menos de 4€, Entre 4 y 5,49€, Entre 5,50 y 7€, Entre 7 y 9,50€ y más de 9,50€.
+Este orden se fijó mediante el parámetro levels de la instrucción factor().
+
 ```{r P16-barra, fig.height=6}
 df_frecuencia_tiempo <- datos %>%
   # Contar la frecuencia de cada nivel (respeta el orden del factor f_Disposicion.Pago)
@@ -2096,7 +2167,11 @@ ft
 ```
 
 #### `f.Edad`
-Las categorías de `f_Edad` miden la edad de los encuestados. La variable tiene 5 categorías, que se ordenan desde menor a edad a más edad: Menos de 18, Entre 18-24 años, Entre 25-44 años, Entre 45-64 años y más de 65 años. Este orden se fijó mediante el parámetro levels de la instrucción factor().
+
+Las categorías de `f_Edad` miden la edad de los encuestados.
+La variable tiene 5 categorías, que se ordenan desde menor a edad a más edad: Menos de 18, Entre 18-24 años, Entre 25-44 años, Entre 45-64 años y más de 65 años.
+Este orden se fijó mediante el parámetro levels de la instrucción factor().
+
 ```{r P20-barra, fig.height=6}
 df_frecuencia_tiempo <- datos %>%
   # Contar la frecuencia de cada nivel (respeta el orden del factor f_Edad)
@@ -2194,7 +2269,11 @@ ft
 ```
 
 #### `f_Nivel.Educativo`
-Las categorías de `f_Nivel.Educativo` miden el nivel educativo máximo alcanzado de los encuestados. La variable tiene 4 categorías, que se ordenan desde menos nivel a más nivel: ESO, FP medio/Bachillerato, FP superior y Universitario. Este orden se fijó mediante el parámetro levels de la instrucción factor().
+
+Las categorías de `f_Nivel.Educativo` miden el nivel educativo máximo alcanzado de los encuestados.
+La variable tiene 4 categorías, que se ordenan desde menos nivel a más nivel: ESO, FP medio/Bachillerato, FP superior y Universitario.
+Este orden se fijó mediante el parámetro levels de la instrucción factor().
+
 ```{r P22-barra, fig.height=6}
 df_frecuencia_tiempo <- datos %>%
   # Contar la frecuencia de cada nivel (respeta el orden del factor f_Nivel.Educativo)
@@ -2294,7 +2373,9 @@ ft
 ## Variables númericas
 
 ### Figuras de las variables de escala Likert
+
 La representación de las variables con escala Likert resulta más visual con un diagrama de barras acumulado:
+
 ```{r P7-P12-P17-likert, fig.height=8, fig.width=10}
 # 1. Definir los vectores de variables y etiquetas para mayor claridad
 
@@ -2356,13 +2437,19 @@ fig.likert
 
 ```
 
-Según la valoración de los factores de importancia en una escala Likert, existe una clara jerarquía de prioridades: los aspectos más cruciales son la Higiene, el Sabor y el Precio, ya que la inmensa mayoría de los encuestados los considera "muy importantes" (categorías 4 y 5); les siguen en importancia la Variedad de Ingredientes, el Origen Local y el valor de Comer Saludable. Por otro lado, la Sostenibilidad es el factor que recibe la mayor proporción de valoraciones bajas en comparación con los demás, y la Rapidez también muestra una importancia variable. Finalmente, una conclusión de opinión destacada es que la mayoría de los encuestados no percibe las ensaladas como una comida social.
+Según la valoración de los factores de importancia en una escala Likert, existe una clara jerarquía de prioridades: los aspectos más cruciales son la Higiene, el Sabor y el Precio, ya que la inmensa mayoría de los encuestados los considera "muy importantes" (categorías 4 y 5); les siguen en importancia la Variedad de Ingredientes, el Origen Local y el valor de Comer Saludable.
+Por otro lado, la Sostenibilidad es el factor que recibe la mayor proporción de valoraciones bajas en comparación con los demás, y la Rapidez también muestra una importancia variable.
+Finalmente, una conclusión de opinión destacada es que la mayoría de los encuestados no percibe las ensaladas como una comida social.
 
 ## Variables cualitativas
 
-La variable `Mala.Experiencia.Descripcion` se ha registrado mediante una pregunta abierta. El motivo de que fuera abierta, sin que se proporcionara un conjunto cerrado de respuestas, es que se quiere conocer con un poco más de detalle algunas experiencias negativas previas para relacionarla con el grado de aceptación. Por tanto, se trata de una variable cualitativa, y por este motivo se planteó en forma de pregunta abierta.
+La variable `Mala.Experiencia.Descripcion` se ha registrado mediante una pregunta abierta.
+El motivo de que fuera abierta, sin que se proporcionara un conjunto cerrado de respuestas, es que se quiere conocer con un poco más de detalle algunas experiencias negativas previas para relacionarla con el grado de aceptación.
+Por tanto, se trata de una variable cualitativa, y por este motivo se planteó en forma de pregunta abierta.
 
-Este tipo de variables no puede ser tratada estadísticamente. Su análisis tiene que llevarse a cabo de forma manual. Lo que sí vamos a hacer es seleccionar las respuestas válidas mediante R para después proceder a su análisis cualitativo
+Este tipo de variables no puede ser tratada estadísticamente.
+Su análisis tiene que llevarse a cabo de forma manual.
+Lo que sí vamos a hacer es seleccionar las respuestas válidas mediante R para después proceder a su análisis cualitativo
 
 ```{r}
 # generamos una tabla con las filas que contienen alguna razón para no usar el escáner
@@ -2377,14 +2464,22 @@ flextable(
   # ajustamos la tabla para que pueda leerse mejor en la página
   autofit()
 ```
-Hemos optado por agrupar las respuestas por categorías para poder analizarlas en mayor profundidad. Nos hemos decantado por 7 categorías:
-1. No han tenido malas experiencias.
-2. Relacionadas con la higiene, salud y contaminación.
-3. Relacionadas con la frescura y calidad.
-4. Relacionadas con el sabor y la preparación.
-5. Relacionadas con el servicio y la logística detrás de este.
-6. Relacionadas con la variedad de ingredientes y la cantidad de porción.
-7. Otros (no queda claro donde categorizarlas).
+
+Hemos optado por agrupar las respuestas por categorías para poder analizarlas en mayor profundidad.
+Nos hemos decantado por 7 categorías: 1.
+No han tenido malas experiencias.
+2.
+Relacionadas con la higiene, salud y contaminación.
+3.
+Relacionadas con la frescura y calidad.
+4.
+Relacionadas con el sabor y la preparación.
+5.
+Relacionadas con el servicio y la logística detrás de este.
+6.
+Relacionadas con la variedad de ingredientes y la cantidad de porción.
+7.
+Otros (no queda claro donde categorizarlas).
 
 ```{r p9_Categorizacion_Cualitativa}
 # Simulamos la columna de datos (asumimos que esta columna no se cargó como factor)
@@ -2463,10 +2558,12 @@ ft_resumen <- flextable::flextable(df_resumen_final) %>%
 ft_resumen
 ```
 
-Procedemos al análisis bivariante-----------------------------------------
+## Análisis bivariante
 
+#### 1. Relacionar la frecuencia con la que la muestra come fuera de casa y el motivo principal
 
-Vamos a comprobar si la frecuencia con el que el encuestado come fuera de casa depende del motivo por el que lo hace. Primero, inspeccionaremos la distribución de los casos mediante una tabla de contingencia:
+Vamos a comprobar si la frecuencia con el que el encuestado come fuera de casa depende del motivo por el que lo hace.
+Primero, inspeccionaremos la distribución de los casos mediante una tabla de contingencia:
 
 ```{r}
 # tabla de contingencia
@@ -2488,11 +2585,13 @@ la frecuencia.') %>%
  autofit()
 
 ```
-Se observa que el 50% de los encuestados que comen fuera de casa por un motivo de conveniencia (trabajo, estudios, etc), lo hacen entre 3 y 4 veces por semana. Además,los encuestados cuyas comidas extradomésticas suelen ser por placer suelen comer fuera de casa ocasionalmente o entre 1 y 2 veces por semana. Finalmente, el 50% de aquellos cuya razón habitual son razones extraordinarias rara vez comen fuera de casa.
+
+Se observa que el 50% de los encuestados que comen fuera de casa por un motivo de conveniencia (trabajo, estudios, etc), lo hacen entre 3 y 4 veces por semana.
+Además,los encuestados cuyas comidas extradomésticas suelen ser por placer suelen comer fuera de casa ocasionalmente o entre 1 y 2 veces por semana.
+Finalmente, el 50% de aquellos cuya razón habitual son razones extraordinarias rara vez comen fuera de casa.
 Se aprecia una diferencia de uso entre los distintos grupos y todo lo observado tiene sentido lógico, lo que sugiere que es posible que haya una dependencia.
 
 Para confirmarlo, realizamos un test chi-cuadrado:
-
 
 ```{r}
 
@@ -2522,8 +2621,6 @@ motivo de comer fuera y la frecuencia.') %>%
 
 ```
 
-
-
 ```{r}
 # sacamos los estadísticos descriptivos del test
 chisq_descriptives(res.chisq) %>%
@@ -2547,9 +2644,10 @@ motivo y la frecuencia.') %>%
  autofit()
 ```
 
-
-Al consultar la tabla con los estadísticos descriptivos del test observamos que en la columna "expected" hay valores que son menores de 5. Por tanto el test no puede considerarse válido al no cumplirse una de las condiciones de validez de esta prueba.
-Para solucionar este problema, agrupamos las categorías para asegurar que se cumpla esta condición. En este caso, unificamos las categorías "Nunca/Rara" y "Ocasionalmente", así como "3-4/sem" y "5+/sem".
+Al consultar la tabla con los estadísticos descriptivos del test observamos que en la columna "expected" hay valores que son menores de 5.
+Por tanto el test no puede considerarse válido al no cumplirse una de las condiciones de validez de esta prueba.
+Para solucionar este problema, agrupamos las categorías para asegurar que se cumpla esta condición.
+En este caso, unificamos las categorías "Nunca/Rara" y "Ocasionalmente", así como "3-4/sem" y "5+/sem".
 
 ```{r}
 # creamos la nueva variable
@@ -2577,6 +2675,7 @@ proc_freq(datos, 'f_Motivo', 'f_Frecuencia2',
  autofit()
                    
 ```
+
 ```{r}
 
 
@@ -2602,8 +2701,6 @@ motivo y la frecuencia') %>%
  autofit()
 ```
 
-
-
 ```{r}
 
 # sacamos los estadísticos descriptivos del test
@@ -2627,7 +2724,9 @@ motivo y la frecuencia.') %>%
  # ajustamos la tabla a la página
  autofit()
 ```
-Sigue habiendo valores en la columna "expected" menores de 5. Vamos a agrupar "Nunca/Ocasional" con "1-2/sem".
+
+Sigue habiendo valores en la columna "expected" menores de 5.
+Vamos a agrupar "Nunca/Ocasional" con "1-2/sem".
 
 ```{r}
 # Creamos la nueva variable
@@ -2673,7 +2772,6 @@ motivo y la frecuencia') %>%
  autofit()
 ```
 
-
 ```{r}
 # sacamos los estadísticos descriptivos del test
 chisq_descriptives(res.chisq) %>%
@@ -2696,6 +2794,266 @@ motivo y la frecuencia.') %>%
  # ajustamos la tabla a la página
  autofit()
 ```
-La nueva tabla cumple la condición para validar el test del chi cuadrado (valores expected mayores o igual a 5).
-Además, el p-valor es menor que 0,05 y por tanto podemos rechazar la hiótesis nula y afirmar que existe una dependencia entre el motivo por el que los encuestados comen fuera y la frecuencia con la que lo hacen. El  54.2% de aquellos cuyo motivo es la conveniencia suelen comer fuera 3 o más veces por semana, mientras que los que comen por placer o por eventos extraordinarios, suelen hacerlo de forma más esporádica, entre 0 y 2 veces por semana.
 
+Tras realizar la agrupación de categorías en la variable frecuencia ('0-2/sem' y '3+/sem'), se verifica el cumplimiento de la condición de validez del test de Chi-cuadrado.
+Todos los valores "expected" \> 5.
+
+El p-valor \< 0,05 permite rechazar la hipótesis nula.
+Por consiguiente, se concluye que existe una dependencia entre el motivo y la frecuencia de consumo extradoméstico.
+
+El análisis de las frecuencias relativas por filas revela diferencias estructurales en los perfiles de consumo:
+
+-   **Perfil de Conveniencia:** El 54,2% de los encuestados cuyo motivo es la conveniencia (trabajo, estudios) se sitúa en el rango de alta frecuencia (3 o más veces por semana).
+
+-   **Perfil de Placer/Extraordinario:** En contraste, los motivos vinculados al ocio o eventos extraordinarios presentan una concentración mayoritaria en el rango de baja frecuencia (0-2 veces por semana).
+
+#### 2. Relacionar la frecuencia con la que la muestra compra comida preparada de supermercado y el motivo principal
+
+Analizaremos si existe una relación entre el motivo principal de comer fuera y la frecuencia con la que el usuario compra comida preparada en supermercados.
+
+```{r}
+# tabla de contingencia inicial
+proc_freq(datos, 'f_Motivo', 'f_Frecuencia.Comida.Preparada',
+ include.row_percent = TRUE,
+ include.column_percent = FALSE,
+ include.table_percent = FALSE) %>%
+ compose(i=2, j=1, value = as_paragraph('Motivo'), part = 'header') %>%
+ compose(i=1, j=3, value = as_paragraph('Frecuencia Comida Preparada'), part = 'header') %>%
+ set_caption('Tabla 22. Tabla de contingencia entre el motivo y la frecuencia de compra de comida preparada.') %>%
+ autofit()
+```
+
+Parece haber una dispersión considerable en los datos.
+Para determinar si existe una asociación estadísticamente significativa, aplicamos el test de Chi-cuadrado.
+
+```{r}
+# test del chi cuadrado inicial
+res.chisq.prep <- chisq_test(
+ x = datos$f_Motivo,
+ y = datos$f_Frecuencia.Comida.Preparada)
+
+# resultado de la evaluación
+res.chisq.prep %>%
+ flextable() %>%
+ set_caption('Resultados del test del chi cuadrado (Comida Preparada') %>%
+ colformat_num(
+   j = c("statistic", "p"),
+   big.mark = ".",
+   decimal.mark = ","
+ ) %>%
+ autofit()
+
+
+# sacamos los estadísticos descriptivos del test
+chisq_descriptives(res.chisq.prep) %>%
+ rename(
+   Motivo = 'x',
+   Frecuencia_Prep = 'y') %>%
+ flextable() %>%
+ set_caption('Estadísticos descriptivos del test (Valores esperados y residuos).') %>%
+ colformat_num(
+   j = c("prop", "row.prop", "col.prop", "expected", "resid", "std.resid"),
+   big.mark = ".",
+   decimal.mark = ","
+ ) %>%
+ autofit()
+```
+
+dada la fragmentación de las respuestas en las frecuencias altas, observamos múltiples celdas con valores esperados ("expected") menores a 5.
+Esto invalida el resultado del test.
+
+Agruparemos las frecuencias en dos categorías lógicas: "Baja frecuencia" (que incluye Nunca/Rara y Ocasional) y "Alta Frecuencia" (que agrupa a quienes consumen al menos 1 vez por semana)
+
+```{r}
+datos$f_Frecuencia.Prep.Agrupada <- datos$f_Frecuencia.Comida.Preparada
+
+levels(datos$f_Frecuencia.Prep.Agrupada) <- list(
+  'Baja frecuencia' = c('Nunca/Rara', 'Ocasional'),
+  'Alta frecuencia (1+ veces/sem)'  = c('1-2/sem', '3-4/sem', '5+/sem')
+)
+
+proc_freq(datos, 'f_Motivo', 'f_Frecuencia.Prep.Agrupada',
+  include.row_percent = TRUE,
+  include.column_percent = FALSE,
+  include.table_percent = FALSE) %>%
+  compose(i=2, j=1, value = as_paragraph('Motivo'), part = 'header') %>%
+  compose(i=1, j=3, value = as_paragraph('Frecuencia Supermercado (Agrupada)'), part = 'header') %>%
+  set_caption('Tabla de contingencia: Motivo vs Frecuencia Comida Preparada (Agrupada)') %>%
+  autofit()
+
+res.chisq.prep.agrup <- chisq_test(
+ x = datos$f_Motivo,
+ y = datos$f_Frecuencia.Prep.Agrupada)
+
+res.chisq.prep.agrup %>%
+  flextable() %>%
+  set_caption('Resultados finales del test Chi-cuadrado (Agrupado)') %>%
+  colformat_num(j = c("statistic", "p"), big.mark = ".", decimal.mark = ",") %>%
+  autofit()
+
+# Estadísticos descriptivos finales
+chisq_descriptives(res.chisq.prep.agrup) %>%
+ rename(Motivo = 'x', Frecuencia_Agrupada = 'y') %>%
+ flextable() %>%
+ set_caption('Estadísticos del test Chi-cuadrado (Agrupado) con residuos estandarizados.') %>%
+ colformat_num(
+   j = c("prop", "row.prop", "col.prop", "expected", "resid", "std.resid"),
+   big.mark = ".", decimal.mark = ","
+ ) %>%
+ autofit()
+```
+
+Sigue habiendo problemas de validación del test.
+Hay valores expected \< 5.\
+Vamos a simplificar la variable "Motivo" en dos grandes perfiles lógicos de consumidor:
+
+-   **Conveniencia (Perfil Funcional):** Comen fuera por necesidad (trabajo, estudios, falta de tiempo).
+
+-   **Ocio y Otros (Perfil Hedónico):** Agrupamos "Social", "Placer" y "Extraordinario", ya que todos comparten que la ingesta es por disfrute o circunstancias voluntarias, no por obligación.
+
+    ```{r}
+
+    # 1. Agrupación de la Frecuencia (Baja vs Alta)
+    datos$f_Frecuencia.Prep.Agrupada <- datos$f_Frecuencia.Comida.Preparada
+    levels(datos$f_Frecuencia.Prep.Agrupada) <- list(
+      'Baja Frecuencia' = c('Nunca/Rara', 'Ocasional'),
+      'Alta Frecuencia'  = c('1-2/sem', '3-4/sem', '5+/sem')
+    )
+
+    # 2. Agrupación de los Motivos (Conveniencia vs Ocio/Otros)
+    datos$f_Motivo_Binario <- datos$f_Motivo
+    levels(datos$f_Motivo_Binario) <- list(
+      'Conveniencia' = 'Conveniencia',
+      'Ocio/Social/Otros' = c('Social', 'Placer', 'Extraordinario')
+    )
+
+    # 3. Tabla de Contingencia 2x2
+    proc_freq(datos, 'f_Motivo_Binario', 'f_Frecuencia.Prep.Agrupada',
+      include.row_percent = TRUE,
+      include.column_percent = FALSE,
+      include.table_percent = FALSE) %>%
+      compose(i=2, j=1, value = as_paragraph('Tipo de Motivo'), part = 'header') %>%
+      compose(i=1, j=3, value = as_paragraph('Frecuencia Compra Prep.'), part = 'header') %>%
+      set_caption('Tabla 23. Tabla de contingencia: Motivos Funcionales vs Ocio y Frecuencia de Compra.') %>%
+      autofit()
+
+    # 4. Test Chi-Cuadrado
+    res.chisq.final <- chisq_test(
+     x = datos$f_Motivo_Binario,
+     y = datos$f_Frecuencia.Prep.Agrupada)
+
+    # Mostrar resultados
+    res.chisq.final %>%
+      flextable() %>%
+      set_caption('Resultados del test Chi-cuadrado (Modelo 2x2).') %>%
+      colformat_num(j = c("statistic", "p"), big.mark = ".", decimal.mark = ",") %>%
+      autofit()
+
+    # 5. Estadísticos descriptivos (Validación final)
+    chisq_descriptives(res.chisq.final) %>%
+     rename(Motivo_Agrupado = 'x', Frecuencia = 'y') %>%
+     flextable() %>%
+     set_caption('Estadísticos del test (Valores esperados y residuos).') %>%
+     colformat_num(
+       j = c("expected", "std.resid"),
+       big.mark = ".", decimal.mark = ","
+     ) %>%
+     autofit()
+
+    ```
+
+Se cumple la condición de validación del test, puesto que todos los valores expected \> 5.
+
+El test proporciona un p-valor \> 0,05, por lo que no podemos rechazar la hipótesis nula.
+Esto indica que no existe una dependencia significativa entre el motivo por el cual el usuario come fuera de casa y su hábito de comprar comida preparada de supermercado.\
+
+#### 3. Contrastar la creencia de que se recurre a la comida rápida por falta de tiempo.
+
+```{r}
+# Tabla de contingencia inicial
+proc_freq(datos, 'f_Motivo', 'f_Tipo.Comida.Rapida',
+ include.row_percent = TRUE,
+ include.column_percent = FALSE,
+ include.table_percent = FALSE) %>%
+ compose(i=2, j=1, value = as_paragraph('Motivo'), part = 'header') %>%
+ compose(i=1, j=3, value = as_paragraph('Consume Comida Rápida'), part = 'header') %>%
+ set_caption('Tabla 24. Tabla de contingencia entre el motivo y el consumo de comida rápida.') %>%
+ autofit()
+
+# Realizamos el test del chi cuadrado inicial
+res.chisq.comidarapida <- chisq_test(
+ x = datos$f_Motivo,
+ y = datos$f_Tipo.Comida.Rapida)
+
+# Mostramos el resultado
+res.chisq.comidarapida %>%
+ flextable() %>%
+ set_caption('Resultados del test del chi cuadrado (Comida Rápida - Sin agrupar).') %>%
+ colformat_num(j = c("statistic", "p"), big.mark = ".", decimal.mark = ",") %>%
+ autofit()
+
+# Verificamos los valores esperados
+chisq_descriptives(res.chisq.comidarapida) %>%
+ rename(Motivo = 'x', Comida_Rapida = 'y') %>%
+ flextable() %>%
+ set_caption('Estadísticos descriptivos del test (Valores esperados).') %>%
+ colformat_num(
+   j = c("expected", "std.resid"),
+   big.mark = ".", decimal.mark = ","
+ ) %>%
+ autofit() 
+```
+
+De nuevo, encontramos valores expected \< 5.
+Para solucionarlo utilizaremos la agrupación de motivos que definimos anteriormente (perfil funcional y perfil hedónico)
+
+```{r}
+
+datos$f_Motivo_Binario <- datos$f_Motivo
+levels(datos$f_Motivo_Binario) <- list(
+  'Conveniencia (Falta tiempo)' = 'Conveniencia',
+  'Ocio/Social/Otros' = c('Social', 'Placer', 'Extraordinario')
+)
+
+proc_freq(datos, 'f_Motivo_Binario', 'f_Tipo.Comida.Rapida',
+  include.row_percent = TRUE,
+  include.column_percent = FALSE,
+  include.table_percent = FALSE) %>%
+  compose(i=2, j=1, value = as_paragraph('Tipo de Motivo'), part = 'header') %>%
+  compose(i=1, j=3, value = as_paragraph('Consume Comida Rápida'), part = 'header') %>%
+  set_caption('Tabla 25. Tabla de contingencia: Motivos Funcionales vs Ocio y Comida Rápida.') %>%
+  autofit()
+
+res.chisq.fastfood.final <- chisq_test(
+ x = datos$f_Motivo_Binario,
+ y = datos$f_Tipo.Comida.Rapida)
+
+# Mostrar resultados
+res.chisq.fastfood.final %>%
+  flextable() %>%
+  set_caption('Resultados del test Chi-cuadrado (Modelo 2x2).') %>%
+  colformat_num(j = c("statistic", "p"), big.mark = ".", decimal.mark = ",") %>%
+  autofit()
+
+# 4. Análisis de Residuos 
+chisq_descriptives(res.chisq.fastfood.final) %>%
+ rename(Motivo_Agrupado = 'x', Comida_Rapida = 'y') %>%
+ flextable() %>%
+ set_caption('Estadísticos finales y residuos estandarizados.') %>%
+ colformat_num(
+   j = c("prop", "row.prop", "col.prop", "expected", "resid", "std.resid"),
+   big.mark = ".", decimal.mark = ","
+ ) %>%
+ autofit()
+```
+
+Todos los valores expected son mayores de 5, por lo que el test es válido.
+
+El test proporciona un p-valor \> 0,05, por lo que no podemos rechazar la hipótesis nula.
+Esto indica que, en nuestra muestra, no existe una dependencia significativa entre el motivo por el cual el usuario come fuera de casa y su consumo de comida rápida.
+Observando la tabla de contingencia, se aprecia que ambos grupos cuentan con proporciones similares.
+
+#### 4. Establecer la relación entre los lugares a los que se acude cuando se come fuera de casa (bar o restaurante, trabajo o centro educativo, vía pública) y el tipo de comida elegido (rápida, platos preparados, de elaboración propia o comida preparada en un restaurante).
+
+El objetivo es determinar si el lugar donde se consume influye en el tipo de comida elegido.
+Al tratarse de una variable de respuesta múltiple, analizaremos la dependencia por separado para las opciones más relevantes: comida de elaboración propia, comida rápida y platos preparados de supermercado.
