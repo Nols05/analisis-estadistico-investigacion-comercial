@@ -3417,3 +3417,140 @@ No existe una dependencia estadísticamente significativa entre la importancia q
 
 Ambos porcentajes son muy similares.
 Esto sugiere que la barra de ensaladas es un producto transversal: atrae tanto a los consumidores concienciados con la salud como a aquellos que no lo priorizan tanto, probablemente debido a otros factores como la conveniencia.
+
+##### 8. Comparar el interés potencial entre quienes comen fuera y quienes no
+
+Analizamos si el hábito de comer fuera de casa influye en la intención de utilizar la barra de ensaladas.
+Para este análisis, hemos agrupado a los encuestados en dos perfiles:
+
+-   **Baja Frecuencia:** Quienes nunca comen fuera o lo hacen solo ocasionalmente.
+
+-   **Alta Frecuencia:** Quienes comen fuera de manera recurrente (al menos 1 vez por semana).
+
+```{r}
+datos$f_Comer_Fuera_Binaria <- datos$f_Frecuencia
+levels(datos$f_Comer_Fuera_Binaria) <- list(
+  'Baja Frecuencia (Nunca/Ocasional)' = c('Nunca/Rara', 'Ocasional'),
+  'Alta Frecuencia (1+ veces/sem)'    = c('1-2/sem', '3-4/sem', '5+/sem')
+)
+
+# Tabla de contingencia
+proc_freq(datos, 'f_Comer_Fuera_Binaria', 'f_Intencion.Uso',
+  include.row_percent = TRUE,
+  include.column_percent = FALSE,
+  include.table_percent = FALSE) %>%
+  compose(i=2, j=1, value = as_paragraph('Hábito de Comer Fuera'), part = 'header') %>%
+  compose(i=1, j=3, value = as_paragraph('Intención de Uso'), part = 'header') %>%
+  set_caption('Tabla 29. Tabla de contingencia: Hábito de Comer Fuera vs Intención de Uso.') %>%
+  autofit()
+
+# Test Chi-cuadrado
+res.chisq.habito <- chisq_test(
+ x = datos$f_Comer_Fuera_Binaria,
+ y = datos$f_Intencion.Uso)
+
+# Mostrar resultados
+res.chisq.habito %>%
+  flextable() %>%
+  set_caption('Resultados del test Chi-cuadrado (Hábito).') %>%
+  colformat_num(j = c("statistic", "p"), big.mark = ".", decimal.mark = ",") %>%
+  autofit()
+
+# Estadísticos descriptivos
+chisq_descriptives(res.chisq.habito) %>%
+ rename(Habito = 'x', Intencion = 'y') %>%
+ flextable() %>%
+  set_caption('Estadísticos del test (Valores esperados y residuos).') %>%
+ colformat_num(
+   j = c("prop", "row.prop", "col.prop", "expected", "resid", "std.resid"),
+   big.mark = ".", decimal.mark = ","
+ ) %>%
+ autofit()
+```
+
+El test es válido ya que todos los valores expected \> 5.
+Como el p-valor \> 0,05, no podemos rechazar la hipótesis nula y concluimos que no hay ninguna diferencia significativa en la aceptación del producto entre los encuestados que comen fuera frecuentemente y los que no.
+
+La barra de ensaladas tiene un atractivo universal.
+Interesa tanto a quienes comen fuera por rutina semanal como a quienes lo hacen solo de forma esporádica u ocasional.
+
+##### 9. Analizar cómo las malas experiencias anteriores con platos preparados o autoservicio influyen en el interés potencial por el producto.
+
+##### 10. Vincular el formato de dispensación preferido con las características consideradas más prioritarias (sostenibilidad, precio, higiene, rapidez del servicio, sabor, variedad y origen de los ingredientes)
+
+Analizamos si el formato de dispensación preferido (`f_Preferencia.Dispensacion`) influye en la importancia que se le da a distintos atributos (Precio, Higiene, Sabor, etc.).
+
+Seleccionamos las columnas de interés y convertimos las escalas Likert (que R lee como factores) a números para poder operar con ellas.
+
+```{r}
+# Bloque 1: Selección y transformación
+# Seleccionamos el formato preferido y las 7 variables de importancia
+datos_analisis <- datos %>%
+  dplyr::select(f_Preferencia.Dispensacion, 
+                f_Imp.Sostenibilidad, f_Imp.Origen.Local, f_Imp.Variedad,
+                f_Imp.Sabor, f_Imp.Precio, f_Imp.Higiene, f_Imp.Rapidez) %>%
+  # Transformamos las escalas Likert a numérico (1-5)
+  dplyr::mutate(across(starts_with("f_Imp"), ~as.numeric(as.character(.)))) %>%
+  drop_na()
+
+# Lista de las variables que vamos a analizar una a una
+variables_a_testear <- names(datos_analisis)[grepl("f_Imp", names(datos_analisis))]
+```
+
+Comprobamos si los residuos de cada variable siguen una distribución normal.
+Según la guía docente (apartado 7.2), usamos el test de **Anderson-Darling** (`ad.test`).
+
+```{r}
+# Función auxiliar para calcular Anderson-Darling de una variable
+calcular_normalidad <- function(var_nombre, df) {
+  # 1. Creamos el modelo lineal
+  formula <- as.formula(paste(var_nombre, "~ f_Preferencia.Dispensacion"))
+  modelo <- lm(formula, data = df)
+  
+  # 2. Extraemos residuos y aplicamos Anderson-Darling
+  test <- nortest::ad.test(residuals(modelo))
+  
+  return(data.frame(Variable = gsub("f_Imp.", "", var_nombre),
+                    P_Valor_Norm = test$p.value))
+}
+
+# Ejecutamos la función para todas las variables
+tabla_normalidad <- do.call(rbind, lapply(variables_a_testear, calcular_normalidad, df = datos_analisis))
+
+# Imprimimos la tabla
+flextable::flextable(tabla_normalidad) %>%
+  set_caption("Tabla 31. Test de Normalidad de Anderson-Darling (Residuos).") %>%
+  colformat_double(j = "P_Valor_Norm", digits = 4, decimal.mark = ",") %>%
+  # Marcamos en rojo si NO es normal (p < 0.05) para verlo rápido
+  color(i = ~ P_Valor_Norm < 0.05, j = "P_Valor_Norm", color = "red") %>%
+  autofit()
+```
+
+Dado que todos los p-valor son menores que 0,05, se rechaza la hipótesis nula y confirmamos que no hay normalidad en ninguna de las variables.
+Esto indica que debemos usar la prueba de Kruskal-Wallis en lugar de ANOVA.
+
+```{r}
+# Calculamos Kruskal-Wallis para todas las variables
+res_kruskal <- datos_analisis %>%
+  tidyr::pivot_longer(cols = starts_with("f_Imp"), names_to = "Variable", values_to = "Valor") %>%
+  group_by(Variable) %>%
+  rstatix::kruskal_test(Valor ~ f_Preferencia.Dispensacion) %>%
+  mutate(Variable = gsub("f_Imp.", "", Variable))
+
+# Imprimimos la tabla final de decisión
+res_kruskal %>%
+  dplyr::select(Variable, n, statistic, df, p, method) %>%
+  flextable::flextable() %>%
+  set_caption("Tabla 33. Resultados del Test de Kruskal-Wallis (Dependencia Final).") %>%
+  colformat_double(j = c("statistic", "p"), digits = 3, decimal.mark = ",") %>%
+  # Si alguno sale significativo (p < 0.05), se pondrá en negrita
+  bold(i = ~ p < 0.05, bold = TRUE) %>%
+  autofit()
+```
+
+1.  Para todas las variables analizadas (Higiene, Origen Local, Precio, Rapidez, Sabor, Sostenibilidad y Variedad), se han obtenido p-valores muy superiores al nivel de significación de 0,05 (oscilando entre 0,112 y 0,959).
+    Esto nos lleva a no rechazar la hipótesis nula en ninguno de los casos.
+    No existe evidencia estadística de que la importancia asignada a estos atributos varíe en función del formato de dispensación preferido por el consumidor.
+
+    Los resultados desmienten la creencia de que la preferencia por un formato (ej. vitrina cerrada vs. autoservicio) se deba a una mayor exigencia en atributos específicos como la higiene o la rapidez.
+    Los consumidores valoran estos factores con la misma intensidad, independientemente de cómo prefieran que se les sirva el producto.
