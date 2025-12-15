@@ -2558,9 +2558,9 @@ ft_resumen <- flextable::flextable(df_resumen_final) %>%
 ft_resumen
 ```
 
-## Análisis bivariante
+# Análisis bivariante
 
-#### 1. Relacionar la frecuencia con la que la muestra come fuera de casa y el motivo principal
+## Relacionar la frecuencia con la que la muestra come fuera de casa y el motivo principal
 
 Vamos a comprobar si la frecuencia con el que el encuestado come fuera de casa depende del motivo por el que lo hace.
 Primero, inspeccionaremos la distribución de los casos mediante una tabla de contingencia:
@@ -2574,12 +2574,12 @@ proc_freq(datos, 'f_Motivo',
  include.column_percent = FALSE,
  include.table_percent = FALSE) %>%
  # ajustamos los nombres de las variables en la tabla
- compose(i=2, j=1, value = as_paragraph('Motivo'), part =
+ compose(i=1, j=1, value = as_paragraph('Motivo'), part =
 'header') %>%
  compose(i=1, j=3, value = as_paragraph('Frecuencia'), part =
 'header') %>%
  # indicamos el título
- set_caption('Tabla 8. Tabla de contingencia entre el motivo y
+ set_caption('Tabla 21. Tabla de contingencia entre el motivo y
 la frecuencia.') %>%
  # ajustamos la tabla a la página
  autofit()
@@ -2606,7 +2606,7 @@ res.chisq %>%
  # imprimimos la tabla
  flextable() %>%
  # indicamos el título
- set_caption('Resultados del test del chi cuadrado entre el
+ set_caption('Tabla 22. Resultados del test del chi cuadrado entre el
 motivo de comer fuera y la frecuencia.') %>%
  # arreglamos la coma de los decimales y el punto de los miles
  colformat_num(
@@ -2631,7 +2631,7 @@ chisq_descriptives(res.chisq) %>%
  # imprimimos la tabla
  flextable() %>%
  # indicamos el título
- set_caption('Estadísticos del test del chi cuadrado entre el
+ set_caption('Tabla 23. Estadísticos del test del chi cuadrado entre el
 motivo y la frecuencia.') %>%
  # arreglamos la coma de los decimales y el punto de los miles
  colformat_num(
@@ -2665,12 +2665,12 @@ proc_freq(datos, 'f_Motivo', 'f_Frecuencia2',
  include.column_percent = FALSE,
  include.table_percent = FALSE) %>%
  # ajustamos los nombres de las variables en la tabla
- compose(i=2, j=1, value = as_paragraph('Motivo'), part =
+ compose(i=1, j=1, value = as_paragraph('Motivo'), part =
 'header') %>%
  compose(i=1, j=3, value = as_paragraph('Frecuencia'), part = # Etiqueta de la nueva variable
 'header') %>%
  # indicamos el título
- set_caption('Tabla de contingencia entre el motivo y la frecuencia') %>% # Título ajustado
+ set_caption('Tabla 24. Tabla de contingencia entre el motivo y la frecuencia') %>% # Título ajustado
  # ajustamos la tabla a la página
  autofit()
                    
@@ -2689,7 +2689,7 @@ res.chisq %>%
   # imprimimos la tabla
  flextable() %>%
  # indicamos el título
- set_caption('Resultados del test del chi cuadrado entre el
+ set_caption('Tabla 25. Resultados del test del chi cuadrado entre el
 motivo y la frecuencia') %>%
  # arreglamos la coma de los decimales y el punto de los miles
  colformat_num(
@@ -2712,7 +2712,7 @@ chisq_descriptives(res.chisq) %>%
  # imprimimos la tabla
  flextable() %>%
  # indicamos el título
- set_caption('Estadísticos del test del chi cuadrado entre el
+ set_caption('Tabla 26. Estadísticos del test del chi cuadrado entre el
 motivo y la frecuencia.') %>%
  # arreglamos la coma de los decimales y el punto de los miles
  colformat_num(
@@ -2745,7 +2745,7 @@ proc_freq(datos, 'f_Motivo', 'f_Frecuencia3',
   include.table_percent = FALSE) %>%
   compose(i=2, j=1, value = as_paragraph('Motivo'), part = 'header') %>%
   compose(i=1, j=3, value = as_paragraph('Frecuencia (Agrupada)'), part = 'header') %>%
-  set_caption('Tabla de contingencia: Motivo vs Frecuencia (0-2/sem vs 3+/sem)') %>%
+  set_caption('Tabla 27. Tabla de contingencia: Motivo vs Frecuencia (0-2/sem vs 3+/sem)') %>%
   autofit()
 ```
 
@@ -2760,7 +2760,7 @@ res.chisq %>%
   # imprimimos la tabla
  flextable() %>%
  # indicamos el título
- set_caption('Resultados del test del chi cuadrado entre el
+ set_caption('Tabla 28. Resultados del test del chi cuadrado entre el
 motivo y la frecuencia') %>%
  # arreglamos la coma de los decimales y el punto de los miles
  colformat_num(
@@ -2782,7 +2782,7 @@ chisq_descriptives(res.chisq) %>%
  # imprimimos la tabla
  flextable() %>%
  # indicamos el título
- set_caption('Estadísticos del test del chi cuadrado entre el
+ set_caption('Tabla 29. Estadísticos del test del chi cuadrado entre el
 motivo y la frecuencia.') %>%
  # arreglamos la coma de los decimales y el punto de los miles
  colformat_num(
@@ -2795,17 +2795,82 @@ motivo y la frecuencia.') %>%
  autofit()
 ```
 
-Tras realizar la agrupación de categorías en la variable frecuencia ('0-2/sem' y '3+/sem'), se verifica el cumplimiento de la condición de validez del test de Chi-cuadrado.
-Todos los valores "expected" \> 5.
 
-El p-valor \< 0,05 permite rechazar la hipótesis nula.
-Por consiguiente, se concluye que existe una dependencia entre el motivo y la frecuencia de consumo extradoméstico.
+Sigue habiendo valores "expected" \< 5 por tanto volvemos a agrupar, pero esta vez, por motivo, diferenciando “Conveniencia” y “”Social/Placer/Extraordinario”, y volvemos a repetir el proceso.
 
-El análisis de las frecuencias relativas por filas revela diferencias estructurales en los perfiles de consumo:
+```{r}
+# Creamos la nueva variable
+datos$f_Motivo_Binario <- datos$f_Motivo
+    levels(datos$f_Motivo_Binario) <- list(
+      'Conveniencia' = 'Conveniencia',
+      'Ocio/Social/Otros' = c('Social', 'Placer', 'Extraordinario')
+)
 
--   **Perfil de Conveniencia:** El 54,2% de los encuestados cuyo motivo es la conveniencia (trabajo, estudios) se sitúa en el rango de alta frecuencia (3 o más veces por semana).
+# Tabla de contingencia
+proc_freq(datos, 'f_Motivo_Binario', 'f_Frecuencia3',
+  include.row_percent = TRUE,
+  include.column_percent = FALSE,
+  include.table_percent = FALSE) %>%
+  compose(i=1, j=1, value = as_paragraph('Motivo Binario'), part = 'header') %>%
+  compose(i=1, j=3, value = as_paragraph('Frecuencia (Agrupada)'), part = 'header') %>%
+  set_caption('Tabla 30. Tabla de contingencia: Motivo Binario vs Frecuencia (0-2/sem vs 3+/sem)') %>%
+  autofit()
+```
 
--   **Perfil de Placer/Extraordinario:** En contraste, los motivos vinculados al ocio o eventos extraordinarios presentan una concentración mayoritaria en el rango de baja frecuencia (0-2 veces por semana).
+```{r}
+
+# test del chi cuadrado
+res.chisq <- chisq_test(
+ x = datos$f_Motivo_Binario,
+ y = datos$f_Frecuencia3)
+# resultado de la evaluación
+res.chisq %>%
+  # imprimimos la tabla
+ flextable() %>%
+ # indicamos el título
+ set_caption('Tabla 31. Resultados del test del chi cuadrado entre el
+motivo binario y la frecuencia') %>%
+ # arreglamos la coma de los decimales y el punto de los miles
+ colformat_num(
+ j = c("statistic", "p"),
+ big.mark = ".",
+ decimal.mark = ","
+ ) %>%
+ # ajustamos la tabla a la página
+ autofit()
+```
+
+```{r}
+# sacamos los estadísticos descriptivos del test
+chisq_descriptives(res.chisq) %>%
+ # renombramos las columnas x e y
+ rename(
+ Motivo = 'x',
+ Frecuencia = 'y') %>%
+ # imprimimos la tabla
+ flextable() %>%
+ # indicamos el título
+ set_caption('Tabla 32. Estadísticos del test del chi cuadrado entre el
+motivo binario y la frecuencia.') %>%
+ # arreglamos la coma de los decimales y el punto de los miles
+ colformat_num(
+ j = c("prop", "row.prop", "col.prop", "expected", "resid",
+"std.resid"),
+ big.mark = ".",
+ decimal.mark = ","
+ ) %>%
+ # ajustamos la tabla a la página
+ autofit()
+```
+
+Tras realizar esta última agrupación, se verifica que todos los valores "expected" \> 5.
+
+El p-valor \< 0,05 permite rechazar la hipótesis nula, por consiguiente, se concluye que existe una dependencia entre el motivo y la frecuencia de consumo extradoméstico. El análisis de las frecuencias relativas por filas revela diferencias estructurales en los perfiles de consumo:
+
+- **Perfil de Conveniencia**: El 54,2% de los encuestados cuyo motivo es la conveniencia (trabajo, estudios) se sitúa en el rango de alta frecuencia (3 o más veces por semana).
+
+- **Perfil de Placer/Social/Extraordinario**: En contraste, los motivos vinculados al ocio, a las reuniones sociales o eventos extraordinarios presentan una concentración mayoritaria (87,2%) en el rango de baja frecuencia (0-2 veces por semana).
+
 
 #### 2. Relacionar la frecuencia con la que la muestra compra comida preparada de supermercado y el motivo principal
 
