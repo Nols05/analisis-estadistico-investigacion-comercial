@@ -3873,3 +3873,6 @@ for (i in 1:3) {
   cat("\n---\n")
 }
 ```
+Todos los tests son válidos, ya que todos los valores expected son mayores que 5.\
+Todos los p-valores son mayores que 0,05, por tanto concluimos en que los ingredientes preferidos por los encuestados no dependen de su género.
+
