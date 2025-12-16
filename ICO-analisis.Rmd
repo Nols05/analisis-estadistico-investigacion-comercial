@@ -2482,80 +2482,66 @@ Relacionadas con la variedad de ingredientes y la cantidad de porción.
 Otros (no queda claro donde categorizarlas).
 
 ```{r p9_Categorizacion_Cualitativa}
-# Simulamos la columna de datos (asumimos que esta columna no se cargó como factor)
-respuestas_raw <- c(
-  "No he tenido experiencias previas", "No he tenido ninguna mala experiencia que recuerde. No suelo usarlo.", "comida grasienta", "Alguna vez no tenía muy buena pinta, posiblemente había algo en mal estado", "Falta de higiene", "No", "Ninguna", "No", "No", "no", 
-  "Me ha aparecido un trozo de madera con pintura en la comida", "Se me olvidaron coger cubiertos y luego no tenía como comer, así que me tocó comer de malas maneras.", "Ocasionalmente el menú de hamburguesas del trinquet, tanto las patatas como la hamburguesa saben a cartón, como si estuviese comiendo pared de casa americana, pero como en relación abusiva, tarde o temprano vuelvo porque está vez cambiaran. También nunca hay pan grande, lo cual es una blasfemia contra la moral pública.", "no", "Comida mal preparada o congelada.", "No he tenido ninguna mala experiencia.", "No", "Un gusano", "Si, que me cuesta mucho decidir que coger", "No", 
-  "Algun ingrediente de hojas verdes sin cocinar poco fresco o algo deteriorado por ser un vegetal delicado para conservar", "Falta de frescura", "Control sanitario / Reposición / Dosificación / bacterizacion por contaminacion de clientela, mendigos, viejos, niños", "Los ingredientes no parecían estar muy frescos, o había muy poca variedad de ingredientes.", "Qué esté la comida fría o por lo menos se note que lleva mucho tiempo hecha.", "No", "no", "si", "Buffet de hoteles con poca variedad. La calidad de la comida baja.", "Productos en mal estado", 
-  "No he tenido, pero prefiero hacerme las ensaladas en cada", "Es cara y no sabe a nada en específico, pura quimica", "Una vez me intoxique con la comida preparada de Mercadona. A partir de ese momento me lo pienso bastante para volver a comprar los platos preaprados", "No recuerdo", "Ninguna", "En las barras de ensalada ponen mucha lechuga y poco condumio", "No he tenido", "Nunca he tenido malas experiencias", "La verdad es que mientras los productos estén frescos, no.", "No", 
-  "No he tenido", "No", "No","No", "Ninguna", "Me preocupa la falta de higiene en la manipulación de los alimentos", "Princi son saludables, no puedo cocinar o calentar los platos preparados", "No", "No he tenido ninguna mala experiencia", "No he tenido ninguna mala experiencia", "no podría describir ninguna. ya que los bares, cafeterías y supermercados en los que suelo comer fuera de casa no tienen implementado esta función de autoservicio.", "No he tenido ninguna", "Falta de higiene", "Problemas con la higiene", "El Sibo", 
-  "No comer en Pompeya", "No he tenido", "Comida con mala pinta", "no", "no he tenido", "no", "No he tenido.", "No"
-)
-# Creamos un dataframe temporal para la categorización
-df_cualitativo <- tibble::tibble(respuesta_raw = respuestas_raw)
-
-# Categorización usando case_when (patrones de texto)
-df_categorizado <- df_cualitativo %>%
+# 1. Aplicamos la categorización DIRECTAMENTE sobre el dataframe 'datos'
+datos <- datos %>%
   dplyr::mutate(
-    Categoria = dplyr::case_when(
-      # Higiene, Salud y Contaminación (Máxima Prioridad)
-      stringr::str_detect(respuesta_raw, stringr::regex("gusano|intoxique|madera|higiene|sanitario|contaminacion|Sibo|saludables", ignore_case = TRUE)) ~ "Higiene / Contaminación / Salud",
+    # Creamos la nueva variable y la guardamos en 'datos' para usarla luego
+    Categoria_Mala_Exp = dplyr::case_when(
+      
+      # Si está vacío (NA), asumimos que no hay queja
+      is.na(Mala.Experiencia.Descripcion) ~ "No Mala Experiencia",
+      
+      # Higiene, Salud y Contaminación
+      stringr::str_detect(Mala.Experiencia.Descripcion, stringr::regex("gusano|intoxique|madera|higiene|sanitario|contaminacion|Sibo|saludables", ignore_case = TRUE)) ~ "Higiene / Contaminación / Salud",
       
       # Frescura y Calidad
-      stringr::str_detect(respuesta_raw, stringr::regex("frescura|fresco|deteriorado|mal estado|mala pinta|fría|baja", ignore_case = TRUE)) ~ "Calidad / Frescura",
+      stringr::str_detect(Mala.Experiencia.Descripcion, stringr::regex("frescura|fresco|deteriorado|mal estado|mala pinta|fría|baja", ignore_case = TRUE)) ~ "Calidad / Frescura",
       
       # Sabor y Preparación
-      stringr::str_detect(respuesta_raw, stringr::regex("grasienta|mal preparada|congelada|cartón|química|saben|caras", ignore_case = TRUE)) ~ "Sabor / Preparación",
+      stringr::str_detect(Mala.Experiencia.Descripcion, stringr::regex("grasienta|mal preparada|congelada|cartón|química|saben|caras", ignore_case = TRUE)) ~ "Sabor / Preparación",
       
       # Variedad y Porción
-      stringr::str_detect(respuesta_raw, stringr::regex("poca variedad|mucha lechuga|poco condumio|buffet de hoteles", ignore_case = TRUE)) ~ "Variedad / Porción",
+      stringr::str_detect(Mala.Experiencia.Descripcion, stringr::regex("poca variedad|mucha lechuga|poco condumio|buffet de hoteles", ignore_case = TRUE)) ~ "Variedad / Porción",
       
       # Logística / Servicio
-      stringr::str_detect(respuesta_raw, stringr::regex("cubiertos|decidir|calentar|problema|lento", ignore_case = TRUE)) ~ "Logística / Servicio",
+      stringr::str_detect(Mala.Experiencia.Descripcion, stringr::regex("cubiertos|decidir|calentar|problema|lento", ignore_case = TRUE)) ~ "Logística / Servicio",
       
-      # No Mala Experiencia
-      stringr::str_detect(respuesta_raw, stringr::regex("no|ninguna|nunca|recuerdo|previas|prefiero|suelo comer fuera|Pompeya", ignore_case = TRUE)) ~ "No Mala Experiencia",
+      # No Mala Experiencia (Patrón de texto explícito)
+      stringr::str_detect(Mala.Experiencia.Descripcion, stringr::regex("no|ninguna|nunca|recuerdo|previas|prefiero|suelo comer fuera|Pompeya", ignore_case = TRUE)) ~ "No Mala Experiencia",
       
-      # Por defecto
+      # Por defecto (Cualquier otra cosa escrita es una queja no categorizada)
       TRUE ~ "Otros (No Categorizado)"
     )
   )
 
-# Crear tabla de frecuencias
-df_resumen <- df_categorizado %>%
-  dplyr::count(Categoria, name = "Frecuencia") %>%
+# 2. Generación de la Tabla Resumen (usando la variable recién creada en 'datos')
+df_resumen <- datos %>%
+  dplyr::count(Categoria_Mala_Exp, name = "Frecuencia") %>%
   dplyr::mutate(
     Porcentaje = (Frecuencia / sum(Frecuencia)) * 100
   ) %>%
-  dplyr::arrange(desc(Frecuencia)) # Ordenar por frecuencia
+  dplyr::arrange(desc(Frecuencia))
 
-
-# Añadir Fila Total y Formato (como en la guía)
+# Añadir Fila Total y Formato
 df_total <- data.frame(
-  Categoria = "TOTAL",
+  Categoria_Mala_Exp = "TOTAL",
   Frecuencia = sum(df_resumen$Frecuencia),
   Porcentaje = 100.0
 )
 df_resumen_final <- bind_rows(df_resumen, df_total)
 
-# Generación de la tabla (flextable)
-ft_resumen <- flextable::flextable(df_resumen_final) %>%
-  flextable::set_caption(caption = "Tabla 21. Agrupación de Motivos de Mala Experiencia (Respuestas Abiertas)") %>%
+# Generación de la tabla visual (flextable)
+flextable::flextable(df_resumen_final) %>%
+  flextable::set_caption(caption = "Tabla 21. Agrupación de Motivos de Mala Experiencia (Datos Reales).") %>%
   flextable::set_header_labels(
-    Categoria = "Categoría de Fallo",
+    Categoria_Mala_Exp = "Categoría de Experiencia",
     Frecuencia = "Frecuencia (n)",
     Porcentaje = "Porcentaje (%)"
   ) %>%
   flextable::colformat_double(j = 3, digits = 1, suffix = "%") %>%
   flextable::theme_booktabs() %>%
   flextable::bold(i = nrow(df_resumen_final), part = "body") %>%
-  flextable::hline(i = nrow(df_resumen_final) - 1, border = officer::fp_border(width = 1.5, color = "black")) %>%
-  flextable::align(align = "center", part = "all") %>%
-  flextable::align(j = 1, align = "left", part = "body") %>%
   flextable::autofit()
-
-# Mostrar la tabla
-ft_resumen
 ```
 
 # Análisis bivariante
@@ -2795,7 +2781,6 @@ motivo y la frecuencia.') %>%
  autofit()
 ```
 
-
 Sigue habiendo valores "expected" \< 5 por tanto volvemos a agrupar, pero esta vez, por motivo, diferenciando “Conveniencia” y “”Social/Placer/Extraordinario”, y volvemos a repetir el proceso.
 
 ```{r}
@@ -2865,12 +2850,12 @@ motivo binario y la frecuencia.') %>%
 
 Tras realizar esta última agrupación, se verifica que todos los valores "expected" \> 5.
 
-El p-valor \< 0,05 permite rechazar la hipótesis nula, por consiguiente, se concluye que existe una dependencia entre el motivo y la frecuencia de consumo extradoméstico. El análisis de las frecuencias relativas por filas revela diferencias estructurales en los perfiles de consumo:
+El p-valor \< 0,05 permite rechazar la hipótesis nula, por consiguiente, se concluye que existe una dependencia entre el motivo y la frecuencia de consumo extradoméstico.
+El análisis de las frecuencias relativas por filas revela diferencias estructurales en los perfiles de consumo:
 
-- **Perfil de Conveniencia**: El 54,2% de los encuestados cuyo motivo es la conveniencia (trabajo, estudios) se sitúa en el rango de alta frecuencia (3 o más veces por semana).
+-   **Perfil de Conveniencia**: El 54,2% de los encuestados cuyo motivo es la conveniencia (trabajo, estudios) se sitúa en el rango de alta frecuencia (3 o más veces por semana).
 
-- **Perfil de Placer/Social/Extraordinario**: En contraste, los motivos vinculados al ocio, a las reuniones sociales o eventos extraordinarios presentan una concentración mayoritaria (87,2%) en el rango de baja frecuencia (0-2 veces por semana).
-
+-   **Perfil de Placer/Social/Extraordinario**: En contraste, los motivos vinculados al ocio, a las reuniones sociales o eventos extraordinarios presentan una concentración mayoritaria (87,2%) en el rango de baja frecuencia (0-2 veces por semana).
 
 #### 2. Relacionar la frecuencia con la que la muestra compra comida preparada de supermercado y el motivo principal
 
@@ -3541,6 +3526,55 @@ Interesa tanto a quienes comen fuera por rutina semanal como a quienes lo hacen 
 
 ##### 9. Analizar cómo las malas experiencias anteriores con platos preparados o autoservicio influyen en el interés potencial por el producto.
 
+Agrupamos la variable cualitativa de malas experiencias en dos categorías: "Mala experiencia" y "No mala experiencia".
+
+```{r}
+
+datos$f_Exp_Negativa_Binaria <- factor(
+  ifelse(datos$Categoria_Mala_Exp == "No Mala Experiencia", 
+         "No ha tenido mala experiencia", 
+         "Sí ha tenido mala experiencia")
+)
+
+# Tabla de contingencia
+proc_freq(datos, 'f_Exp_Negativa_Binaria', 'f_Intencion.Uso',
+  include.row_percent = TRUE,
+  include.column_percent = FALSE,
+  include.table_percent = FALSE) %>%
+  compose(i=1, j=1, value = as_paragraph('Antecedentes'), part = 'header') %>%
+  compose(i=1, j=3, value = as_paragraph('Intención de Uso'), part = 'header') %>%
+  set_caption('Tabla 30. Tabla de contingencia: Malas Experiencias Previas (Binaria) vs Intención de Uso.') %>%
+  autofit()
+
+# Test Chi-cuadrado
+res.chisq.negativa <- chisq_test(
+ x = datos$f_Exp_Negativa_Binaria,
+ y = datos$f_Intencion.Uso)
+
+# Mostrar resultados
+res.chisq.negativa %>%
+  flextable() %>%
+  set_caption('Resultados del test Chi-cuadrado (Malas Experiencias).') %>%
+  colformat_num(j = c("statistic", "p"), big.mark = ".", decimal.mark = ",") %>%
+  autofit()
+
+# Estadísticos descriptivos
+chisq_descriptives(res.chisq.negativa) %>%
+ rename(Tiene_Mala_Exp = 'x', Intencion = 'y') %>%
+ flextable() %>%
+ set_caption('Estadísticos del test (Valores esperados y residuos).') %>%
+ colformat_num(
+   j = c("prop", "row.prop", "col.prop", "expected", "resid", "std.resid"),
+   big.mark = ".", decimal.mark = ","
+ ) %>%
+ autofit()
+```
+
+Todos los valores expected son mayores que 5, por lo que el test es válido.
+
+El p-valor es mayor que 0,05, por lo que no podemos rechazar la hipótesis nula.
+Por tanto, concluimos que no existe una dependencia significativa entre la aceptación del producto y si las experiencias previas con productos similares han sido positivas o negativas,.
+
 ##### 10. Vincular el formato de dispensación preferido con las características consideradas más prioritarias (sostenibilidad, precio, higiene, rapidez del servicio, sabor, variedad y origen de los ingredientes)
 
 Analizamos si el formato de dispensación preferido (`f_Preferencia.Dispensacion`) influye en la importancia que se le da a distintos atributos (Precio, Higiene, Sabor, etc.).
@@ -3619,3 +3653,223 @@ res_kruskal %>%
 
     Los resultados desmienten la creencia de que la preferencia por un formato (ej. vitrina cerrada vs. autoservicio) se deba a una mayor exigencia en atributos específicos como la higiene o la rapidez.
     Los consumidores valoran estos factores con la misma intensidad, independientemente de cómo prefieran que se les sirva el producto.
+
+##### 11. Relación entre los ingredientes demandados y la edad
+
+Nos centramos ahora en los productos estrella de la barra de ensaladas.
+Primero identificamos cuáles son los ingredientes más seleccionados por los consumidores y, a continuación, analizamos si su demanda depende de la edad del consumidor.
+
+```{r}
+# 1. Identificación de los "Top 3" Ingredientes más demandados
+# Buscamos todas las variables de ingredientes (Base, Proteína, Complementos)
+vars_ingredientes <- names(datos)[grep("f_Base|f_Prot|f_Complem", names(datos))]
+
+# Calculamos cuál es el porcentaje de "Sí" para cada uno
+ranking_popularidad <- datos %>%
+  dplyr::select(all_of(vars_ingredientes)) %>%
+  # Convertimos "Sí" a 1 y "No" a 0 para sumar
+  dplyr::mutate(across(everything(), ~ifelse(. == "Sí", 1, 0))) %>%
+  # Sumamos los "Sí" de cada columna
+  summarise(across(everything(), sum, na.rm = TRUE)) %>%
+  tidyr::pivot_longer(cols = everything(), names_to = "Variable", values_to = "Total_Si") %>%
+  # Ordenamos de mayor a menor demanda
+  arrange(desc(Total_Si)) %>%
+  slice(1:3) # Nos quedamos con los 3 primeros
+
+# Guardamos los nombres de las variables Top
+top_ingredientes <- ranking_popularidad$Variable
+nombres_limpios <- gsub("f_Base.|f_Prot.|f_Complem.", "", top_ingredientes)
+
+# Mostramos cuáles son para que quede constancia en el informe
+print(paste("Los ingredientes más demandados a analizar son:", paste(nombres_limpios, collapse = ", ")))
+
+
+# 2. Función para realizar el análisis detallado (Formato Estándar)
+realizar_analisis_edad <- function(var_ingrediente, nombre_ingrediente) {
+  
+  # A. Tabla de Contingencia
+  # Usamos print() para que se muestre dentro del bucle
+  cat(paste("\n### Análisis para:", nombre_ingrediente, "\n"))
+  
+  t1 <- proc_freq(datos, var_ingrediente, 'f_Edad',
+            include.row_percent = TRUE,
+            include.column_percent = FALSE,
+            include.table_percent = FALSE) %>%
+    compose(i=2, j=1, value = as_paragraph(nombre_ingrediente), part = 'header') %>%
+    compose(i=1, j=3, value = as_paragraph('Edad'), part = 'header') %>%
+    set_caption(paste0("Tabla de contingencia: ", nombre_ingrediente, " vs Edad.")) %>%
+    autofit()
+  print(t1) # Forzamos la impresión
+  
+  # B. Test Chi-Cuadrado
+  res_chisq <- rstatix::chisq_test(
+    x = datos[[var_ingrediente]],
+    y = datos$f_Edad
+  )
+  
+  t2 <- res_chisq %>%
+    flextable() %>%
+    set_caption(paste0("Resultados del test Chi-cuadrado (", nombre_ingrediente, ").")) %>%
+    colformat_num(j = c("statistic", "p"), big.mark = ".", decimal.mark = ",") %>%
+    autofit()
+  print(t2)
+  
+  # C. Descriptivos (Validación de Expected)
+  t3 <- rstatix::chisq_descriptives(res_chisq) %>%
+    dplyr::rename(Ingrediente = 'x', Edad = 'y') %>%
+    flextable() %>%
+    set_caption(paste0("Estadísticos del test (Valores esperados): ", nombre_ingrediente, ".")) %>%
+    colformat_num(j = c("expected", "std.resid"), big.mark = ".", decimal.mark = ",") %>%
+    autofit()
+  print(t3)
+  
+  cat("\n---\n") # Separador visual
+}
+
+# 3. Ejecutamos el análisis para los 3 ingredientes Top (Bucle)
+# Nota: Al renderizar, esto generará las 3 tablas consecutivas para cada ingrediente
+for (i in 1:3) {
+  realizar_analisis_edad(top_ingredientes[i], nombres_limpios[i])
+}
+```
+
+Encontramos valores expected menores que 5, por lo que el test no es válido.
+Para corregirlo, vamos a agrupar a los encuestados en dos categorías: "Jóvenes" (hasta 24 años) y "No Jóvenes" (de 25 años en adelante).
+Idealmente, debería haber más grupos de edades, pero el tamaño reducido de la muestra y el reducido número de encuestados mayores de 25 años nos obliga a hacer esta agrupación.
+
+```{r}
+# 1. Creación de la variable Edad Agrupada (Jovenes vs No Jovenes)
+datos$f_Edad_Agrupada <- datos$f_Edad
+levels(datos$f_Edad_Agrupada) <- list(
+  'Jovenes'    = c('Menor de 18', '18 - 24'),
+  'No Jovenes' = c('25 - 44', '45 - 64', '65+')
+)
+
+# 2. Identificación de los "Top 3" Ingredientes
+vars_ingredientes <- names(datos)[grep("f_Base|f_Prot|f_Complem", names(datos))]
+
+ranking_popularidad <- datos %>%
+  dplyr::select(all_of(vars_ingredientes)) %>%
+  dplyr::mutate(across(everything(), ~ifelse(. == "Sí", 1, 0))) %>%
+  summarise(across(everything(), sum, na.rm = TRUE)) %>%
+  tidyr::pivot_longer(cols = everything(), names_to = "Variable", values_to = "Total_Si") %>%
+  arrange(desc(Total_Si)) %>%
+  slice(1:3)
+
+top_ingredientes <- ranking_popularidad$Variable
+nombres_limpios <- gsub("f_Base.|f_Prot.|f_Complem.", "", top_ingredientes)
+
+print(paste("Ingredientes analizados:", paste(nombres_limpios, collapse = ", ")))
+
+# 3. Bucle de Análisis con la variable AGRUPADA
+for (i in 1:3) {
+  var_ingrediente <- top_ingredientes[i]
+  nombre_ingrediente <- nombres_limpios[i]
+  
+  cat(paste("\n### Análisis para:", nombre_ingrediente, "\n"))
+  
+  # A. Tabla de Contingencia
+  t1 <- proc_freq(datos, var_ingrediente, 'f_Edad_Agrupada',
+            include.row_percent = TRUE,
+            include.column_percent = FALSE,
+            include.table_percent = FALSE) %>%
+    compose(i=2, j=1, value = as_paragraph(nombre_ingrediente), part = 'header') %>%
+    compose(i=1, j=3, value = as_paragraph('Grupo de Edad'), part = 'header') %>%
+    set_caption(paste0("Tabla 34.", i, " Contingencia: ", nombre_ingrediente, " vs Edad.")) %>%
+    autofit()
+  print(t1)
+  
+  # B. Test Chi-Cuadrado
+  res_chisq <- rstatix::chisq_test(x = datos[[var_ingrediente]], y = datos$f_Edad_Agrupada)
+  
+  t2 <- res_chisq %>%
+    flextable() %>%
+    set_caption(paste0("Resultado Chi-cuadrado (", nombre_ingrediente, ").")) %>%
+    colformat_num(j = c("statistic", "p"), big.mark = ".", decimal.mark = ",") %>%
+    autofit()
+  print(t2)
+  
+  # C. Validación (Expected)
+  t3 <- rstatix::chisq_descriptives(res_chisq) %>%
+    dplyr::rename(Ingrediente = 'x', Grupo_Edad = 'y') %>%
+    flextable() %>%
+    set_caption("Validación de esperados.") %>%
+    colformat_num(j = c("expected", "std.resid"), big.mark = ".", decimal.mark = ",") %>%
+    autofit()
+  print(t3)
+  
+  cat("\n---\n")
+}
+```
+
+Todos los tests son válidos, ya que todos los valores expected son mayores que 5.\
+Todos los p-valores son mayores que 0,05, por tanto concluimos en que los ingredientes preferidos por los encuestados no depende de si son menores o mayores de 25 años.
+Siempre son el pollo, la mezcla verde y los frutos secos.
+
+##### 12. Relación entre los ingredientes más demandados y el género
+
+Analizamos si existen diferencias significativas en la preferencia de los ingredientes principales según el género del consumidor.
+Para garantizar la robustez del test estadístico, centramos el análisis en los dos grupos mayoritarios: **Hombres y Mujeres**.
+
+```{r}
+# 1. Preparación: Filtrado de Género (Solo Hombre/Mujer para robustez)
+datos_genero <- datos %>%
+  dplyr::filter(f_Genero %in% c("Hombre", "Mujer")) %>%
+  droplevels()
+
+# 2. Identificación de los "Top 3" Ingredientes (sobre la muestra filtrada)
+vars_ingredientes <- names(datos_genero)[grep("f_Base|f_Prot|f_Complem", names(datos_genero))]
+
+ranking_popularidad <- datos_genero %>%
+  dplyr::select(all_of(vars_ingredientes)) %>%
+  dplyr::mutate(across(everything(), ~ifelse(. == "Sí", 1, 0))) %>%
+  summarise(across(everything(), sum, na.rm = TRUE)) %>%
+  tidyr::pivot_longer(cols = everything(), names_to = "Variable", values_to = "Total_Si") %>%
+  arrange(desc(Total_Si)) %>%
+  slice(1:3)
+
+top_ingredientes <- ranking_popularidad$Variable
+nombres_limpios <- gsub("f_Base.|f_Prot.|f_Complem.", "", top_ingredientes)
+
+print(paste("Ingredientes analizados por género:", paste(nombres_limpios, collapse = ", ")))
+
+# 3. Bucle de Análisis
+for (i in 1:3) {
+  var_ingrediente <- top_ingredientes[i]
+  nombre_ingrediente <- nombres_limpios[i]
+  
+  cat(paste("\n### Análisis de Género para:", nombre_ingrediente, "\n"))
+  
+  # A. Tabla de Contingencia
+  t1 <- proc_freq(datos_genero, var_ingrediente, 'f_Genero',
+            include.row_percent = TRUE,
+            include.column_percent = FALSE,
+            include.table_percent = FALSE) %>%
+    compose(i=2, j=1, value = as_paragraph(nombre_ingrediente), part = 'header') %>%
+    compose(i=1, j=3, value = as_paragraph('Género'), part = 'header') %>%
+    set_caption(paste0("Tabla 35.", i, " Contingencia: ", nombre_ingrediente, " vs Género.")) %>%
+    autofit()
+  print(t1)
+  
+  # B. Test Chi-Cuadrado
+  res_chisq <- rstatix::chisq_test(x = datos_genero[[var_ingrediente]], y = datos_genero$f_Genero)
+  
+  t2 <- res_chisq %>%
+    flextable() %>%
+    set_caption(paste0("Resultado Chi-cuadrado (", nombre_ingrediente, ").")) %>%
+    colformat_num(j = c("statistic", "p"), big.mark = ".", decimal.mark = ",") %>%
+    autofit()
+  print(t2)
+  
+  # C. Validación (Expected)
+  t3 <- rstatix::chisq_descriptives(res_chisq) %>%
+    dplyr::rename(Ingrediente = 'x', Genero = 'y') %>%
+    flextable() %>%
+    set_caption("Validación de esperados.") %>%
+    colformat_num(j = c("expected", "std.resid"), big.mark = ".", decimal.mark = ",") %>%
+    autofit()
+  print(t3)
+  
+  cat("\n---\n")
+}
+```
