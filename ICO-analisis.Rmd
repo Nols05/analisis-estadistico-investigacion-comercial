@@ -3808,6 +3808,15 @@ Siempre son el pollo, la mezcla verde y los frutos secos.
 
 ##### 12. Relación entre los ingredientes más demandados y el género
 
+```{r}
+```
+
+```{r}
+```
+
+```{r}
+```
+
 Analizamos si existen diferencias significativas en la preferencia de los ingredientes principales según el género del consumidor.
 Para garantizar la robustez del test estadístico, centramos el análisis en los dos grupos mayoritarios: **Hombres y Mujeres**.
 
@@ -3873,6 +3882,122 @@ for (i in 1:3) {
   cat("\n---\n")
 }
 ```
+
 Todos los tests son válidos, ya que todos los valores expected son mayores que 5.\
 Todos los p-valores son mayores que 0,05, por tanto concluimos en que los ingredientes preferidos por los encuestados no dependen de su género.
 
+##### 13. Influencia del precio dispuesto a pagar en el modelo de tarificación
+
+Analizamos si existe una relación entre cuánto está dispuesto a pagar el consumidor y qué modelo de precios prefiere (Precio Fijo por tamaño vs. Precio por Peso).
+
+Para evitar problemas de validez estadística por la dispersión de respuestas en los extremos, hemos agrupado la disposición a pagar en dos niveles: **"Hasta 5,50€"** y **"Más de 5,50€"**.
+
+```{r}
+# 1. Agrupación de la Disposición a Pagar (Para robustez del test)
+datos$f_Pago_Agrupado <- datos$f_Disposicion.Pago
+levels(datos$f_Pago_Agrupado) <- list(
+  'Hasta 5,50€'   = c('<4€', '4-5.5€'),
+  'Más de 5,50€'  = c('5.5-7€', '7-9.5€', '>9.5€')
+)
+
+# 2. Tabla de Contingencia
+proc_freq(datos, 'f_Pago_Agrupado', 'f_Formato.Preferido',
+  include.row_percent = TRUE,
+  include.column_percent = FALSE,
+  include.table_percent = FALSE) %>%
+  compose(i=2, j=1, value = as_paragraph('Disposición a Pagar'), part = 'header') %>%
+  compose(i=1, j=3, value = as_paragraph('Formato Preferido'), part = 'header') %>%
+  set_caption('Tabla 36. Contingencia: Disposición a Pagar vs Formato Preferido.') %>%
+  autofit()
+
+# 3. Test Chi-cuadrado
+res_chisq_precio <- rstatix::chisq_test(
+  x = datos$f_Pago_Agrupado,
+  y = datos$f_Formato.Preferido
+)
+
+res_chisq_precio %>%
+  flextable() %>%
+  set_caption('Resultado Chi-cuadrado (Precio vs Formato).') %>%
+  colformat_num(j = c("statistic", "p"), big.mark = ".", decimal.mark = ",") %>%
+  autofit()
+
+# 4. Validación (Expected)
+rstatix::chisq_descriptives(res_chisq_precio) %>%
+  dplyr::rename(Pago = 'x', Formato = 'y') %>%
+  flextable() %>%
+  set_caption("Validación de valores esperados.") %>%
+  colformat_num(j = c("expected", "std.resid"), big.mark = ".", decimal.mark = ",") %>%
+  autofit()
+```
+
+Todos los valores expected son mayores que 5, excepto uno que es un poco mejor que 5.
+Esto es debe a falta de muestra, ya que hay pocas respuestas para esa combinación de variables.
+Por ello, vamos a considerar el test como válido.
+
+El p-valor es mayor que 0,05, por tanto se rechaza la hipótesis nula y concluimos que no hay una dependencia entre el precio dispuesto a pagar y el formato de tarificación preferido.
+Ambos grupos prefieren pagar un precio fijo.
+
+##### 14. Analizar el grado de aceptación del producto según las variables sociodemográficas (edad, género, nivel educativo y ocupación).
+
+Analizamos el grado de aceptación del producto en función de las características sociodemográficas de los encuestados: Edad, Género, Nivel Educativo y Situación Laboral.
+
+```{r}
+vars_sociodemo <- c("f_Edad", "f_Genero", "f_Nivel.Educativo", "f_Situacion.Laboral")
+nombres_vars <- c("Edad", "Género", "Nivel Educativo", "Situación Laboral")
+
+# 2. Bucle de Análisis Automático
+for (i in seq_along(vars_sociodemo)) {
+  
+  var_actual <- vars_sociodemo[i]
+  nombre_actual <- nombres_vars[i]
+  
+  # Preparación de datos específica para cada variable
+  datos_temp <- datos
+  
+  # Si es Género, filtramos para quedarnos solo con Hombre/Mujer (evitamos errores de categorías vacías)
+  if (var_actual == "f_Genero") {
+    datos_temp <- datos %>% 
+      dplyr::filter(f_Genero %in% c("Hombre", "Mujer")) %>% 
+      droplevels()
+  }
+  
+  cat(paste("\n### Análisis de Aceptación según:", nombre_actual, "\n"))
+  
+  # A. Tabla de Contingencia
+  t1 <- proc_freq(datos_temp, var_actual, 'f_Intencion.Uso',
+            include.row_percent = TRUE,
+            include.column_percent = FALSE,
+            include.table_percent = FALSE) %>%
+    compose(i=2, j=1, value = as_paragraph(nombre_actual), part = 'header') %>%
+    compose(i=1, j=3, value = as_paragraph('Intención de Uso'), part = 'header') %>%
+    set_caption(paste0("Tabla 37.", i, " Contingencia: ", nombre_actual, " vs Aceptación.")) %>%
+    autofit()
+  print(t1)
+  
+  # B. Test Chi-Cuadrado
+  res_chisq <- rstatix::chisq_test(x = datos_temp[[var_actual]], y = datos_temp$f_Intencion.Uso)
+  
+  t2 <- res_chisq %>%
+    flextable() %>%
+    set_caption(paste0("Resultado Chi-cuadrado (", nombre_actual, ").")) %>%
+    colformat_num(j = c("statistic", "p"), big.mark = ".", decimal.mark = ",") %>%
+    # Resaltamos si es significativo
+    bold(i = ~ p < 0.05, bold = TRUE) %>%
+    autofit()
+  print(t2)
+  
+  # C. Validación (Valores Esperados)
+  t3 <- rstatix::chisq_descriptives(res_chisq) %>%
+    dplyr::rename(Variable = 'x', Aceptacion = 'y') %>%
+    flextable() %>%
+    set_caption(paste0("Validación de esperados (", nombre_actual, ").")) %>%
+    colformat_num(j = c("expected", "std.resid"), big.mark = ".", decimal.mark = ",") %>%
+    autofit()
+  print(t3)
+  
+  cat("\n---\n")
+}
+```
+
+FALTA AGRUPAR
