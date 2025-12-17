@@ -3019,43 +3019,6 @@ Esto indica que no existe una dependencia significativa entre el motivo por el c
 
 #### 3. Contrastar la creencia de que se recurre a la comida rápida por falta de tiempo.
 
-```{r}
-# Tabla de contingencia inicial
-proc_freq(datos, 'f_Motivo', 'f_Tipo.Comida.Rapida',
- include.row_percent = TRUE,
- include.column_percent = FALSE,
- include.table_percent = FALSE) %>%
- compose(i=2, j=1, value = as_paragraph('Motivo'), part = 'header') %>%
- compose(i=1, j=3, value = as_paragraph('Consume Comida Rápida'), part = 'header') %>%
- set_caption('Tabla 24. Tabla de contingencia entre el motivo y el consumo de comida rápida.') %>%
- autofit()
-
-# Realizamos el test del chi cuadrado inicial
-res.chisq.comidarapida <- chisq_test(
- x = datos$f_Motivo,
- y = datos$f_Tipo.Comida.Rapida)
-
-# Mostramos el resultado
-res.chisq.comidarapida %>%
- flextable() %>%
- set_caption('Resultados del test del chi cuadrado (Comida Rápida - Sin agrupar).') %>%
- colformat_num(j = c("statistic", "p"), big.mark = ".", decimal.mark = ",") %>%
- autofit()
-
-# Verificamos los valores esperados
-chisq_descriptives(res.chisq.comidarapida) %>%
- rename(Motivo = 'x', Comida_Rapida = 'y') %>%
- flextable() %>%
- set_caption('Estadísticos descriptivos del test (Valores esperados).') %>%
- colformat_num(
-   j = c("expected", "std.resid"),
-   big.mark = ".", decimal.mark = ","
- ) %>%
- autofit() 
-```
-
-De nuevo, encontramos valores expected \< 5.
-Para solucionarlo utilizaremos la agrupación de motivos que definimos anteriormente (perfil funcional y perfil hedónico)
 
 ```{r}
 
@@ -3069,9 +3032,9 @@ proc_freq(datos, 'f_Motivo_Binario', 'f_Tipo.Comida.Rapida',
   include.row_percent = TRUE,
   include.column_percent = FALSE,
   include.table_percent = FALSE) %>%
-  compose(i=2, j=1, value = as_paragraph('Tipo de Motivo'), part = 'header') %>%
+  compose(i=1, j=1, value = as_paragraph('Tipo de Motivo'), part = 'header') %>%
   compose(i=1, j=3, value = as_paragraph('Consume Comida Rápida'), part = 'header') %>%
-  set_caption('Tabla 25. Tabla de contingencia: Motivos Funcionales vs Ocio y Comida Rápida.') %>%
+  set_caption('Tabla 42. Tabla de contingencia: Conveniencia o no y Comida Rápida.') %>%
   autofit()
 
 res.chisq.fastfood.final <- chisq_test(
@@ -3081,7 +3044,7 @@ res.chisq.fastfood.final <- chisq_test(
 # Mostrar resultados
 res.chisq.fastfood.final %>%
   flextable() %>%
-  set_caption('Resultados del test Chi-cuadrado (Modelo 2x2).') %>%
+  set_caption('Tabla 43. Resultados del test Chi-cuadrado (Modelo 2x2).') %>%
   colformat_num(j = c("statistic", "p"), big.mark = ".", decimal.mark = ",") %>%
   autofit()
 
@@ -3089,7 +3052,7 @@ res.chisq.fastfood.final %>%
 chisq_descriptives(res.chisq.fastfood.final) %>%
  rename(Motivo_Agrupado = 'x', Comida_Rapida = 'y') %>%
  flextable() %>%
- set_caption('Estadísticos finales y residuos estandarizados.') %>%
+ set_caption('Tabla 44. Estadísticos finales y residuos estandarizados.') %>%
  colformat_num(
    j = c("prop", "row.prop", "col.prop", "expected", "resid", "std.resid"),
    big.mark = ".", decimal.mark = ","
@@ -3118,9 +3081,9 @@ proc_freq(datos, 'f_Lugar.Habitual', 'f_Tipo.Comida.Rapida',
  include.row_percent = TRUE,
  include.column_percent = FALSE,
  include.table_percent = FALSE) %>%
- compose(i=2, j=1, value = as_paragraph('Lugar Habitual'), part = 'header') %>%
+ compose(i=1, j=1, value = as_paragraph('Lugar Habitual'), part = 'header') %>%
  compose(i=1, j=3, value = as_paragraph('Consume Comida Rápida'), part = 'header') %>%
- set_caption('Tabla 26. Contingencia: Lugar Habitual vs Comida Rápida.') %>%
+ set_caption('Tabla 45. Contingencia: Lugar Habitual vs Comida Rápida.') %>%
  autofit()
 
 # Test Chi-cuadrado
@@ -3130,7 +3093,7 @@ res.chisq.rapida <- chisq_test(
 
 res.chisq.rapida %>%
  flextable() %>%
- set_caption('Resultados del test Chi-cuadrado (Comida Rápida).') %>%
+ set_caption('Tabla 46. Resultados del test Chi-cuadrado (Comida Rápida).') %>%
  colformat_num(j = c("statistic", "p"), big.mark = ".", decimal.mark = ",") %>%
  autofit()
 
@@ -3138,7 +3101,7 @@ res.chisq.rapida %>%
 chisq_descriptives(res.chisq.rapida) %>%
  rename(Lugar = 'x', Comida_Rapida = 'y') %>%
  flextable() %>%
- set_caption('Estadísticos y valores esperados: Lugar vs Comida Rápida.') %>%
+ set_caption('Tabla 47. Estadísticos y valores esperados: Lugar vs Comida Rápida.') %>%
  colformat_num(
    j = c("prop", "row.prop", "col.prop", "expected", "resid", "std.resid"),
    big.mark = ".", decimal.mark = ","
@@ -3172,21 +3135,21 @@ A continuación, realizamos los análisis de los 4 lugares con esta variable agr
 # Tabla de contingencia
 proc_freq(datos, 'f_Lugar_Agrupado', 'f_Tipo.Comida.Rapida',
  include.row_percent = TRUE, include.column_percent = FALSE, include.table_percent = FALSE) %>%
- compose(i=2, j=1, value = as_paragraph('Lugar (Agrupado)'), part = 'header') %>%
+ compose(i=1, j=1, value = as_paragraph('Lugar (Agrupado)'), part = 'header') %>%
  compose(i=1, j=3, value = as_paragraph('Consume Comida Rápida'), part = 'header') %>%
- set_caption('Tabla 26. Contingencia: Lugar vs Comida Rápida.') %>%
+ set_caption('Tabla 48. Contingencia: Lugar vs Comida Rápida.') %>%
  autofit()
 
 # Test Chi-cuadrado
 res.chisq.rapida <- chisq_test(x = datos$f_Lugar_Agrupado, y = datos$f_Tipo.Comida.Rapida)
 res.chisq.rapida %>% flextable() %>%
- set_caption('Test Chi-cuadrado (Comida Rápida).') %>%
+ set_caption('Tabla 49. Test Chi-cuadrado (Comida Rápida).') %>%
  colformat_num(j = c("statistic", "p"), big.mark = ".", decimal.mark = ",") %>% autofit()
 
 # Validación (Esperados)
 chisq_descriptives(res.chisq.rapida) %>%
  rename(Lugar = 'x', Comida_Rapida = 'y') %>% flextable() %>%
- set_caption('Estadísticos y residuos (Comida Rápida).') %>%
+ set_caption('Tabla 50. Estadísticos y residuos (Comida Rápida).') %>%
  colformat_num(j = c("expected", "std.resid"), big.mark = ".", decimal.mark = ",") %>% autofit()
 ```
 
@@ -3205,25 +3168,45 @@ Observamos si el consumo de platos de supermercado (listos para comer) destaca e
 # Tabla de contingencia
 proc_freq(datos, 'f_Lugar_Agrupado', 'f_Tipo.Comida.Super',
  include.row_percent = TRUE, include.column_percent = FALSE, include.table_percent = FALSE) %>%
- compose(i=2, j=1, value = as_paragraph('Lugar (Agrupado)'), part = 'header') %>%
+ compose(i=1, j=1, value = as_paragraph('Lugar (Agrupado)'), part = 'header') %>%
  compose(i=1, j=3, value = as_paragraph('Consume Platos Super'), part = 'header') %>%
- set_caption('Tabla 27. Contingencia: Lugar vs Platos de Supermercado.') %>%
+ set_caption('Tabla 51. Contingencia: Lugar vs Platos de Supermercado.') %>%
  autofit()
 
 # Test Chi-cuadrado
 res.chisq.super <- chisq_test(x = datos$f_Lugar_Agrupado, y = datos$f_Tipo.Comida.Super)
 res.chisq.super %>% flextable() %>%
- set_caption('Test Chi-cuadrado (Platos Supermercado).') %>%
+ set_caption('Tabla 52. Test Chi-cuadrado (Platos Supermercado).') %>%
  colformat_num(j = c("statistic", "p"), big.mark = ".", decimal.mark = ",") %>% autofit()
 
 # Validación
 chisq_descriptives(res.chisq.super) %>%
  rename(Lugar = 'x', Comida_Super = 'y') %>% flextable() %>%
- set_caption('Estadísticos y residuos (Platos Supermercado).') %>%
+ set_caption('Tabla 53. Estadísticos y residuos (Platos Supermercado).') %>%
  colformat_num(j = c("expected", "std.resid"), big.mark = ".", decimal.mark = ",") %>% autofit()
 ```
 
-Consideramos el test como válido aunque haya un valor excepted ligaramente menor que 5.
+Como hay un valor excepted ligaramente menor que 5 realizamos el test de Fisher:
+
+```{r}
+tabla_cruzada <- table (datos$f_Lugar_Agrupado, datos$f_Tipo.Comida.Super)
+
+res.fisher <- fisher_test(tabla_cruzada)
+
+res.fisher %>%
+  flextable() %>%
+  set_caption(' Tabla 54. Resultados del Test de Fisher') %>%
+  colformat_num(
+    j = c("p"),
+    big.mark = ".",
+    decimal.mark = ","
+  ) %>%
+autofit()
+```
+
+
+
+
 Es difícil agrupar más las categorías sin perder información esencial.
 El problema viene principalmente de una muestra de tamaño reducido.\
 
