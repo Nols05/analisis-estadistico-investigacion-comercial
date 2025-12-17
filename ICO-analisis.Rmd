@@ -3352,104 +3352,76 @@ Esto sugiere que, para captar al segmento de "Plato Principal", quizás sería n
 
 ##### 7. Relacionar la relevancia de comer saludable con la aceptación de la barra de ensaladas
 
-Primero, observamos la distribución inicial con los 5 niveles de la escala Likert.
+Primero observamos las medias y la distribución de las puntuaciones en cada grupo.
 
 ```{r}
-# Tabla de contingencia inicial (Escala completa 1-5)
-proc_freq(datos, 'f_Importancia.Saludable', 'f_Intencion.Uso',
- include.row_percent = TRUE,
- include.column_percent = FALSE,
- include.table_percent = FALSE) %>%
- compose(i=2, j=1, value = as_paragraph('Importancia Saludable (1-5)'), part = 'header') %>%
- compose(i=1, j=3, value = as_paragraph('Intención de Uso'), part = 'header') %>%
- set_caption('Tabla 26. Tabla de contingencia: Importancia Saludable vs Intención de Uso.') %>%
- autofit()
+# 1. Estadísticos descriptivos por grupo
+datos %>%
+  group_by(f_Intencion.Uso) %>%
+  rstatix::get_summary_stats(Importancia.Saludable, type = "common") %>%
+  flextable::flextable() %>%
+  set_caption("Tabla 26. Estadísticos descriptivos: Importancia Saludable (1-5) según Intención de Uso.") %>%
+  colformat_double(j = c("mean", "sd", "se", "ci"), digits = 2, decimal.mark = ",") %>%
+  autofit()
 
-# Test Chi-cuadrado inicial
-res.chisq.salud <- chisq_test(
- x = datos$f_Importancia.Saludable,
- y = datos$f_Intencion.Uso)
-
-# Mostrar resultados del test
-res.chisq.salud %>%
- flextable() %>%
- set_caption('Resultados del test Chi-cuadrado (Sin agrupar).') %>%
- colformat_num(j = c("statistic", "p"), big.mark = ".", decimal.mark = ",") %>%
- autofit()
-
-# Verificación de condiciones (Valores esperados)
-chisq_descriptives(res.chisq.salud) %>%
- rename(Importancia = 'x', Intencion = 'y') %>%
- flextable() %>%
- set_caption('Estadísticos del test (Valores esperados y residuos).') %>%
- colformat_num(
-   j = c("expected", "std.resid"),
-   big.mark = ".", decimal.mark = ","
- ) %>%
- autofit()
+# 2. Diagrama de Caja y Bigotes
+ggpubr::ggboxplot(datos, 
+          x = "f_Intencion.Uso", 
+          y = "Importancia.Saludable",
+          color = "f_Intencion.Uso", 
+          palette = c("#E7B800", "#2E9FDF"),
+          add = "jitter",
+          ylab = "Importancia de comer saludable (1-5)",
+          xlab = "Intención de Uso",
+          title = "Figura. Distribución de la Importancia Saludable según Aceptación")
 ```
+En el gráfico de bigotes se aprecia que existe un solapamiento considerable entre ambas cajas, lo que sugiere que no hay una diferencia radical entre la preocupación por la salud entre ambos grupos. Además, las medianas parecen posicionarse en valores similares (3,5 - 4) y hay una gran dispersión en los datos. Esto anticipa que la preocupación por la salud podría no ser el factor determinante de la aceptación del producto.
 
-Debido a la presencia de valores expected \< 5, agruparemos la importancia en 2 niveles.
-
--   Baja/Media: 1, 2 y 3
-
--   Alta: 4 y 5
-
-    \
+Comprobamos si los residuos del modelo siguen una distribución normal para decidir si usamos un test paramétrico (ANOVA) o no paramétrico (Kruskal-Wallis). Usamos el Test de Anderson-Darling ($n > 50$).
 
 ```{r}
-# 1. Creación de la variable agrupada
-datos$f_Imp_Salud_Agrupada <- datos$f_Importancia.Saludable
-levels(datos$f_Imp_Salud_Agrupada) <- list(
-  'Baja/Media (1-3)' = c('1', '2', '3'),
-  'Alta (4-5)'       = c('4', '5')
-)
+# 1. Construimos el modelo lineal para extraer residuos
+modelo_salud <- lm(Importancia.Saludable ~ f_Intencion.Uso, data = datos)
 
-# 2. Tabla de contingencia agrupada
-proc_freq(datos, 'f_Imp_Salud_Agrupada', 'f_Intencion.Uso',
-  include.row_percent = TRUE,
-  include.column_percent = FALSE,
-  include.table_percent = FALSE) %>%
-  compose(i=2, j=1, value = as_paragraph('Importancia Saludable (Agrupada)'), part = 'header') %>%
-  compose(i=1, j=3, value = as_paragraph('Intención de Uso'), part = 'header') %>%
-  set_caption('Tabla 27. Tabla de contingencia: Importancia (Agrupada) vs Intención de Uso.') %>%
+# 2. Gráfico QQ Plot
+ggpubr::ggqqplot(residuals(modelo_salud)) +
+  labs(title = "Gráfico QQ de los residuos (Importancia Saludable)")
+
+# 3. Test de Anderson-Darling
+test_ad <- nortest::ad.test(residuals(modelo_salud))
+
+# Imprimimos el resultado para confirmar la NO normalidad
+data.frame(
+  Metodo = test_ad$method,
+  Estadistico = test_ad$statistic,
+  P_Valor = test_ad$p.value
+) %>%
+  flextable::flextable() %>%
+  set_caption("Tabla 27. Test de Normalidad de Anderson-Darling (Residuos).") %>%
+  colformat_double(j = "P_Valor", digits = 5, decimal.mark = ",") %>%
+  # Resaltamos en rojo si NO es normal
+  color(i = ~ P_Valor < 0.05, color = "red") %>%
   autofit()
-
-# 3. Test Chi-cuadrado final
-res.chisq.salud.final <- chisq_test(
- x = datos$f_Imp_Salud_Agrupada,
- y = datos$f_Intencion.Uso)
-
-# Mostrar resultados
-res.chisq.salud.final %>%
-  flextable() %>%
-  set_caption('Resultados del test Chi-cuadrado (Variable Agrupada).') %>%
-  colformat_num(j = c("statistic", "p"), big.mark = ".", decimal.mark = ",") %>%
-  autofit()
-
-# 4. Estadísticos descriptivos finales
-chisq_descriptives(res.chisq.salud.final) %>%
- rename(Importancia_Agrupada = 'x', Intencion = 'y') %>%
- flextable() %>%
- set_caption('Estadísticos finales del test y residuos estandarizados.') %>%
- colformat_num(
-   j = c("prop", "row.prop", "col.prop", "expected", "resid", "std.resid"),
-   big.mark = ".", decimal.mark = ","
- ) %>%
- autofit()
 ```
 
-Consideramos que el test es válido ya que todos los valores expected \> 5.
+Dado los datos no siguen una distribución normal (lo cual es esperable en escalas Likert), aplicamos la Prueba de Kruskal-Wallis.
 
-El p-valor es mayor que 0,05, por lo que no podemos rechazar la hipótesis nula.
-No existe una dependencia estadísticamente significativa entre la importancia que el consumidor asigna a comer saludable y su intención de usar la barra de ensaladas.
+```{r}
+# Ejecución directa del test no paramétrico
+res_kruskal <- rstatix::kruskal_test(datos, Importancia.Saludable ~ f_Intencion.Uso)
 
--   El grupo que da poca o media importancia a la salud muestra una aceptación del 74,2%.
+# Impresión de resultados
+res_kruskal %>%
+  flextable::flextable() %>%
+  set_caption("Tabla 28. Resultados del Test de Kruskal-Wallis (Relevancia Salud vs Aceptación).") %>%
+  colformat_double(j = c("statistic", "p"), digits = 3, decimal.mark = ",") %>%
+  # Negrita si es significativo
+  bold(i = ~ p < 0.05, bold = TRUE) %>%
+  autofit()
+```
 
--   El grupo que da mucha importancia a la salud muestra una aceptación del 71,9%.
+El p-valor es mayor que 0,05. Por tanto concluimos que no existe una dependencia entre la importancia que los encuestados dan a comer saludable con la aceptación de la barra de ensaladas.
 
-Ambos porcentajes son muy similares.
-Esto sugiere que la barra de ensaladas es un producto transversal: atrae tanto a los consumidores concienciados con la salud como a aquellos que no lo priorizan tanto, probablemente debido a otros factores como la conveniencia.
 
 ##### 8. Comparar el interés potencial entre quienes comen fuera y quienes no
 
