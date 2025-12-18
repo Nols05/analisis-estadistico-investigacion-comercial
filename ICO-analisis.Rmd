@@ -3760,15 +3760,6 @@ Siempre son el pollo, la mezcla verde y los frutos secos.
 
 ##### 12. Relación entre los ingredientes más demandados y el género
 
-```{r}
-```
-
-```{r}
-```
-
-```{r}
-```
-
 Analizamos si existen diferencias significativas en la preferencia de los ingredientes principales según el género del consumidor.
 Para garantizar la robustez del test estadístico, centramos el análisis en los dos grupos mayoritarios: **Hombres y Mujeres**.
 
@@ -3794,10 +3785,14 @@ nombres_limpios <- gsub("f_Base.|f_Prot.|f_Complem.", "", top_ingredientes)
 
 print(paste("Ingredientes analizados por género:", paste(nombres_limpios, collapse = ", ")))
 
-# 3. Bucle de Análisis
+# 3. Bucle de Análisis con numeración de 93 a 101
 for (i in 1:3) {
   var_ingrediente <- top_ingredientes[i]
   nombre_ingrediente <- nombres_limpios[i]
+  
+  # Base numérica: 92 + (i-1)*3
+  # i=1 -> 92 | i=2 -> 95 | i=3 -> 98
+  base_num <- 92 + (i - 1) * 3
   
   cat(paste("\n### Análisis de Género para:", nombre_ingrediente, "\n"))
   
@@ -3806,18 +3801,18 @@ for (i in 1:3) {
             include.row_percent = TRUE,
             include.column_percent = FALSE,
             include.table_percent = FALSE) %>%
-    compose(i=2, j=1, value = as_paragraph(nombre_ingrediente), part = 'header') %>%
+    compose(i=1, j=1, value = as_paragraph(nombre_ingrediente), part = 'header') %>%
     compose(i=1, j=3, value = as_paragraph('Género'), part = 'header') %>%
-    set_caption(paste0("Tabla 35.", i, " Contingencia: ", nombre_ingrediente, " vs Género.")) %>%
+    set_caption(paste0("Tabla ", base_num + 1, ". Contingencia: ", nombre_ingrediente, " vs Género.")) %>%
     autofit()
   print(t1)
-  
+   
   # B. Test Chi-Cuadrado
   res_chisq <- rstatix::chisq_test(x = datos_genero[[var_ingrediente]], y = datos_genero$f_Genero)
   
   t2 <- res_chisq %>%
     flextable() %>%
-    set_caption(paste0("Resultado Chi-cuadrado (", nombre_ingrediente, ").")) %>%
+    set_caption(paste0("Tabla ", base_num + 2, ". Resultado Chi-cuadrado (", nombre_ingrediente, ").")) %>%
     colformat_num(j = c("statistic", "p"), big.mark = ".", decimal.mark = ",") %>%
     autofit()
   print(t2)
@@ -3826,7 +3821,7 @@ for (i in 1:3) {
   t3 <- rstatix::chisq_descriptives(res_chisq) %>%
     dplyr::rename(Ingrediente = 'x', Genero = 'y') %>%
     flextable() %>%
-    set_caption("Validación de esperados.") %>%
+    set_caption(paste0("Tabla ", base_num + 3, ". Estadísticos del test (Valores esperados): ", nombre_ingrediente, ".")) %>%
     colformat_num(j = c("expected", "std.resid"), big.mark = ".", decimal.mark = ",") %>%
     autofit()
   print(t3)
@@ -3857,9 +3852,9 @@ proc_freq(datos, 'f_Pago_Agrupado', 'f_Formato.Preferido',
   include.row_percent = TRUE,
   include.column_percent = FALSE,
   include.table_percent = FALSE) %>%
-  compose(i=2, j=1, value = as_paragraph('Disposición a Pagar'), part = 'header') %>%
+  compose(i=1, j=1, value = as_paragraph('Disposición a Pagar'), part = 'header') %>%
   compose(i=1, j=3, value = as_paragraph('Formato Preferido'), part = 'header') %>%
-  set_caption('Tabla 36. Contingencia: Disposición a Pagar vs Formato Preferido.') %>%
+  set_caption('Tabla 102. Contingencia: Disposición a Pagar vs Formato Preferido.') %>%
   autofit()
 
 # 3. Test Chi-cuadrado
@@ -3870,7 +3865,7 @@ res_chisq_precio <- rstatix::chisq_test(
 
 res_chisq_precio %>%
   flextable() %>%
-  set_caption('Resultado Chi-cuadrado (Precio vs Formato).') %>%
+  set_caption('Tabla 103. Resultado Chi-cuadrado (Precio vs Formato).') %>%
   colformat_num(j = c("statistic", "p"), big.mark = ".", decimal.mark = ",") %>%
   autofit()
 
@@ -3878,14 +3873,32 @@ res_chisq_precio %>%
 rstatix::chisq_descriptives(res_chisq_precio) %>%
   dplyr::rename(Pago = 'x', Formato = 'y') %>%
   flextable() %>%
-  set_caption("Validación de valores esperados.") %>%
+  set_caption("Tabla 104. Estadísiticos del test (Validación de valores esperados).") %>%
   colformat_num(j = c("expected", "std.resid"), big.mark = ".", decimal.mark = ",") %>%
   autofit()
 ```
 
 Todos los valores expected son mayores que 5, excepto uno que es un poco mejor que 5.
 Esto es debe a falta de muestra, ya que hay pocas respuestas para esa combinación de variables.
-Por ello, vamos a considerar el test como válido.
+Por ello, vamos a hacer el test de Fisher.
+
+omo hay un valor excepted ligaramente menor que 5 realizamos el test de Fisher:
+
+```{r}
+tabla_cruzada <- table (datos$f_Pago_Agrupado, datos$f_Formato.Preferido)
+
+res.fisher <- fisher_test(tabla_cruzada)
+
+res.fisher %>%
+  flextable() %>%
+  set_caption(' Tabla 105. Resultados del Test de Fisher') %>%
+  colformat_num(
+    j = c("p"),
+    big.mark = ".",
+    decimal.mark = ","
+  ) %>%
+autofit()
+```
 
 El p-valor es mayor que 0,05, por tanto se rechaza la hipótesis nula y concluimos que no hay una dependencia entre el precio dispuesto a pagar y el formato de tarificación preferido.
 Ambos grupos prefieren pagar un precio fijo.
@@ -3895,6 +3908,7 @@ Ambos grupos prefieren pagar un precio fijo.
 Analizamos el grado de aceptación del producto en función de las características sociodemográficas de los encuestados: Edad, Género, Nivel Educativo y Situación Laboral.
 
 ```{r}
+# 1. Definición de variables y etiquetas
 vars_sociodemo <- c("f_Edad", "f_Genero", "f_Nivel.Educativo", "f_Situacion.Laboral")
 nombres_vars <- c("Edad", "Género", "Nivel Educativo", "Situación Laboral")
 
@@ -3904,10 +3918,13 @@ for (i in seq_along(vars_sociodemo)) {
   var_actual <- vars_sociodemo[i]
   nombre_actual <- nombres_vars[i]
   
-  # Preparación de datos específica para cada variable
+  # Calculamos el número base para esta iteración
+  # i=1 -> 105 | i=2 -> 108 | i=3 -> 111 | i=4 -> 114
+  base_num <- 105 + (i - 1) * 3
+  
+  # Preparación de datos específica
   datos_temp <- datos
   
-  # Si es Género, filtramos para quedarnos solo con Hombre/Mujer (evitamos errores de categorías vacías)
   if (var_actual == "f_Genero") {
     datos_temp <- datos %>% 
       dplyr::filter(f_Genero %in% c("Hombre", "Mujer")) %>% 
@@ -3921,9 +3938,10 @@ for (i in seq_along(vars_sociodemo)) {
             include.row_percent = TRUE,
             include.column_percent = FALSE,
             include.table_percent = FALSE) %>%
-    compose(i=2, j=1, value = as_paragraph(nombre_actual), part = 'header') %>%
+    # Corrección de los compose para los headers
+    compose(i=1, j=1, value = as_paragraph(nombre_actual), part = 'header') %>%
     compose(i=1, j=3, value = as_paragraph('Intención de Uso'), part = 'header') %>%
-    set_caption(paste0("Tabla 37.", i, " Contingencia: ", nombre_actual, " vs Aceptación.")) %>%
+    set_caption(paste0("Tabla ", base_num + 1, ". Contingencia: ", nombre_actual, " vs Aceptación.")) %>%
     autofit()
   print(t1)
   
@@ -3932,9 +3950,8 @@ for (i in seq_along(vars_sociodemo)) {
   
   t2 <- res_chisq %>%
     flextable() %>%
-    set_caption(paste0("Resultado Chi-cuadrado (", nombre_actual, ").")) %>%
+    set_caption(paste0("Tabla ", base_num + 2, ". Resultado Chi-cuadrado (", nombre_actual, ").")) %>%
     colformat_num(j = c("statistic", "p"), big.mark = ".", decimal.mark = ",") %>%
-    # Resaltamos si es significativo
     bold(i = ~ p < 0.05, bold = TRUE) %>%
     autofit()
   print(t2)
@@ -3943,7 +3960,7 @@ for (i in seq_along(vars_sociodemo)) {
   t3 <- rstatix::chisq_descriptives(res_chisq) %>%
     dplyr::rename(Variable = 'x', Aceptacion = 'y') %>%
     flextable() %>%
-    set_caption(paste0("Validación de esperados (", nombre_actual, ").")) %>%
+    set_caption(paste0("Tabla ", base_num + 3, ". Estadísticos del test (Valores esperados): ", nombre_actual, ".")) %>%
     colformat_num(j = c("expected", "std.resid"), big.mark = ".", decimal.mark = ",") %>%
     autofit()
   print(t3)
@@ -3952,4 +3969,6 @@ for (i in seq_along(vars_sociodemo)) {
 }
 ```
 
+De las 4 variables sociodemográficas, solo Género cuenta con valores “expected” > 5, por tanto, primeramente analizaremos esta. Como su p-valor > 0,05 se rechaza la hipótesis nula y concluimos que no hay una dependencia entre el género de los encuestados y el grado de aceptación de la barra de ensaladas. Señalamos que ambos géneros tienen un grado de aceptación alto.
+Para continuar con el análisis de las variables restantes agrupamos por diferentes grupos:
 FALTA AGRUPAR
