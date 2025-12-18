@@ -273,7 +273,7 @@ n.filas <- dim(datos)[1]
 En el trabajo de campo recogimos inicialmente `r n.filas.bruto` cuestionarios.
 Tras realizar el control de consistencia, nuestra muestra efectiva es de `r n.filas` cuestionarios válidos.
 
-# Estadísticos descriptivos (Análisis Univariante) {.tabset}
+# Estadísticos descriptivos (Análisis Univariante)
 
 Vamos a distinguir tres tipos de variables: categóricas, numéricas y cualitativas.
 Cada una tiene un tratamiento descriptivo diferente.
@@ -3309,7 +3309,7 @@ proc_freq(datos, 'f_Perfil_Saciedad', 'f_Intencion.Uso',
   include.row_percent = TRUE,
   include.column_percent = FALSE,
   include.table_percent = FALSE) %>%
-  compose(i=2, j=1, value = as_paragraph('Percepción de Saciedad'), part = 'header') %>%
+  compose(i=1, j=1, value = as_paragraph('Percepción de Saciedad'), part = 'header') %>%
   compose(i=1, j=3, value = as_paragraph('Intención de Uso'), part = 'header') %>%
   set_caption('Tabla 28. Tabla de contingencia: Percepción de Saciedad vs Intención de Uso.') %>%
   autofit()
@@ -3360,7 +3360,9 @@ datos %>%
   group_by(f_Intencion.Uso) %>%
   rstatix::get_summary_stats(Importancia.Saludable, type = "common") %>%
   flextable::flextable() %>%
-  set_caption("Tabla 26. Estadísticos descriptivos: Importancia Saludable (1-5) según Intención de Uso.") %>%
+  compose(i=1, j=1, value = as_paragraph('Aceptación'), part = 'header') %>%
+  compose(i=1, j=2, value = as_paragraph('Importancia de comer saludable'), part = 'header') %>%
+  set_caption("Tabla 64. Estadísticos descriptivos: Importancia Saludable (1-5) según Intención de Uso.") %>%
   colformat_double(j = c("mean", "sd", "se", "ci"), digits = 2, decimal.mark = ",") %>%
   autofit()
 
@@ -3372,8 +3374,8 @@ ggpubr::ggboxplot(datos,
           palette = c("#E7B800", "#2E9FDF"),
           add = "jitter",
           ylab = "Importancia de comer saludable (1-5)",
-          xlab = "Intención de Uso",
-          title = "Figura. Distribución de la Importancia Saludable según Aceptación")
+          xlab = "Aceptación",
+          title = "Figura 24. Distribución de la Importancia Saludable según Aceptación")
 ```
 En el gráfico de bigotes se aprecia que existe un solapamiento considerable entre ambas cajas, lo que sugiere que no hay una diferencia radical entre la preocupación por la salud entre ambos grupos. Además, las medianas parecen posicionarse en valores similares (3,5 - 4) y hay una gran dispersión en los datos. Esto anticipa que la preocupación por la salud podría no ser el factor determinante de la aceptación del producto.
 
@@ -3385,7 +3387,7 @@ modelo_salud <- lm(Importancia.Saludable ~ f_Intencion.Uso, data = datos)
 
 # 2. Gráfico QQ Plot
 ggpubr::ggqqplot(residuals(modelo_salud)) +
-  labs(title = "Gráfico QQ de los residuos (Importancia Saludable)")
+  labs(title = "Figura 25. Gráfico QQ de los residuos (Importancia Saludable)")
 
 # 3. Test de Anderson-Darling
 test_ad <- nortest::ad.test(residuals(modelo_salud))
@@ -3397,7 +3399,7 @@ data.frame(
   P_Valor = test_ad$p.value
 ) %>%
   flextable::flextable() %>%
-  set_caption("Tabla 27. Test de Normalidad de Anderson-Darling (Residuos).") %>%
+  set_caption("Tabla 65. Test de Normalidad de Anderson-Darling (Residuos).") %>%
   colformat_double(j = "P_Valor", digits = 5, decimal.mark = ",") %>%
   # Resaltamos en rojo si NO es normal
   color(i = ~ P_Valor < 0.05, color = "red") %>%
@@ -3413,7 +3415,7 @@ res_kruskal <- rstatix::kruskal_test(datos, Importancia.Saludable ~ f_Intencion.
 # Impresión de resultados
 res_kruskal %>%
   flextable::flextable() %>%
-  set_caption("Tabla 28. Resultados del Test de Kruskal-Wallis (Relevancia Salud vs Aceptación).") %>%
+  set_caption("Tabla 66. Resultados del Test de Kruskal-Wallis (Relevancia Salud vs Aceptación).") %>%
   colformat_double(j = c("statistic", "p"), digits = 3, decimal.mark = ",") %>%
   # Negrita si es significativo
   bold(i = ~ p < 0.05, bold = TRUE) %>%
@@ -3444,9 +3446,9 @@ proc_freq(datos, 'f_Comer_Fuera_Binaria', 'f_Intencion.Uso',
   include.row_percent = TRUE,
   include.column_percent = FALSE,
   include.table_percent = FALSE) %>%
-  compose(i=2, j=1, value = as_paragraph('Hábito de Comer Fuera'), part = 'header') %>%
+  compose(i=1, j=1, value = as_paragraph('Hábito de Comer Fuera'), part = 'header') %>%
   compose(i=1, j=3, value = as_paragraph('Intención de Uso'), part = 'header') %>%
-  set_caption('Tabla 29. Tabla de contingencia: Hábito de Comer Fuera vs Intención de Uso.') %>%
+  set_caption('Tabla 67. Tabla de contingencia: Hábito de Comer Fuera vs Intención de Uso.') %>%
   autofit()
 
 # Test Chi-cuadrado
@@ -3457,7 +3459,7 @@ res.chisq.habito <- chisq_test(
 # Mostrar resultados
 res.chisq.habito %>%
   flextable() %>%
-  set_caption('Resultados del test Chi-cuadrado (Hábito).') %>%
+  set_caption('Tabla 68. Resultados del test Chi-cuadrado (Hábito).') %>%
   colformat_num(j = c("statistic", "p"), big.mark = ".", decimal.mark = ",") %>%
   autofit()
 
@@ -3465,7 +3467,7 @@ res.chisq.habito %>%
 chisq_descriptives(res.chisq.habito) %>%
  rename(Habito = 'x', Intencion = 'y') %>%
  flextable() %>%
-  set_caption('Estadísticos del test (Valores esperados y residuos).') %>%
+  set_caption('Tabla 69. Estadísticos del test (Valores esperados y residuos).') %>%
  colformat_num(
    j = c("prop", "row.prop", "col.prop", "expected", "resid", "std.resid"),
    big.mark = ".", decimal.mark = ","
@@ -3498,7 +3500,7 @@ proc_freq(datos, 'f_Exp_Negativa_Binaria', 'f_Intencion.Uso',
   include.table_percent = FALSE) %>%
   compose(i=1, j=1, value = as_paragraph('Antecedentes'), part = 'header') %>%
   compose(i=1, j=3, value = as_paragraph('Intención de Uso'), part = 'header') %>%
-  set_caption('Tabla 30. Tabla de contingencia: Malas Experiencias Previas (Binaria) vs Intención de Uso.') %>%
+  set_caption('Tabla 70. Tabla de contingencia: Malas Experiencias Previas (Binaria) vs Intención de Uso.') %>%
   autofit()
 
 # Test Chi-cuadrado
@@ -3509,7 +3511,7 @@ res.chisq.negativa <- chisq_test(
 # Mostrar resultados
 res.chisq.negativa %>%
   flextable() %>%
-  set_caption('Resultados del test Chi-cuadrado (Malas Experiencias).') %>%
+  set_caption('Tabla 71. Resultados del test Chi-cuadrado (Malas Experiencias).') %>%
   colformat_num(j = c("statistic", "p"), big.mark = ".", decimal.mark = ",") %>%
   autofit()
 
@@ -3517,7 +3519,7 @@ res.chisq.negativa %>%
 chisq_descriptives(res.chisq.negativa) %>%
  rename(Tiene_Mala_Exp = 'x', Intencion = 'y') %>%
  flextable() %>%
- set_caption('Estadísticos del test (Valores esperados y residuos).') %>%
+ set_caption('Tabla 72. Estadísticos del test (Valores esperados y residuos).') %>%
  colformat_num(
    j = c("prop", "row.prop", "col.prop", "expected", "resid", "std.resid"),
    big.mark = ".", decimal.mark = ","
@@ -3573,7 +3575,7 @@ tabla_normalidad <- do.call(rbind, lapply(variables_a_testear, calcular_normalid
 
 # Imprimimos la tabla
 flextable::flextable(tabla_normalidad) %>%
-  set_caption("Tabla 31. Test de Normalidad de Anderson-Darling (Residuos).") %>%
+  set_caption("Tabla 73. Test de Normalidad de Anderson-Darling (Residuos).") %>%
   colformat_double(j = "P_Valor_Norm", digits = 4, decimal.mark = ",") %>%
   # Marcamos en rojo si NO es normal (p < 0.05) para verlo rápido
   color(i = ~ P_Valor_Norm < 0.05, j = "P_Valor_Norm", color = "red") %>%
@@ -3595,19 +3597,19 @@ res_kruskal <- datos_analisis %>%
 res_kruskal %>%
   dplyr::select(Variable, n, statistic, df, p, method) %>%
   flextable::flextable() %>%
-  set_caption("Tabla 33. Resultados del Test de Kruskal-Wallis (Dependencia Final).") %>%
+  set_caption("Tabla 74. Resultados del Test de Kruskal-Wallis (Dependencia Final).") %>%
   colformat_double(j = c("statistic", "p"), digits = 3, decimal.mark = ",") %>%
   # Si alguno sale significativo (p < 0.05), se pondrá en negrita
   bold(i = ~ p < 0.05, bold = TRUE) %>%
   autofit()
 ```
 
-1.  Para todas las variables analizadas (Higiene, Origen Local, Precio, Rapidez, Sabor, Sostenibilidad y Variedad), se han obtenido p-valores muy superiores al nivel de significación de 0,05 (oscilando entre 0,112 y 0,959).
-    Esto nos lleva a no rechazar la hipótesis nula en ninguno de los casos.
-    No existe evidencia estadística de que la importancia asignada a estos atributos varíe en función del formato de dispensación preferido por el consumidor.
+Para todas las variables analizadas (Higiene, Origen Local, Precio, Rapidez, Sabor, Sostenibilidad y Variedad), se han obtenido p-valores muy superiores al nivel de significación de 0,05 (oscilando entre 0,112 y 0,959).
+Esto nos lleva a no rechazar la hipótesis nula en ninguno de los casos.
+No existe evidencia estadística de que la importancia asignada a estos atributos varíe en función del formato de dispensación preferido por el consumidor.
 
-    Los resultados desmienten la creencia de que la preferencia por un formato (ej. vitrina cerrada vs. autoservicio) se deba a una mayor exigencia en atributos específicos como la higiene o la rapidez.
-    Los consumidores valoran estos factores con la misma intensidad, independientemente de cómo prefieran que se les sirva el producto.
+Los resultados desmienten la creencia de que la preferencia por un formato (ej. vitrina cerrada vs. autoservicio) se deba a una mayor exigencia en atributos específicos como la higiene o la rapidez.
+Los consumidores valoran estos factores con la misma intensidad, independientemente de cómo prefieran que se les sirva el producto.
 
 ##### 11. Relación entre los ingredientes demandados y la edad
 
@@ -3615,46 +3617,41 @@ Nos centramos ahora en los productos estrella de la barra de ensaladas.
 Primero identificamos cuáles son los ingredientes más seleccionados por los consumidores y, a continuación, analizamos si su demanda depende de la edad del consumidor.
 
 ```{r}
-# 1. Identificación de los "Top 3" Ingredientes más demandados
-# Buscamos todas las variables de ingredientes (Base, Proteína, Complementos)
+# 1. Identificación de los "Top 3" Ingredientes
 vars_ingredientes <- names(datos)[grep("f_Base|f_Prot|f_Complem", names(datos))]
 
-# Calculamos cuál es el porcentaje de "Sí" para cada uno
 ranking_popularidad <- datos %>%
   dplyr::select(all_of(vars_ingredientes)) %>%
-  # Convertimos "Sí" a 1 y "No" a 0 para sumar
   dplyr::mutate(across(everything(), ~ifelse(. == "Sí", 1, 0))) %>%
-  # Sumamos los "Sí" de cada columna
   summarise(across(everything(), sum, na.rm = TRUE)) %>%
   tidyr::pivot_longer(cols = everything(), names_to = "Variable", values_to = "Total_Si") %>%
-  # Ordenamos de mayor a menor demanda
   arrange(desc(Total_Si)) %>%
-  slice(1:3) # Nos quedamos con los 3 primeros
+  slice(1:3)
 
-# Guardamos los nombres de las variables Top
 top_ingredientes <- ranking_popularidad$Variable
 nombres_limpios <- gsub("f_Base.|f_Prot.|f_Complem.", "", top_ingredientes)
 
-# Mostramos cuáles son para que quede constancia en el informe
-print(paste("Los ingredientes más demandados a analizar son:", paste(nombres_limpios, collapse = ", ")))
-
-
-# 2. Función para realizar el análisis detallado (Formato Estándar)
-realizar_analisis_edad <- function(var_ingrediente, nombre_ingrediente) {
+# 2. Función para realizar el análisis detallado (Numeración corregida)
+realizar_analisis_edad <- function(var_ingrediente, nombre_ingrediente, i) {
   
-  # A. Tabla de Contingencia
-  # Usamos print() para que se muestre dentro del bucle
+  # Calculamos el desplazamiento: 
+  # Para i=1 -> tablas 75, 76, 77
+  # Para i=2 -> tablas 78, 79, 80
+  # Para i=3 -> tablas 81, 82, 83
+  base_num <- 74 + (i - 1) * 3
+  
   cat(paste("\n### Análisis para:", nombre_ingrediente, "\n"))
   
+  # A. Tabla de Contingencia
   t1 <- proc_freq(datos, var_ingrediente, 'f_Edad',
             include.row_percent = TRUE,
             include.column_percent = FALSE,
             include.table_percent = FALSE) %>%
-    compose(i=2, j=1, value = as_paragraph(nombre_ingrediente), part = 'header') %>%
+    compose(i=1, j=1, value = as_paragraph(nombre_ingrediente), part = 'header') %>%
     compose(i=1, j=3, value = as_paragraph('Edad'), part = 'header') %>%
-    set_caption(paste0("Tabla de contingencia: ", nombre_ingrediente, " vs Edad.")) %>%
+    set_caption(paste0("Tabla ", base_num + 1, ". Tabla de contingencia: ", nombre_ingrediente, " vs Edad.")) %>%
     autofit()
-  print(t1) # Forzamos la impresión
+  print(t1)
   
   # B. Test Chi-Cuadrado
   res_chisq <- rstatix::chisq_test(
@@ -3664,27 +3661,26 @@ realizar_analisis_edad <- function(var_ingrediente, nombre_ingrediente) {
   
   t2 <- res_chisq %>%
     flextable() %>%
-    set_caption(paste0("Resultados del test Chi-cuadrado (", nombre_ingrediente, ").")) %>%
+    set_caption(paste0("Tabla ", base_num + 2, ". Resultados del test Chi-cuadrado (", nombre_ingrediente, ").")) %>%
     colformat_num(j = c("statistic", "p"), big.mark = ".", decimal.mark = ",") %>%
     autofit()
   print(t2)
   
-  # C. Descriptivos (Validación de Expected)
+  # C. Descriptivos (Valores esperados)
   t3 <- rstatix::chisq_descriptives(res_chisq) %>%
     dplyr::rename(Ingrediente = 'x', Edad = 'y') %>%
     flextable() %>%
-    set_caption(paste0("Estadísticos del test (Valores esperados): ", nombre_ingrediente, ".")) %>%
+    set_caption(paste0("Tabla ", base_num + 3, ". Estadísticos del test (Valores esperados): ", nombre_ingrediente, ".")) %>%
     colformat_num(j = c("expected", "std.resid"), big.mark = ".", decimal.mark = ",") %>%
     autofit()
   print(t3)
   
-  cat("\n---\n") # Separador visual
+  cat("\n---\n") 
 }
 
-# 3. Ejecutamos el análisis para los 3 ingredientes Top (Bucle)
-# Nota: Al renderizar, esto generará las 3 tablas consecutivas para cada ingrediente
+# 3. Ejecución del bucle pasando el índice 'i'
 for (i in 1:3) {
-  realizar_analisis_edad(top_ingredientes[i], nombres_limpios[i])
+  realizar_analisis_edad(top_ingredientes[i], nombres_limpios[i], i)
 }
 ```
 
@@ -3714,12 +3710,13 @@ ranking_popularidad <- datos %>%
 top_ingredientes <- ranking_popularidad$Variable
 nombres_limpios <- gsub("f_Base.|f_Prot.|f_Complem.", "", top_ingredientes)
 
-print(paste("Ingredientes analizados:", paste(nombres_limpios, collapse = ", ")))
-
-# 3. Bucle de Análisis con la variable AGRUPADA
+# 3. Bucle de Análisis con numeración de 84 a 92
 for (i in 1:3) {
   var_ingrediente <- top_ingredientes[i]
   nombre_ingrediente <- nombres_limpios[i]
+  
+  # Calculamos la base: para i=1 es 83, para i=2 es 86, para i=3 es 89
+  base_num <- 83 + (i - 1) * 3
   
   cat(paste("\n### Análisis para:", nombre_ingrediente, "\n"))
   
@@ -3728,9 +3725,9 @@ for (i in 1:3) {
             include.row_percent = TRUE,
             include.column_percent = FALSE,
             include.table_percent = FALSE) %>%
-    compose(i=2, j=1, value = as_paragraph(nombre_ingrediente), part = 'header') %>%
+    compose(i=1, j=1, value = as_paragraph(nombre_ingrediente), part = 'header') %>%
     compose(i=1, j=3, value = as_paragraph('Grupo de Edad'), part = 'header') %>%
-    set_caption(paste0("Tabla 34.", i, " Contingencia: ", nombre_ingrediente, " vs Edad.")) %>%
+    set_caption(paste0("Tabla ", base_num + 1, ". Contingencia: ", nombre_ingrediente, " vs Edad Agrupada.")) %>%
     autofit()
   print(t1)
   
@@ -3739,7 +3736,7 @@ for (i in 1:3) {
   
   t2 <- res_chisq %>%
     flextable() %>%
-    set_caption(paste0("Resultado Chi-cuadrado (", nombre_ingrediente, ").")) %>%
+    set_caption(paste0("Tabla ", base_num + 2, ". Resultado Chi-cuadrado (", nombre_ingrediente, ").")) %>%
     colformat_num(j = c("statistic", "p"), big.mark = ".", decimal.mark = ",") %>%
     autofit()
   print(t2)
@@ -3748,7 +3745,7 @@ for (i in 1:3) {
   t3 <- rstatix::chisq_descriptives(res_chisq) %>%
     dplyr::rename(Ingrediente = 'x', Grupo_Edad = 'y') %>%
     flextable() %>%
-    set_caption("Validación de esperados.") %>%
+    set_caption(paste0("Tabla ", base_num + 3, ". Estadísticos del test (Valores esperados): ", nombre_ingrediente, ".")) %>%
     colformat_num(j = c("expected", "std.resid"), big.mark = ".", decimal.mark = ",") %>%
     autofit()
   print(t3)
