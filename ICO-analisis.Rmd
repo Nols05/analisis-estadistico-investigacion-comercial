@@ -3971,4 +3971,112 @@ for (i in seq_along(vars_sociodemo)) {
 
 De las 4 variables sociodemográficas, solo Género cuenta con valores “expected” > 5, por tanto, primeramente analizaremos esta. Como su p-valor > 0,05 se rechaza la hipótesis nula y concluimos que no hay una dependencia entre el género de los encuestados y el grado de aceptación de la barra de ensaladas. Señalamos que ambos géneros tienen un grado de aceptación alto.
 Para continuar con el análisis de las variables restantes agrupamos por diferentes grupos:
-FALTA AGRUPAR
+
+- Para **Edad** agruparemos como en análisis anteriores: "Jóvenes" (hasta 25 años) y "No Jóvenes" (+ 25 años) para concentrar en un grupo la mayoría de la muestra.
+- Para **Nivel Educativo** agruparemos en 2 categorías: "Nivel de Estudios Medios" (ESO y FP medio / Bachillerato) y "Nivel de Estudios Superiores" (FP superior y Universidad).
+- Para **Situación Laboral** agruparemos por 2 categorías "Estudiantes" y "No Estudiantes" (Trabajadores por cuenta ajena, Autónomos, Desempleados y Jubilados).
+
+```{r}
+# 1. Definición de variables
+vars_agrupadas <- c("f_Edad", "f_Nivel.Educativo", "f_Situacion.Laboral")
+nombres_vars <- c("Edad Agrupada", "Nivel Educativo Agrupado", "Situación Laboral Agrupada")
+
+# 2. Bucle de Análisis
+for (i in seq_along(vars_agrupadas)) {
+  
+  var_actual <- vars_agrupadas[i]
+  nombre_actual <- nombres_vars[i]
+  base_num <- 117 + (i - 1) * 3
+  
+  datos_temp <- datos
+  
+  # --- PROCESO DE AGRUPACIÓN ROBUSTO ---
+  if (var_actual == "f_Edad") {
+    datos_temp[[var_actual]] <- factor(ifelse(datos_temp[[var_actual]] %in% c('Menor de 18', '18 - 24'), 
+                                       'Jóvenes', 'No Jóvenes'))
+  } else if (var_actual == "f_Nivel.Educativo") {
+    datos_temp[[var_actual]] <- factor(ifelse(datos_temp[[var_actual]] %in% c('ESO', 'FP medio / Bachillerato'), 
+                                       'Nivel de Estudios Medios', 'Nivel de Estudios Superiores'))
+  } else if (var_actual == "f_Situacion.Laboral") {
+    # Usamos grepl para que detecte "Estudiante" aunque tenga espacios o variaciones
+    datos_temp[[var_actual]] <- factor(ifelse(grepl("Estudiante", datos_temp[[var_actual]], ignore.case = TRUE), 
+                                       'Estudiantes', 'No Estudiantes'))
+  }
+  
+  datos_temp <- datos_temp %>% droplevels() %>% filter(!is.na(get(var_actual)))
+
+  # --- DETECCIÓN DE ACEPTACIÓN 100% ---
+  tabla_proporciones <- prop.table(table(datos_temp[[var_actual]], datos_temp$f_Intencion.Uso), 1)
+  
+  if ("Sí" %in% colnames(tabla_proporciones)) {
+    exito_total <- rownames(tabla_proporciones)[which(tabla_proporciones[, "Sí"] == 1)]
+    if (length(exito_total) > 0) {
+      cat(paste0("\n**Nota:** El grupo '", paste(exito_total, collapse = ", "), 
+                 "' tiene una aceptación del 100% en ", nombre_actual, ".\n"))
+    }
+  }
+
+  cat(paste("\n### Análisis para:", nombre_actual, "\n"))
+  
+  # A. TABLA DE CONTINGENCIA (Se imprime siempre)
+  t1 <- proc_freq(datos_temp, var_actual, 'f_Intencion.Uso',
+            include.row_percent = TRUE, include.column_percent = FALSE) %>%
+    compose(i=1, j=1, value = as_paragraph(nombre_actual), part = 'header') %>%
+    set_caption(paste0("Tabla ", base_num + 1, ". Contingencia: ", nombre_actual, " vs Aceptación.")) %>%
+    autofit()
+  print(t1)
+  
+  # --- VALIDACIÓN PARA TESTS ---
+  n_niv_x <- length(unique(datos_temp[[var_actual]]))
+  n_niv_y <- length(unique(datos_temp$f_Intencion.Uso))
+  
+  if (n_niv_x >= 2 & n_niv_y >= 2) {
+    # B. Test Chi-Cuadrado
+    res_chisq <- rstatix::chisq_test(x = datos_temp[[var_actual]], y = datos_temp$f_Intencion.Uso)
+    t2 <- res_chisq %>% flextable() %>%
+      set_caption(paste0("Tabla ", base_num + 2, ". Resultado Chi-cuadrado (", nombre_actual, ").")) %>%
+      colformat_num(j = c("statistic", "p"), big.mark = ".", decimal.mark = ",") %>%
+      bold(i = ~ p < 0.05, bold = TRUE) %>% autofit()
+    print(t2)
+    
+    # C. Valores Esperados
+    t3 <- rstatix::chisq_descriptives(res_chisq) %>%
+      dplyr::rename(Variable = 'x', Aceptacion = 'y') %>% flextable() %>%
+      set_caption(paste0("Tabla ", base_num + 3, ". Valores esperados: ", nombre_actual, ".")) %>%
+      colformat_num(j = c("expected", "std.resid"), big.mark = ".", decimal.mark = ",") %>%
+      autofit()
+    print(t3)
+  } else {
+    cat("\n*No se realiza el test estadístico para esta variable por falta de diversidad en las respuestas (una categoría tiene 0 respuestas).*\n")
+  }
+  cat("\n---\n")
+}
+```
+
+Una vez realizado este análisis, de las variables Edad y Situación Laboral tenemos unos valores “expected” > 5 por lo que el test es válido para estas 2 variables. Además ambas variables cuentan con un p-valor > 0,05 en los test de Chi-cuadrado, por lo tanto no existen relaciones entre la edad de los encuestados y el grado de aceptación ni entre la situación laboral de los encuestados y el grado de aceptación.
+Por otro lado, hay valores esperados de Nivel Educativo que no son superiores a 5, por lo que realizamos un test de Fisher, para comprobar si existe una relación o no:
+
+```{r}
+# Creamos una nueva variable para no perder la original
+datos$f_Nivel.Educativo_Agrupado <- factor(ifelse(
+  datos$f_Nivel.Educativo %in% c('ESO', 'FP medio / Bachillerato'), 
+  'Nivel de Estudios Medios', 
+  'Nivel de Estudios Superiores'
+))
+
+tabla_cruzada <- table (datos$f_Nivel.Educativo_Agrupado, datos$f_Intencion.Uso)
+
+res.fisher <- fisher_test(tabla_cruzada)
+
+res.fisher %>%
+  flextable() %>%
+  set_caption(' Tabla 127. Resultados del Test de Fisher') %>%
+  colformat_num(
+    j = c("p"),
+    big.mark = ".",
+    decimal.mark = ","
+  ) %>%
+autofit()
+```
+
+Como el p-valor > 0,05, tampoco podemos rechazar la hipótesis nula y por tanto no existe una relación entre el nivel educativo máximo alcanzado por los encuestados y la aceptación de la barra de ensaladas.
