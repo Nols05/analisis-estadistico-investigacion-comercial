@@ -3,6 +3,8 @@ title: 'Análisis de Mercado: Barra de Ensaladas'
 author: "Noel Lirón Martínez, Raquel Mus Maquieira, Carles Sahuquillo Soriano"
 date: "`r Sys.Date()`"
 output:
+  pdf_document:
+    toc: true
   html_document:
     theme: flatly
     highlight: tango
@@ -11,8 +13,6 @@ output:
       collapsed: false
       smooth_scroll: true
     number_sections: true
-  pdf_document:
-    toc: true
 subtitle: 'Asignatura: Investigación Comercial'
 editor_options: 
   markdown: 
@@ -305,7 +305,7 @@ pie(datos_grafico$Porcentaje,
     # Usamos las Etiquetas que combinan nombre y porcentaje
     labels = datos_grafico$Etiquetas,
     # Título
-    main = 'Figura 1. Motivos de compra.',
+    main = 'Figura 9. Motivos de compra.',
     # Asignar un color diferente a cada porción
     col = RColorBrewer::brewer.pal(n = nrow(datos_grafico), name = "Set3"))
 
@@ -341,7 +341,7 @@ df_tabla_final <- bind_rows(df_tabla_motivo, df_total)
 # Generación de la tabla (flextable)
 ft <- flextable::flextable(df_tabla_final) %>%
 
-flextable::set_caption(caption = "Tabla 1. Distribución de frecuencias para Motivo de Comer Fuera.") %>%
+flextable::set_caption(caption = "Tabla 5. Distribución de frecuencias para Motivo de Comer Fuera.") %>%
   
   # Renombrar las cabeceras
   flextable::set_header_labels(
@@ -393,7 +393,7 @@ pie(datos_grafico$Porcentaje,
     # Usamos las Etiquetas que combinan nombre y porcentaje
     labels = datos_grafico$Etiquetas,
     # Título
-    main = 'Figura 2. Lugar habitual.',
+    main = 'Figura 11. Lugar habitual.',
     # Asignar un color diferente a cada porción
     col = RColorBrewer::brewer.pal(n = nrow(datos_grafico), name = "Set3"))
 
@@ -429,7 +429,7 @@ df_tabla_final <- bind_rows(df_tabla_lugar, df_total)
 # Generación de la tabla (flextable)
 ft <- flextable::flextable(df_tabla_final) %>%
 
-flextable::set_caption(caption = "Tabla 2. Distribución de frecuencias para Lugar habitual en el que se come fuera de casa.") %>%
+flextable::set_caption(caption = "Tabla 7. Distribución de frecuencias para Lugar habitual en el que se come fuera de casa.") %>%
   
   # Renombrar las cabeceras
   flextable::set_header_labels(
@@ -499,7 +499,7 @@ ggplot(df_barras_dobles, aes(x = Tipo_de_Comida, y = Frecuencia, fill = Respuest
   
   # Títulos y Ejes
   labs(
-    title = "Figura 3. Gráfico de barras (Sí/No) por Tipo de Comida",
+    title = "Figura 12. Gráfico de barras (Sí/No) por Tipo de Comida",
     x = "Tipo de Comida Consumida",
     y = "Número de Respuestas",
     fill = "Consumo"
@@ -568,7 +568,7 @@ df_tabla_final <- bind_rows(df_tabla_temp, df_total)
 ft_si_no <- flextable::flextable(df_tabla_final) %>%
   
   # Añadir Título
-  flextable::set_caption(caption = "Tabla 3. Distribución de Frecuencias (Sí/No) para Tipos de Comida") %>%
+  flextable::set_caption(caption = "Tabla 8. Distribución de Frecuencias (Sí/No) para Tipos de Comida") %>%
   
   # Renombrar cabeceras (se usan para la segunda fila de la cabecera)
   flextable::set_header_labels(
@@ -777,7 +777,7 @@ pie(datos_grafico$Porcentaje,
     # Usamos las Etiquetas que combinan nombre y porcentaje
     labels = datos_grafico$Etiquetas,
     # Título
-    main = 'Figura 5. Experiencia con barra de ensaldas.',
+    main = 'Figura 14. Experiencia con barra de ensaldas.',
     # Asignar un color diferente a cada porción
     col = RColorBrewer::brewer.pal(n = nrow(datos_grafico), name = "Set3"))
 
@@ -813,7 +813,7 @@ df_tabla_final <- bind_rows(df_tabla_experiencia, df_total)
 # Generación de la tabla (flextable)
 ft <- flextable::flextable(df_tabla_final) %>%
 
-flextable::set_caption(caption = "Tabla 5. Distribución de frecuencias para Experiencia previa con una barra de ensaladas") %>%
+flextable::set_caption(caption = "Tabla 10. Distribución de frecuencias para Experiencia previa con una barra de ensaladas") %>%
   
   # Renombrar las cabeceras
   flextable::set_header_labels(
@@ -882,7 +882,7 @@ ggplot(df_barras_dobles, aes(x = Situaciones_Uso, y = Frecuencia, fill = Respues
   
   # Títulos y Ejes
   labs(
-    title = "Figura 6. Gráfico de barras (Sí/No) por Situaciones de Uso",
+    title = "Figura 15. Gráfico de barras (Sí/No) por Situaciones de Uso",
     x = "Situación de Uso",
     y = "Número de Respuestas",
     fill = "Usaría"
@@ -950,7 +950,7 @@ df_tabla_final <- bind_rows(df_tabla_temp, df_total)
 ft_si_no <- flextable::flextable(df_tabla_final) %>%
   
   # Añadir Título
-  flextable::set_caption(caption = "Tabla 6. Distribución de Frecuencias (Sí/No) para Situaciones de Uso") %>%
+  flextable::set_caption(caption = "Tabla 11. Distribución de Frecuencias (Sí/No) para Situaciones de Uso") %>%
   
   # Renombrar cabeceras (se usan para la segunda fila de la cabecera)
   flextable::set_header_labels(
@@ -1011,7 +1011,7 @@ pie(datos_grafico$Porcentaje,
     # Usamos las Etiquetas que combinan nombre y porcentaje
     labels = datos_grafico$Etiquetas,
     # Título
-    main = 'Figura 7. Formato preferido',
+    main = 'Figura 16. Formato preferido',
     # Asignar un color diferente a cada porción
     col = RColorBrewer::brewer.pal(n = nrow(datos_grafico), name = "Set3"))
 
@@ -1046,7 +1046,7 @@ df_tabla_final <- bind_rows(df_tabla_formato, df_total)
 # Generación de la tabla (flextable)
 ft <- flextable::flextable(df_tabla_final) %>%
 
-flextable::set_caption(caption = "Tabla 7. Distribución de frecuencias para Formato preferido") %>%
+flextable::set_caption(caption = "Tabla 12. Distribución de frecuencias para Formato preferido") %>%
   
   # Renombrar las cabeceras
   flextable::set_header_labels(
@@ -1115,7 +1115,7 @@ ggplot(df_barras_dobles, aes(x = Preferencia_Base, y = Frecuencia, fill = Respue
   
   # Títulos y Ejes
   labs(
-    title = "Figura 8. Gráfico de barras (Sí/No) por Preferencia de Base",
+    title = "Figura 17. Gráfico de barras (Sí/No) por Preferencia de Base",
     x = "Preferencia Base",
     y = "Número de Respuestas",
     fill = "Usaría"
@@ -1183,7 +1183,7 @@ df_tabla_final <- bind_rows(df_tabla_temp, df_total)
 ft_si_no <- flextable::flextable(df_tabla_final) %>%
   
   # Añadir Título
-  flextable::set_caption(caption = "Tabla 8. Distribución de Frecuencias (Sí/No) para Preferencia Base") %>%
+  flextable::set_caption(caption = "Tabla 13. Distribución de Frecuencias (Sí/No) para Preferencia Base") %>%
   
   # Renombrar cabeceras (se usan para la segunda fila de la cabecera)
   flextable::set_header_labels(
@@ -1261,7 +1261,7 @@ ggplot(df_barras_dobles, aes(x = Prerencia_Proteina, y = Frecuencia, fill = Resp
   
   # Títulos y Ejes
   labs(
-    title = "Figura 9. Gráfico de barras (Sí/No) por Preferencia de Proteínas",
+    title = "Figura 18. Gráfico de barras (Sí/No) por Preferencia de Proteínas",
     x = "Preferencia de Proteínas",
     y = "Número de Respuestas",
     fill = "Pondría"
@@ -1328,7 +1328,7 @@ df_tabla_final <- bind_rows(df_tabla_temp, df_total)
 ft_si_no <- flextable::flextable(df_tabla_final) %>%
   
   # Añadir Título
-  flextable::set_caption(caption = "Tabla 9. Distribución de Frecuencias (Sí/No) para Preferencia de Proteína") %>%
+  flextable::set_caption(caption = "Tabla 14. Distribución de Frecuencias (Sí/No) para Preferencia de Proteína") %>%
   
   # Renombrar cabeceras (se usan para la segunda fila de la cabecera)
   flextable::set_header_labels(
@@ -1406,7 +1406,7 @@ ggplot(df_barras_dobles, aes(x = Preferenica_Complementos, y = Frecuencia, fill 
   
   # Títulos y Ejes
   labs(
-    title = "Figura 10. Gráfico de barras (Sí/No) por Preferencia Complementos",
+    title = "Figura 19. Gráfico de barras (Sí/No) por Preferencia Complementos",
     x = "Preferencia Complementos",
     y = "Número de Respuestas",
     fill = "Pondría"
@@ -1473,7 +1473,7 @@ df_tabla_final <- bind_rows(df_tabla_temp, df_total)
 ft_si_no <- flextable::flextable(df_tabla_final) %>%
   
   # Añadir Título
-  flextable::set_caption(caption = "Tabla 10. Distribución de Frecuencias (Sí/No) para Preferencia de Complementos") %>%
+  flextable::set_caption(caption = "Tabla 15. Distribución de Frecuencias (Sí/No) para Preferencia de Complementos") %>%
   
   # Renombrar cabeceras (se usan para la segunda fila de la cabecera)
   flextable::set_header_labels(
@@ -1534,7 +1534,7 @@ pie(datos_grafico$Porcentaje,
     # Usamos las Etiquetas que combinan nombre y porcentaje
     labels = datos_grafico$Etiquetas,
     # Título
-    main = 'Figura 11. Preferencia del Formato de Dispensación',
+    main = 'Figura 21. Preferencia del Formato de Dispensación',
     # Asignar un color diferente a cada porción
     col = RColorBrewer::brewer.pal(n = nrow(datos_grafico), name = "Set3"))
 
@@ -1569,7 +1569,7 @@ df_tabla_final <- bind_rows(df_tabla_dispensacion, df_total)
 # Generación de la tabla (flextable)
 ft <- flextable::flextable(df_tabla_final) %>%
 
-flextable::set_caption(caption = "Tabla 11. Distribución de frecuencias para Formato de Dispensación Preferido") %>%
+flextable::set_caption(caption = "Tabla 17. Distribución de frecuencias para Formato de Dispensación Preferido") %>%
   
   # Renombrar las cabeceras
   flextable::set_header_labels(
@@ -1621,7 +1621,7 @@ pie(datos_grafico$Porcentaje,
     # Usamos las Etiquetas que combinan nombre y porcentaje
     labels = datos_grafico$Etiquetas,
     # Título
-    main = 'Figura 12. Grado de Aceptación',
+    main = 'Figura 22. Grado de Aceptación',
     # Asignar un color diferente a cada porción
     col = RColorBrewer::brewer.pal(n = nrow(datos_grafico), name = "Set3"))
 
@@ -1656,7 +1656,7 @@ df_tabla_final <- bind_rows(df_tabla_aceptacion, df_total)
 # Generación de la tabla (flextable)
 ft <- flextable::flextable(df_tabla_final) %>%
 
-flextable::set_caption(caption = "Tabla 12. Distribución de frecuencias para el Grado de Aceptación") %>%
+flextable::set_caption(caption = "Tabla 18. Distribución de frecuencias para el Grado de Aceptación") %>%
   
   # Renombrar las cabeceras
   flextable::set_header_labels(
@@ -1708,7 +1708,7 @@ pie(datos_grafico$Porcentaje,
     # Usamos las Etiquetas que combinan nombre y porcentaje
     labels = datos_grafico$Etiquetas,
     # Título
-    main = 'Figura 13. Género',
+    main = 'Figura 6. Género',
     # Asignar un color diferente a cada porción
     col = RColorBrewer::brewer.pal(n = nrow(datos_grafico), name = "Set3"))
 
@@ -1743,7 +1743,7 @@ df_tabla_final <- bind_rows(df_tabla_genero, df_total)
 # Generación de la tabla (flextable)
 ft <- flextable::flextable(df_tabla_final) %>%
 
-flextable::set_caption(caption = "Tabla 13. Distribución de frecuencias para Género") %>%
+flextable::set_caption(caption = "Tabla 2. Distribución de frecuencias para Género") %>%
   
   # Renombrar las cabeceras
   flextable::set_header_labels(
@@ -1795,7 +1795,7 @@ pie(datos_grafico$Porcentaje,
     # Usamos las Etiquetas que combinan nombre y porcentaje
     labels = datos_grafico$Etiquetas,
     # Título
-    main = 'Figura 14. Situación Laboral',
+    main = 'Figura 8. Situación Laboral',
     # Asignar un color diferente a cada porción
     col = RColorBrewer::brewer.pal(n = nrow(datos_grafico), name = "Set3"))
 
@@ -1830,7 +1830,7 @@ df_tabla_final <- bind_rows(df_tabla_laboral, df_total)
 # Generación de la tabla (flextable)
 ft <- flextable::flextable(df_tabla_final) %>%
 
-flextable::set_caption(caption = "Tabla 14. Distribución de frecuencias para Situación Laboral") %>%
+flextable::set_caption(caption = "Tabla 4. Distribución de frecuencias para Situación Laboral") %>%
   
   # Renombrar las cabeceras
   flextable::set_header_labels(
@@ -1896,7 +1896,7 @@ ggplot(df_frecuencia_tiempo, aes(x = f_Frecuencia, y = Frecuencia)) +
   
   # Títulos y Ejes
   labs(
-    title = 'Figura 15. Frecuencia de Comer Fuera de Casa',
+    title = 'Figura 10. Frecuencia de Comer Fuera de Casa',
     x = "Frecuencia",
     y = "Numero de respuestas"
   ) +
@@ -1935,7 +1935,7 @@ df_tabla_final <- bind_rows(df_tabla_freq, df_total)
 # Generación de la tabla (flextable)
 ft <- flextable::flextable(df_tabla_final) %>%
 
-flextable::set_caption(caption = "Tabla 15. Distribución de frecuencias para Frecuencia de Comer Fuera de Casa") %>%
+flextable::set_caption(caption = "Tabla 6. Distribución de frecuencias para Frecuencia de Comer Fuera de Casa") %>%
   
   # Renombrar las cabeceras
   flextable::set_header_labels(
@@ -1999,7 +1999,7 @@ ggplot(df_frecuencia_tiempo, aes(x = f_Frecuencia.Comida.Preparada, y = Frecuenc
   
   # Títulos y Ejes
   labs(
-    title = 'Figura 16. Frecuencia de Comprar Comida Preparada en Supermercados',
+    title = 'Figura 13. Frecuencia de Comprar Comida Preparada en Supermercados',
     x = "Frecuencia de Comprar Comida Preparada en Supermercados",
     y = "Numero de respuestas"
   ) +
@@ -2037,7 +2037,7 @@ df_tabla_final <- bind_rows(df_tabla_freq_prep, df_total)
 # Generación de la tabla (flextable)
 ft <- flextable::flextable(df_tabla_final) %>%
 
-flextable::set_caption(caption = "Tabla 16. Distribución de frecuencias para Frecuencia de Comprar Comida Preparada en un Supermercado") %>%
+flextable::set_caption(caption = "Tabla 9. Distribución de frecuencias para Frecuencia de Comprar Comida Preparada en un Supermercado") %>%
   
   # Renombrar las cabeceras
   flextable::set_header_labels(
@@ -2066,7 +2066,8 @@ flextable::set_caption(caption = "Tabla 16. Distribución de frecuencias para Fr
 ft
 ```
 
-\####`f_Disposicion.Pago` Las categorías de `f_Disposicion.Pago` miden la disposición a pagar de los encuestados por las ensaladas de la barra.
+####`f_Disposicion.Pago` 
+Las categorías de `f_Disposicion.Pago` miden la disposición a pagar de los encuestados por las ensaladas de la barra.
 La variable tiene 5 categorías, que se ordenan desde menos dinero a más dinero: Menos de 4€, Entre 4 y 5,49€, Entre 5,50 y 7€, Entre 7 y 9,50€ y más de 9,50€.
 Este orden se fijó mediante el parámetro levels de la instrucción factor().
 
@@ -2099,7 +2100,7 @@ ggplot(df_frecuencia_tiempo, aes(x = f_Disposicion.Pago, y = Frecuencia)) +
   
   # Títulos y Ejes
   labs(
-    title = 'Figura 17. Disposición a Pagar',
+    title = 'Figura 20. Disposición a Pagar',
     x = "Disposición a Pagar",
     y = "Numero de respuestas"
   ) +
@@ -2137,7 +2138,7 @@ df_tabla_final <- bind_rows(df_tabla_disp, df_total)
 # Generación de la tabla (flextable)
 ft <- flextable::flextable(df_tabla_final) %>%
 
-flextable::set_caption(caption = "Tabla 17. Distribución de frecuencias para la Disposición a Pagar") %>%
+flextable::set_caption(caption = "Tabla 16. Distribución de frecuencias para la Disposición a Pagar") %>%
   
   # Renombrar las cabeceras
   flextable::set_header_labels(
@@ -2201,7 +2202,7 @@ ggplot(df_frecuencia_tiempo, aes(x = f_Edad, y = Frecuencia)) +
   
   # Títulos y Ejes
   labs(
-    title = 'Figura 18. Edad',
+    title = 'Figura 5. Edad',
     x = "Edad",
     y = "Numero de respuestas"
   ) +
@@ -2239,7 +2240,7 @@ df_tabla_final <- bind_rows(df_tabla_edad, df_total)
 # Generación de la tabla (flextable)
 ft <- flextable::flextable(df_tabla_final) %>%
 
-flextable::set_caption(caption = "Tabla 18. Distribución de frecuencias por Edad") %>%
+flextable::set_caption(caption = "Tabla 1. Distribución de frecuencias por Edad") %>%
   
   # Renombrar las cabeceras
   flextable::set_header_labels(
@@ -2303,7 +2304,7 @@ ggplot(df_frecuencia_tiempo, aes(x = f_Nivel.Educativo, y = Frecuencia)) +
   
   # Títulos y Ejes
   labs(
-    title = 'Figura 19. Nivel Educativo Máximo Alcanzado',
+    title = 'Figura 7. Nivel Educativo Máximo Alcanzado',
     x = "Nivel Educativo",
     y = "Numero de respuestas"
   ) +
@@ -2341,7 +2342,7 @@ df_tabla_final <- bind_rows(df_tabla_edu, df_total)
 # Generación de la tabla (flextable)
 ft <- flextable::flextable(df_tabla_final) %>%
 
-flextable::set_caption(caption = "Tabla 19. Distribución de frecuencias para Nivel Educativo Máximo Alcanzado") %>%
+flextable::set_caption(caption = "Tabla 3. Distribución de frecuencias para Nivel Educativo Máximo Alcanzado") %>%
   
   # Renombrar las cabeceras
   flextable::set_header_labels(
@@ -2381,61 +2382,148 @@ La representación de las variables con escala Likert resulta más visual con un
 
 # Variables de escala Likert (factores)
 likert_factors <- c(
-  "f_Importancia.Saludable", 
-  "f_Imp.Sostenibilidad", "f_Imp.Origen.Local", "f_Imp.Variedad", 
-  "f_Imp.Sabor", "f_Imp.Precio", "f_Imp.Higiene", "f_Imp.Rapidez", 
-  "f_Aptitud.Social"
+ "f_Importancia.Saludable",
+ "f_Imp.Sostenibilidad", "f_Imp.Origen.Local", "f_Imp.Variedad",
+ "f_Imp.Sabor", "f_Imp.Precio", "f_Imp.Higiene", "f_Imp.Rapidez",
+ "f_Aptitud.Social"
 )
 
 # Etiquetas descriptivas correspondientes para el gráfico (Eje Y)
 likert_labels <- c(
-  'Me importa comer saludable',
-  'Doy importancia a la sostenibilidad',
-  'Doy importancia a productos de origen local',
-  'Doy importancia a la variedad de ingredientes',
-  'Doy importancia al sabor',
-  'Doy importancia al precio',
-  'Doy importancia a la higiene',
-  'Doy importancia a la rapidez',
-  'Considero las ensaladas una comida social'
+ 'Me importa comer saludable',
+ 'Doy importancia a la sostenibilidad',
+ 'Doy importancia a productos de origen local',
+ 'Doy importancia a la variedad de ingredientes',
+ 'Doy importancia al sabor',
+ 'Doy importancia al precio',
+ 'Doy importancia a la higiene',
+ 'Doy importancia a la rapidez',
+ 'Considero las ensaladas una comida social'
 )
 
-
-# 2. SELECCIONAR DATOS (Sustitución de variables)
+# 2. SELECCIONAR DATOS
 datos.likert <- datos[likert_factors]
 
 # 3. CAMBIAR EL NOMBRE DE LAS COLUMNAS para que aparezcan las afirmaciones evaluadas
 names(datos.likert) <- likert_labels
 
+
+# 3.5 RE-ETIQUETADO DE FACTORES
+new_likert_labels <- c(
+  'Nada Importante / Nada apropiado', 
+  'Ligeramente Importante / Poco apropiado',          
+  'Moderado / Neutral',              
+  'Importante / Apropiado',          
+  'Muy Importante / Muy apropiado'   
+)
+
+# Aplicamos las nuevas etiquetas a todas las columnas Likert seleccionadas
+datos.likert[] <- lapply(datos.likert, function(x) {
+  levels(x) <- new_likert_labels
+  return(x)
+})
+
+
 # 4. GENERAR LA FIGURA
-# Se mantiene 'likert.bar.plot' y 'centered = FALSE' para replicar el formato del profesor
 fig.likert <- likert::likert.bar.plot(
-  likert::likert(datos.likert),
-  
-  # Orden de los ítems (se mantiene el orden de las etiquetas)
-  group.order = likert_labels,      
-  
-  # Configuración para hacer un gráfico de barras apiladas simple (NO divergente)
-  centered = FALSE,
-  plot.percent.low = FALSE,
-  plot.percent.high = FALSE,
-  plot.percent.neutral = FALSE,
-  
-  # Leyenda que explica las respuestas
-  legend.position = 'right',
-  legend = 'Respuesta (1-5)'
+likert::likert(datos.likert), 
+
+ # Orden de los ítems (se mantiene el orden de las etiquetas)
+ group.order = likert_labels,
+
+ # Configuración para hacer un gráfico de barras apiladas simple (NO divergente)
+ centered = FALSE,
+ plot.percent.low = FALSE,
+ plot.percent.high = FALSE,
+ plot.percent.neutral = FALSE,
+
+ # Eliminamos la etiqueta genérica de la leyenda, ya que los niveles son autoexplicativos
+ legend.position = 'bottom'
 ) +
-  # Título de la figura (Actualizado)
-  labs(
-    title = 'Figura 20. Valoración de Factores de Importancia (Escala 1-5)',
-    y = 'Porcentaje (%)',
-    x = NULL
-  )
+ # Título de la figura (Actualizado)
+ labs(
+    # ESTA ES LA CLAVE: Usamos 'fill' para renombrar el título de la leyenda
+fill = "Nivel de Valoración", 
+title = 'Figura X. Valoración de Factores de Importancia y Aptitud Social',
+ y = 'Porcentaje (%)',
+ x = NULL
+)
 
 # Imprimimos la figura
 fig.likert
 
 ```
+
+```{r likert-descriptivos}
+# 1. Variables y Etiquetas (Se asume que los datos están cargados y filtrados)
+likert_vars <- c(
+  'Importancia.Saludable', 'Imp.Sostenibilidad', 'Imp.Origen.Local', 
+  'Imp.Variedad', 'Imp.Sabor', 'Imp.Precio', 'Imp.Higiene', 
+  'Imp.Rapidez', 'Aptitud.Social'
+)
+
+likert_labels <- c(
+  'Importancia de comer saludable',
+  'Importancia de la sostenibilidad',
+  'Importancia del origen local',
+  'Importancia de la variedad',
+  'Importancia del sabor',
+  'Importancia del precio',
+  'Importancia de la higiene',
+  'Importancia de la rapidez',
+  'Aptitud social de las ensaladas'
+)
+
+# 2. Selección y Conversión a Numérico
+# Se asume que 'datos' es el DataFrame filtrado con N=61 (o N=63, según la ejecución)
+datos_likert <- datos[, likert_vars]
+datos_likert[] <- lapply(datos_likert, as.numeric)
+
+# 3. Función para calcular descriptivos (usa base R)
+f_descriptivos <- function(x) {
+  data.frame(
+    n = sum(!is.na(x)),
+    min = min(x, na.rm = TRUE),
+    max = max(x, na.rm = TRUE),
+    median = median(x, na.rm = TRUE),
+    mean = mean(x, na.rm = TRUE),
+    sd = sd(x, na.rm = TRUE)
+  )
+}
+
+# 4. Cálculo de Descriptivos
+descriptivos_raw <- lapply(datos_likert, f_descriptivos)
+descriptivos_final <- do.call(rbind, descriptivos_raw)
+descriptivos_final$Variable <- likert_labels
+rownames(descriptivos_final) <- NULL
+
+# Reordenar columnas para la tabla
+descriptivos_final <- descriptivos_final %>%
+  select(Variable, n, min, max, median, mean, sd)
+
+# 5. Generación de la flextable
+ft_descriptivos <- flextable(descriptivos_final) %>%
+  set_caption(caption = "Tabla 19. Estadísticos Descriptivos para Escalas Likert") %>%
+  set_header_labels(
+    Variable = "Factor de Decisión",
+    n = "N",
+    min = "Mín.",
+    max = "Máx.",
+    median = "Mediana",
+    mean = "Media",
+    sd = "D. Típica"
+  ) %>%
+  colformat_double(j = c("mean", "sd"), digits = 2) %>%
+  colformat_double(j = c("min", "max", "median", "n"), digits = 0) %>%
+  theme_booktabs() %>%
+  align(j = 1, align = "left", part = "body") %>%
+  align(j = 2:7, align = "center", part = "all") %>%
+  autofit()
+
+# Imprimimos la figura
+ft_descriptivos
+```
+
 
 Según la valoración de los factores de importancia en una escala Likert, existe una clara jerarquía de prioridades: los aspectos más cruciales son la Higiene, el Sabor y el Precio, ya que la inmensa mayoría de los encuestados los considera "muy importantes" (categorías 4 y 5); les siguen en importancia la Variedad de Ingredientes, el Origen Local y el valor de Comer Saludable.
 Por otro lado, la Sostenibilidad es el factor que recibe la mayor proporción de valoraciones bajas en comparación con los demás, y la Rapidez también muestra una importancia variable.
@@ -2532,7 +2620,7 @@ df_resumen_final <- bind_rows(df_resumen, df_total)
 
 # Generación de la tabla visual (flextable)
 flextable::flextable(df_resumen_final) %>%
-  flextable::set_caption(caption = "Tabla 21. Agrupación de Motivos de Mala Experiencia (Datos Reales).") %>%
+  flextable::set_caption(caption = "Tabla 20. Agrupación de Motivos de Mala Experiencia (Datos Reales).") %>%
   flextable::set_header_labels(
     Categoria_Mala_Exp = "Categoría de Experiencia",
     Frecuencia = "Frecuencia (n)",
@@ -2546,7 +2634,7 @@ flextable::flextable(df_resumen_final) %>%
 
 # Análisis bivariante
 
-## Relacionar la frecuencia con la que la muestra come fuera de casa y el motivo principal
+## H1: Relacionar la frecuencia con la que la muestra come fuera de casa y el motivo principal
 
 Vamos a comprobar si la frecuencia con el que el encuestado come fuera de casa depende del motivo por el que lo hace.
 Primero, inspeccionaremos la distribución de los casos mediante una tabla de contingencia:
@@ -2857,7 +2945,7 @@ El análisis de las frecuencias relativas por filas revela diferencias estructur
 
 -   **Perfil de Placer/Social/Extraordinario**: En contraste, los motivos vinculados al ocio, a las reuniones sociales o eventos extraordinarios presentan una concentración mayoritaria (87,2%) en el rango de baja frecuencia (0-2 veces por semana).
 
-#### 2. Relacionar la frecuencia con la que la muestra compra comida preparada de supermercado y el motivo principal
+## H2: Relacionar la frecuencia con la que la muestra compra comida preparada de supermercado y el motivo principal
 
 Analizaremos si existe una relación entre el motivo principal de comer fuera y la frecuencia con la que el usuario compra comida preparada en supermercados.
 
@@ -2867,9 +2955,9 @@ proc_freq(datos, 'f_Motivo', 'f_Frecuencia.Comida.Preparada',
  include.row_percent = TRUE,
  include.column_percent = FALSE,
  include.table_percent = FALSE) %>%
- compose(i=2, j=1, value = as_paragraph('Motivo'), part = 'header') %>%
+ compose(i=1, j=1, value = as_paragraph('Motivo'), part = 'header') %>%
  compose(i=1, j=3, value = as_paragraph('Frecuencia Comida Preparada'), part = 'header') %>%
- set_caption('Tabla 22. Tabla de contingencia entre el motivo y la frecuencia de compra de comida preparada.') %>%
+ set_caption('Tabla 33. Tabla de contingencia entre el motivo y la frecuencia de compra de comida preparada.') %>%
  autofit()
 ```
 
@@ -2885,7 +2973,7 @@ res.chisq.prep <- chisq_test(
 # resultado de la evaluación
 res.chisq.prep %>%
  flextable() %>%
- set_caption('Resultados del test del chi cuadrado (Comida Preparada') %>%
+ set_caption('Tabla 34. Resultados del test del chi cuadrado (Comida Preparada') %>%
  colformat_num(
    j = c("statistic", "p"),
    big.mark = ".",
@@ -2900,7 +2988,7 @@ chisq_descriptives(res.chisq.prep) %>%
    Motivo = 'x',
    Frecuencia_Prep = 'y') %>%
  flextable() %>%
- set_caption('Estadísticos descriptivos del test (Valores esperados y residuos).') %>%
+ set_caption('Tabla 35. Estadísticos descriptivos del test (Valores esperados y residuos).') %>%
  colformat_num(
    j = c("prop", "row.prop", "col.prop", "expected", "resid", "std.resid"),
    big.mark = ".",
@@ -2926,9 +3014,9 @@ proc_freq(datos, 'f_Motivo', 'f_Frecuencia.Prep.Agrupada',
   include.row_percent = TRUE,
   include.column_percent = FALSE,
   include.table_percent = FALSE) %>%
-  compose(i=2, j=1, value = as_paragraph('Motivo'), part = 'header') %>%
+  compose(i=1, j=1, value = as_paragraph('Motivo'), part = 'header') %>%
   compose(i=1, j=3, value = as_paragraph('Frecuencia Supermercado (Agrupada)'), part = 'header') %>%
-  set_caption('Tabla de contingencia: Motivo vs Frecuencia Comida Preparada (Agrupada)') %>%
+  set_caption('Tabla 36. Tabla de contingencia: Motivo vs Frecuencia Comida Preparada (Agrupada)') %>%
   autofit()
 
 res.chisq.prep.agrup <- chisq_test(
@@ -2937,7 +3025,7 @@ res.chisq.prep.agrup <- chisq_test(
 
 res.chisq.prep.agrup %>%
   flextable() %>%
-  set_caption('Resultados finales del test Chi-cuadrado (Agrupado)') %>%
+  set_caption('Tabla 37. Resultados finales del test Chi-cuadrado (Agrupado)') %>%
   colformat_num(j = c("statistic", "p"), big.mark = ".", decimal.mark = ",") %>%
   autofit()
 
@@ -2945,7 +3033,7 @@ res.chisq.prep.agrup %>%
 chisq_descriptives(res.chisq.prep.agrup) %>%
  rename(Motivo = 'x', Frecuencia_Agrupada = 'y') %>%
  flextable() %>%
- set_caption('Estadísticos del test Chi-cuadrado (Agrupado) con residuos estandarizados.') %>%
+ set_caption('Tabla 38. Estadísticos del test Chi-cuadrado (Agrupado) con residuos estandarizados.') %>%
  colformat_num(
    j = c("prop", "row.prop", "col.prop", "expected", "resid", "std.resid"),
    big.mark = ".", decimal.mark = ","
@@ -2982,9 +3070,9 @@ Vamos a simplificar la variable "Motivo" en dos grandes perfiles lógicos de con
       include.row_percent = TRUE,
       include.column_percent = FALSE,
       include.table_percent = FALSE) %>%
-      compose(i=2, j=1, value = as_paragraph('Tipo de Motivo'), part = 'header') %>%
+      compose(i=1, j=1, value = as_paragraph('Tipo de Motivo'), part = 'header') %>%
       compose(i=1, j=3, value = as_paragraph('Frecuencia Compra Prep.'), part = 'header') %>%
-      set_caption('Tabla 23. Tabla de contingencia: Motivos Funcionales vs Ocio y Frecuencia de Compra.') %>%
+      set_caption('Tabla 39. Tabla de contingencia: Motivos Funcionales vs Ocio y Frecuencia de Compra.') %>%
       autofit()
 
     # 4. Test Chi-Cuadrado
@@ -2995,7 +3083,7 @@ Vamos a simplificar la variable "Motivo" en dos grandes perfiles lógicos de con
     # Mostrar resultados
     res.chisq.final %>%
       flextable() %>%
-      set_caption('Resultados del test Chi-cuadrado (Modelo 2x2).') %>%
+      set_caption('Tabla 40. Resultados del test Chi-cuadrado (Modelo 2x2).') %>%
       colformat_num(j = c("statistic", "p"), big.mark = ".", decimal.mark = ",") %>%
       autofit()
 
@@ -3003,7 +3091,7 @@ Vamos a simplificar la variable "Motivo" en dos grandes perfiles lógicos de con
     chisq_descriptives(res.chisq.final) %>%
      rename(Motivo_Agrupado = 'x', Frecuencia = 'y') %>%
      flextable() %>%
-     set_caption('Estadísticos del test (Valores esperados y residuos).') %>%
+     set_caption('Tabla 41. Estadísticos del test (Valores esperados y residuos).') %>%
      colformat_num(
        j = c("expected", "std.resid"),
        big.mark = ".", decimal.mark = ","
@@ -3017,7 +3105,7 @@ Se cumple la condición de validación del test, puesto que todos los valores ex
 El test proporciona un p-valor \> 0,05, por lo que no podemos rechazar la hipótesis nula.
 Esto indica que no existe una dependencia significativa entre el motivo por el cual el usuario come fuera de casa y su hábito de comprar comida preparada de supermercado.\
 
-#### 3. Contrastar la creencia de que se recurre a la comida rápida por falta de tiempo.
+## H3: Contrastar la creencia de que se recurre a la comida rápida por falta de tiempo.
 
 
 ```{r}
@@ -3066,12 +3154,12 @@ El test proporciona un p-valor \> 0,05, por lo que no podemos rechazar la hipót
 Esto indica que, en nuestra muestra, no existe una dependencia significativa entre el motivo por el cual el usuario come fuera de casa y su consumo de comida rápida.
 Observando la tabla de contingencia, se aprecia que ambos grupos cuentan con proporciones similares.
 
-#### 4. Establecer la relación entre los lugares a los que se acude cuando se come fuera de casa (bar o restaurante, trabajo o centro educativo, vía pública) y el tipo de comida elegido (rápida, platos preparados, de elaboración propia o comida preparada en un restaurante).
+## H4: Establecer la relación entre los lugares a los que se acude cuando se come fuera de casa (bar o restaurante, trabajo o centro educativo, vía pública) y el tipo de comida elegido (rápida, platos preparados, de elaboración propia o comida preparada en un restaurante).
 
 El objetivo es determinar si el lugar elegido para comer fuera de casa condiciona el tipo de comida consumida.
 Dado que la variable sobre el tipo de comida permite respuesta múltiple, se analizará la asociación de forma individualizada para las categorías principales.
 
-##### 4.1. Asociación con Comida de Rápida
+#### H4.1: Asociación con Comida de Rápida
 
 Primero, verificamos la relación entre el lugar habitual y el consumo de comida preparada en restaurantes de comida rápida.
 
@@ -3160,7 +3248,7 @@ Todos los valores expected son mayores que 5, así que consideramos que el test 
 El test calcula un p-valor \> 0,05, por lo que no podemos rechazar la hipótesis nula.
 Por tanto, no podemos determinar una dependencia significativa entre el motivo por el que se come fuera y el consumo de comida rápida.
 
-##### 4.2. Asociación con Platos Preparados de Supermercado
+#### H4.2: Asociación con Platos Preparados de Supermercado
 
 Observamos si el consumo de platos de supermercado (listos para comer) destaca en alguno de los dos entornos.
 
@@ -3215,31 +3303,30 @@ Solo un 11.9% de personas que suelen comer en bares o restaurantes suele comer c
 El test nos proporciona un p-valor \< 0,05, por lo que podemos rechazar la hipótesis nula y afirmar que existe una dependencia significativa entre el lugar donde se suele comer fuera de casa y el consumo de platos preparados de supermercado.
 Los encuestados que suelen comer en restaurantes son los que menos consumen este tipo de platos.
 
-##### 4.3. Asociación con Comida de Elaboración Propia (Tupper)
+#### H4.3: Asociación con Comida de Elaboración Propia (Tupper)
 
 ```{r}
 # Tabla de contingencia
 proc_freq(datos, 'f_Lugar_Agrupado', 'f_Tipo.Comida.Propia',
  include.row_percent = TRUE, include.column_percent = FALSE, include.table_percent = FALSE) %>%
- compose(i=2, j=1, value = as_paragraph('Lugar (Agrupado)'), part = 'header') %>%
+ compose(i=1, j=1, value = as_paragraph('Lugar (Agrupado)'), part = 'header') %>%
  compose(i=1, j=3, value = as_paragraph('Consume Comida Propia'), part = 'header') %>%
- set_caption('Tabla 28. Contingencia: Lugar vs Comida Propia.') %>%
+ set_caption('Tabla 55. Contingencia: Lugar vs Comida Propia.') %>%
  autofit()
 
 # Test Chi-cuadrado
 res.chisq.propia <- chisq_test(x = datos$f_Lugar_Agrupado, y = datos$f_Tipo.Comida.Propia)
 res.chisq.propia %>% flextable() %>%
- set_caption('Test Chi-cuadrado (Comida Propia).') %>%
+ set_caption('Tabla 56. Test Chi-cuadrado (Comida Propia).') %>%
  colformat_num(j = c("statistic", "p"), big.mark = ".", decimal.mark = ",") %>% autofit()
 
 # Validación y Residuos
 chisq_descriptives(res.chisq.propia) %>%
  rename(Lugar = 'x', Comida_Propia = 'y') %>% flextable() %>%
- set_caption('Estadísticos y residuos (Comida Propia).') %>%
+ set_caption('Tabla 57. Estadísticos y residuos (Comida Propia).') %>%
  colformat_num(j = c("expected", "std.resid"), big.mark = ".", decimal.mark = ",") %>% autofit()
 ```
 
-![](images/clipboard-1362719507.png)
 
 \
 Solo un 21.4% de personas que suelen comer en bares o restaurantes suele comer comida preparada en casa cuando comen fuera, frente al 47,6% de las personas que suelen comer en la calle, la oficina o centro educativo.\
@@ -3250,7 +3337,7 @@ Al realizar el test de Chi-cuadrado, obtenemos un p-valor ligeramente superior a
 Sin embargo, es crucial observar la tabla de contingencia: el consumo de comida propia es del **47,6%** en los entornos de 'Otros' (Oficina/Centro/Vía Pública), frente a solo un 21,4% en 'Restauración'.
 Esta diferencia sustancial de más de 26 puntos porcentuales sugiere una tendencia clara hacia la dependencia, que no ha alcanzado la significatividad estadística debido probablemente al tamaño limitado de la muestra.
 
-##### 4.4. Asociación con Comida de Bar o Restaurante
+#### H4.4: Asociación con Comida de Bar o Restaurante
 
 Finalmente, verificamos la consistencia de las respuestas cruzando el lugar con el consumo de menú o platos de restaurante.
 
@@ -3258,21 +3345,21 @@ Finalmente, verificamos la consistencia de las respuestas cruzando el lugar con 
 # Tabla de contingencia
 proc_freq(datos, 'f_Lugar_Agrupado', 'f_Tipo.Comida.Restaurante',
  include.row_percent = TRUE, include.column_percent = FALSE, include.table_percent = FALSE) %>%
- compose(i=2, j=1, value = as_paragraph('Lugar (Agrupado)'), part = 'header') %>%
+ compose(i=1, j=1, value = as_paragraph('Lugar (Agrupado)'), part = 'header') %>%
  compose(i=1, j=3, value = as_paragraph('Consume Comida Restaurante'), part = 'header') %>%
- set_caption('Tabla 29. Contingencia: Lugar vs Comida de Restaurante.') %>%
+ set_caption('Tabla 58. Contingencia: Lugar vs Comida de Restaurante.') %>%
  autofit()
 
 # Test Chi-cuadrado
 res.chisq.rest <- chisq_test(x = datos$f_Lugar_Agrupado, y = datos$f_Tipo.Comida.Restaurante)
 res.chisq.rest %>% flextable() %>%
- set_caption('Test Chi-cuadrado (Comida Restaurante).') %>%
+ set_caption('Tabla 59. Test Chi-cuadrado (Comida Restaurante).') %>%
  colformat_num(j = c("statistic", "p"), big.mark = ".", decimal.mark = ",") %>% autofit()
 
 # Validación
 chisq_descriptives(res.chisq.rest) %>%
  rename(Lugar = 'x', Comida_Restaurante = 'y') %>% flextable() %>%
- set_caption('Estadísticos y residuos (Comida Restaurante).') %>%
+ set_caption('Tabla 60. Estadísticos y residuos (Comida Restaurante).') %>%
  colformat_num(j = c("expected", "std.resid"), big.mark = ".", decimal.mark = ",") %>% autofit()
 ```
 
@@ -3285,7 +3372,7 @@ El análisis de la distribución (porcentajes por fila) confirma la dirección d
 
 -   En contraste, solo un 42,9% de los encuestados que come en otros espacios elige este tipo de comida.
 
-##### 6. Relación entre la sensación de saciedad y la aceptación
+## H6: Relación entre la sensación de saciedad y la aceptación
 
 Evaluamos si la percepción del producto como una opción "ligera" (que no llena mucho) o como un "plato principal" influye en la intención de uso.
 Para ello, hemos creado una nueva variable (`f_Perfil_Saciedad`) que agrupa a los usuarios que indicaron que usarían la barra para una "cena ligera" o como un "complemento" frente al resto.
@@ -3311,7 +3398,7 @@ proc_freq(datos, 'f_Perfil_Saciedad', 'f_Intencion.Uso',
   include.table_percent = FALSE) %>%
   compose(i=1, j=1, value = as_paragraph('Percepción de Saciedad'), part = 'header') %>%
   compose(i=1, j=3, value = as_paragraph('Intención de Uso'), part = 'header') %>%
-  set_caption('Tabla 28. Tabla de contingencia: Percepción de Saciedad vs Intención de Uso.') %>%
+  set_caption('Tabla 61. Tabla de contingencia: Percepción de Saciedad vs Intención de Uso.') %>%
   autofit()
 
 # 3. Test Chi-cuadrado
@@ -3322,7 +3409,7 @@ res.chisq.saciedad <- chisq_test(
 # Mostrar resultados del test
 res.chisq.saciedad %>%
   flextable() %>%
-  set_caption('Resultados del test Chi-cuadrado (Saciedad).') %>%
+  set_caption('Tabla 62. Resultados del test Chi-cuadrado (Saciedad).') %>%
   colformat_num(j = c("statistic", "p"), big.mark = ".", decimal.mark = ",") %>%
   autofit()
 
@@ -3330,7 +3417,7 @@ res.chisq.saciedad %>%
 chisq_descriptives(res.chisq.saciedad) %>%
  rename(Perfil_Saciedad = 'x', Intencion = 'y') %>%
  flextable() %>%
- set_caption('Estadísticos del test (Valores esperados y residuos).') %>%
+ set_caption('Tabla 63. Estadísticos del test (Valores esperados y residuos).') %>%
  colformat_num(
    j = c("prop", "row.prop", "col.prop", "expected", "resid", "std.resid"),
    big.mark = ".", decimal.mark = ","
@@ -3350,7 +3437,7 @@ Este hallazgo es crucial para el posicionamiento del producto.
 La barra de ensaladas tiene un éxito casi garantizado si se comercializa como una solución para cenas ligeras o como complemento saludable, mientras que genera más dudas entre quienes buscan una comida completa y contundente.
 Esto sugiere que, para captar al segmento de "Plato Principal", quizás sería necesario reforzar la percepción de saciedad (por ejemplo, destacando proteínas o bases más pesadas como pasta/arroz en la comunicación).
 
-##### 7. Relacionar la relevancia de comer saludable con la aceptación de la barra de ensaladas
+## H7: Relacionar la relevancia de comer saludable con la aceptación de la barra de ensaladas
 
 Primero observamos las medias y la distribución de las puntuaciones en cada grupo.
 
@@ -3425,7 +3512,7 @@ res_kruskal %>%
 El p-valor es mayor que 0,05. Por tanto concluimos que no existe una dependencia entre la importancia que los encuestados dan a comer saludable con la aceptación de la barra de ensaladas.
 
 
-##### 8. Comparar el interés potencial entre quienes comen fuera y quienes no
+## H8: Comparar el interés potencial entre quienes comen fuera y quienes no
 
 Analizamos si el hábito de comer fuera de casa influye en la intención de utilizar la barra de ensaladas.
 Para este análisis, hemos agrupado a los encuestados en dos perfiles:
@@ -3481,7 +3568,7 @@ Como el p-valor \> 0,05, no podemos rechazar la hipótesis nula y concluimos que
 La barra de ensaladas tiene un atractivo universal.
 Interesa tanto a quienes comen fuera por rutina semanal como a quienes lo hacen solo de forma esporádica u ocasional.
 
-##### 9. Analizar cómo las malas experiencias anteriores con platos preparados o autoservicio influyen en el interés potencial por el producto.
+## H9: Analizar cómo las malas experiencias anteriores con platos preparados o autoservicio influyen en el interés potencial por el producto.
 
 Agrupamos la variable cualitativa de malas experiencias en dos categorías: "Mala experiencia" y "No mala experiencia".
 
@@ -3532,7 +3619,7 @@ Todos los valores expected son mayores que 5, por lo que el test es válido.
 El p-valor es mayor que 0,05, por lo que no podemos rechazar la hipótesis nula.
 Por tanto, concluimos que no existe una dependencia significativa entre la aceptación del producto y si las experiencias previas con productos similares han sido positivas o negativas,.
 
-##### 10. Vincular el formato de dispensación preferido con las características consideradas más prioritarias (sostenibilidad, precio, higiene, rapidez del servicio, sabor, variedad y origen de los ingredientes)
+## H10: Vincular el formato de dispensación preferido con las características consideradas más prioritarias (sostenibilidad, precio, higiene, rapidez del servicio, sabor, variedad y origen de los ingredientes)
 
 Analizamos si el formato de dispensación preferido (`f_Preferencia.Dispensacion`) influye en la importancia que se le da a distintos atributos (Precio, Higiene, Sabor, etc.).
 
@@ -3611,7 +3698,7 @@ No existe evidencia estadística de que la importancia asignada a estos atributo
 Los resultados desmienten la creencia de que la preferencia por un formato (ej. vitrina cerrada vs. autoservicio) se deba a una mayor exigencia en atributos específicos como la higiene o la rapidez.
 Los consumidores valoran estos factores con la misma intensidad, independientemente de cómo prefieran que se les sirva el producto.
 
-##### 11. Relación entre los ingredientes demandados y la edad
+## H11: Relación entre los ingredientes demandados y la edad
 
 Nos centramos ahora en los productos estrella de la barra de ensaladas.
 Primero identificamos cuáles son los ingredientes más seleccionados por los consumidores y, a continuación, analizamos si su demanda depende de la edad del consumidor.
@@ -3758,7 +3845,7 @@ Todos los tests son válidos, ya que todos los valores expected son mayores que 
 Todos los p-valores son mayores que 0,05, por tanto concluimos en que los ingredientes preferidos por los encuestados no depende de si son menores o mayores de 25 años.
 Siempre son el pollo, la mezcla verde y los frutos secos.
 
-##### 12. Relación entre los ingredientes más demandados y el género
+## H12: Relación entre los ingredientes más demandados y el género
 
 Analizamos si existen diferencias significativas en la preferencia de los ingredientes principales según el género del consumidor.
 Para garantizar la robustez del test estadístico, centramos el análisis en los dos grupos mayoritarios: **Hombres y Mujeres**.
@@ -3833,7 +3920,7 @@ for (i in 1:3) {
 Todos los tests son válidos, ya que todos los valores expected son mayores que 5.\
 Todos los p-valores son mayores que 0,05, por tanto concluimos en que los ingredientes preferidos por los encuestados no dependen de su género.
 
-##### 13. Influencia del precio dispuesto a pagar en el modelo de tarificación
+## H13: Influencia del precio dispuesto a pagar en el modelo de tarificación
 
 Analizamos si existe una relación entre cuánto está dispuesto a pagar el consumidor y qué modelo de precios prefiere (Precio Fijo por tamaño vs. Precio por Peso).
 
@@ -3903,7 +3990,7 @@ autofit()
 El p-valor es mayor que 0,05, por tanto se rechaza la hipótesis nula y concluimos que no hay una dependencia entre el precio dispuesto a pagar y el formato de tarificación preferido.
 Ambos grupos prefieren pagar un precio fijo.
 
-##### 14. Analizar el grado de aceptación del producto según las variables sociodemográficas (edad, género, nivel educativo y ocupación).
+## H14: Analizar el grado de aceptación del producto según las variables sociodemográficas (edad, género, nivel educativo y ocupación).
 
 Analizamos el grado de aceptación del producto en función de las características sociodemográficas de los encuestados: Edad, Género, Nivel Educativo y Situación Laboral.
 
